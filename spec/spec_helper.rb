@@ -9,6 +9,11 @@ Spork.prefork do
   require 'rspec'
   require 'fakefs/spec_helpers'
   require 'awesome_print'
+  require 'bourne'
+
+  RSpec.configure do |config|
+    config.mock_with :mocha
+  end
 end
 
 Spork.each_run do
