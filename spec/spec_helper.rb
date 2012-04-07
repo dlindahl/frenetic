@@ -7,6 +7,8 @@ Spork.prefork do
   # need to restart spork for it take effect.
 
   require 'rspec'
+  require 'fakefs/spec_helpers'
+  require 'awesome_print'
 end
 
 Spork.each_run do
