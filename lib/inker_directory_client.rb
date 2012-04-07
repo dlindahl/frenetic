@@ -1,5 +1,4 @@
 require "inker_directory_client/version"
+class InkerDirectoryClient
 
-module InkerDirectoryClient
-  # Your code goes here...
 end

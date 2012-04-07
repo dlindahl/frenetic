@@ -14,4 +14,7 @@ Gem::Specification.new do |gem|
   gem.name          = "inker_directory_client"
   gem.require_paths = ["lib"]
   gem.version       = InkerDirectoryClient::VERSION
+  gem.add_development_dependency 'guard-spork',   '~> 0.6.0'
+  gem.add_development_dependency 'guard-rspec',   '~> 0.7.0'
+  gem.add_development_dependency 'rspec',         '~> 2.9.0'
 end
