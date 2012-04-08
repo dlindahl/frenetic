@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: http://localhost:9393/api/
+    uri: http://localhost:9393/api
     body:
       encoding: US-ASCII
       string: ''
