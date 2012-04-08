@@ -2,6 +2,7 @@ require 'faraday'
 
 require "inker_directory_client/configuration"
 require "inker_directory_client/version"
+require "inker_directory_client/hal_json"
 
 class InkerDirectoryClient
   extend Forwardable
@@ -14,6 +15,7 @@ class InkerDirectoryClient
     config = Configuration.new( config )
 
     @connection = Faraday.new( config ) do |builder|
+      builder.use HalJson
       builder.adapter :net_http
     end
   end
