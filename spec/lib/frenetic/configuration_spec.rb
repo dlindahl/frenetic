@@ -29,8 +29,17 @@ describe Frenetic::Configuration do
     end
 
     context "with no config YAML" do
-      it { should be_a( Hash ) }
-      it { should be_empty }
+      context "and no passed options" do
+        it "should raise a configuration error" do
+          expect { Frenetic::Configuration.new }.to raise_error( Frenetic::Configuration::ConfigurationError )
+        end
+      end
+      context "and passed options" do
+        let(:config) { Frenetic::Configuration.new( 'url' => 'http://example.org' ) }
+
+        it { should be_a( Hash ) }
+        it { should_not be_empty }
+      end
     end
   end
 

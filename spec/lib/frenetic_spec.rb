@@ -1,5 +1,12 @@
 describe Frenetic do
   let(:client) { Frenetic.new }
+  let(:config) { {
+    :url     => 'http://example.org:5447/api',
+    :api_key => '1234567890',
+    :version => 'v1'
+  } }
+
+  before { Frenetic::Configuration.stubs(:new).returns(config) }
 
   subject { client }
 
@@ -27,7 +34,7 @@ describe Frenetic do
 
     it "should be created" do
       Faraday.should have_received(:new).with() { |config|
-        config.is_a? Frenetic::Configuration
+        config.has_key? :url
       }
     end
   end
