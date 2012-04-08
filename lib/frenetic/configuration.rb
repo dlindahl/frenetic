@@ -8,8 +8,11 @@ class Frenetic
 
       self[:url]     = config['url']     if config['url']
       self[:user]    = config['api_key'] if config['api_key']
-      # TODO: Make the Accepts header configurable or default to JSON
-      self[:accepts] = "application/vnd.customink-inkers-#{config['version']}+json" if config['version']
+      if config['content-type']
+        self[:accepts] = config['content-type']
+      else
+        self[:accepts] = "application/hal+json"
+      end
 
       super()
 

@@ -1,9 +1,10 @@
 describe Frenetic::Configuration do
+  let(:content_type) { 'application/vnd.frenetic-v1-hal+json' }
   let(:yaml_config) {
     { 'test' => {
-        'url'     => 'http://example.org',
-        'api_key' => '1234567890',
-        'version' => 'v2'
+        'url'          => 'http://example.org',
+        'api_key'      => '1234567890',
+        'content-type' => content_type
       }
     }
   }
@@ -23,9 +24,16 @@ describe Frenetic::Configuration do
       end
 
       it { should include(:user) }
-      it { should include(:accepts) }
       it { should include(:url) }
       it { should_not include(:unknown => 'option')}
+      context "with a specified Content-Type" do
+        it { should include(:accepts => 'application/vnd.frenetic-v1-hal+json') }
+      end
+      context "without a specified Content-Type" do
+        let(:content_type) { nil }
+
+        it { should include(:accepts => 'application/hal+json') }
+      end
     end
 
     context "with no config YAML" do
