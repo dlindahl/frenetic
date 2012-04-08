@@ -20,4 +20,16 @@ class InkerDirectoryClient
     end
   end
 
+  def schema
+    @schema ||= load_schema
+  end
+
+private
+
+  # TODO: Parse the root_uri from the config file.
+  def load_schema
+    if response = conn.get('/api/') and response.success?
+      @schema = response.body
+    end
+  end
 end

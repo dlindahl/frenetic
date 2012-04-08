@@ -10,9 +10,15 @@ Spork.prefork do
   require 'fakefs/spec_helpers'
   require 'awesome_print'
   require 'bourne'
+  require 'vcr'
 
   RSpec.configure do |config|
     config.mock_with :mocha
+  end
+
+  VCR.configure do |c|
+    c.cassette_library_dir = 'fixtures/vcr_cassettes'
+    c.hook_into :webmock
   end
 end
 

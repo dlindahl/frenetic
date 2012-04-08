@@ -3,6 +3,7 @@ describe InkerDirectoryClient do
 
   subject { client }
 
+  it { should respond_to(:schema) }
   it { should respond_to(:connection) }
   it { should respond_to(:conn) }
   it { should respond_to(:get) }
@@ -31,4 +32,14 @@ describe InkerDirectoryClient do
     end
   end
  
+  describe "#schema" do
+    subject do
+      VCR.use_cassette('schema_success') do
+        client.schema
+      end
+    end
+
+    it { should be_a( InkerDirectoryClient::HalJson::ResponseWrapper ) }
+  end
+
 end
