@@ -1,5 +1,5 @@
-describe InkerDirectoryClient do
-  let(:client) { InkerDirectoryClient.new }
+describe Frenetic do
+  let(:client) { Frenetic.new }
 
   subject { client }
 
@@ -27,7 +27,7 @@ describe InkerDirectoryClient do
 
     it "should be created" do
       Faraday.should have_received(:new).with() { |config|
-        config.is_a? InkerDirectoryClient::Configuration
+        config.is_a? Frenetic::Configuration
       }
     end
   end
@@ -39,7 +39,7 @@ describe InkerDirectoryClient do
       end
     end
 
-    it { should be_a( InkerDirectoryClient::HalJson::ResponseWrapper ) }
+    it { should be_a( Frenetic::HalJson::ResponseWrapper ) }
   end
 
 end

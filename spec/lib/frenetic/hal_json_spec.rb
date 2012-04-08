@@ -1,5 +1,5 @@
-describe InkerDirectoryClient::HalJson do
-  let(:hal_json) { InkerDirectoryClient::HalJson.new }
+describe Frenetic::HalJson do
+  let(:hal_json) { Frenetic::HalJson.new }
   let(:app_callbacks_stub) do
     stub('FaradayCallbackStubs').tap do |cb_stub|
       cb_stub.stubs('on_complete').yields env
@@ -43,7 +43,7 @@ describe InkerDirectoryClient::HalJson do
       before { hal_json.on_complete(env) }
 
       it "should parse the HAL+JSON response" do
-        env[:body].should be_a( InkerDirectoryClient::HalJson::ResponseWrapper )
+        env[:body].should be_a( Frenetic::HalJson::ResponseWrapper )
       end
     end    
   end

@@ -1,8 +1,8 @@
 require 'json'
 require 'recursive_open_struct'
-require 'inker_directory_client/hal_json/response_wrapper'
+require 'frenetic/hal_json/response_wrapper'
 
-class InkerDirectoryClient
+class Frenetic
 
   class HalJson < Faraday::Middleware
     def call( env )

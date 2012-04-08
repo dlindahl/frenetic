@@ -1,12 +1,12 @@
-# InkerDirectory Client
+# Frenetic Client
 
-A Ruby-based InkerDirectory API client.
+A Ruby-based Hypermedia API client.
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
-    gem 'inker_directory_client'
+    gem 'frenetic'
 
 And then execute:
 
@@ -14,7 +14,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install inker_directory_client
+    $ gem install frenetic
 
 ## Usage
 

@@ -1,8 +1,8 @@
-describe InkerDirectoryClient::HalJson::ResponseWrapper do
+describe Frenetic::HalJson::ResponseWrapper do
   let(:properties) do
     { 'a' => 1, 'b' => 2 }
   end
-  let(:wrapper) { InkerDirectoryClient::HalJson::ResponseWrapper.new( properties ) }
+  let(:wrapper) { Frenetic::HalJson::ResponseWrapper.new( properties ) }
 
   subject { wrapper }
 
@@ -22,7 +22,7 @@ describe InkerDirectoryClient::HalJson::ResponseWrapper do
       end
     end
 
-    it { should be_a InkerDirectoryClient::HalJson::ResponseWrapper }
+    it { should be_a Frenetic::HalJson::ResponseWrapper }
     it "should iterate over each getter" do
       @items.should == [ ['a',1], ['b',2] ]
     end

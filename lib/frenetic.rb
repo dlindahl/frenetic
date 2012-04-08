@@ -1,10 +1,10 @@
 require 'faraday'
 
-require "inker_directory_client/configuration"
-require "inker_directory_client/version"
-require "inker_directory_client/hal_json"
+require "frenetic/configuration"
+require "frenetic/version"
+require "frenetic/hal_json"
 
-class InkerDirectoryClient
+class Frenetic
   extend Forwardable
   def_delegators :@connection, :get, :put, :post, :delete
 

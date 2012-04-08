@@ -24,5 +24,5 @@ end
 
 Spork.each_run do
   # This code will be run each time you run your specs.
-  require 'inker_directory_client'
+  require 'frenetic'
 end

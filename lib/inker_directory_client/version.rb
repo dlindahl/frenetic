@@ -1,3 +1,0 @@
-class InkerDirectoryClient
-  VERSION = "0.0.1"
-end

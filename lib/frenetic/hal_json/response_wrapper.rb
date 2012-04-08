@@ -1,4 +1,4 @@
-class InkerDirectoryClient
+class Frenetic
   class HalJson < Faraday::Middleware
     # TODO: The API for this differs greatly from the `inspect` output.
     # Perhaps the Hash keys should be normalized and then aliased back to the original keys?

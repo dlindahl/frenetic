@@ -1,4 +1,4 @@
-class InkerDirectoryClient
+class Frenetic
   class Configuration < Hash
 
     def initialize( custom_config = {} )
@@ -15,7 +15,7 @@ class InkerDirectoryClient
   private
 
     def config_file
-      config_path = File.join( 'config', 'inker_directory_client.yml' )
+      config_path = File.join( 'config', 'frenetic.yml' )
 
       if File.exists? config_path
         YAML.load_file( config_path )[ENV['RAILS_ENV']] || {}

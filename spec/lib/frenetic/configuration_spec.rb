@@ -1,4 +1,4 @@
-describe InkerDirectoryClient::Configuration do
+describe Frenetic::Configuration do
   let(:yaml_config) {
     { 'test' => {
         'url'     => 'http://example.org',
@@ -7,7 +7,7 @@ describe InkerDirectoryClient::Configuration do
       }
     }
   }
-  let(:config) { InkerDirectoryClient::Configuration.new( unknown: :option ) }
+  let(:config) { Frenetic::Configuration.new( unknown: :option ) }
 
   subject { config }
 
@@ -17,7 +17,7 @@ describe InkerDirectoryClient::Configuration do
     context "with a proper config YAML" do
       before do
         FileUtils.mkdir_p("config")
-        File.open( 'config/inker_directory_client.yml', 'w') do |f|
+        File.open( 'config/frenetic.yml', 'w') do |f|
           f.write( YAML::dump(yaml_config) )
         end
       end
