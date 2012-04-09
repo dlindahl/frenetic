@@ -1,4 +1,7 @@
-# Frenetic Client
+# Frenetic Client [![Build Status][travis_status]][travis]
+
+[travis_status]: https://secure.travis-ci.org/dlindahl/frenetic.png
+[travis]: http://travis-ci.org/dlindahl/frenetic
 
 A Ruby-based Hypermedia API client.
 
