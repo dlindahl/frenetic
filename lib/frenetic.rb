@@ -2,10 +2,14 @@ require 'addressable/uri'
 require 'faraday'
 
 require "frenetic/configuration"
-require "frenetic/version"
 require "frenetic/hal_json"
+require "frenetic/resource"
+require "frenetic/version"
 
 class Frenetic
+
+  class MissingAPIReference < StandardError; end
+
   extend Forwardable
   def_delegators :@connection, :get, :put, :post, :delete
 
