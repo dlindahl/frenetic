@@ -5,9 +5,14 @@ class Frenetic
     class ResponseWrapper < RecursiveOpenStruct
       include Enumerable
 
+      def []( key )
+        self.send(key)
+      end
+
       def members
         methods(false).grep(%r{_as_a_hash}).map { |m| m[0...-10] }
       end
+      alias_method :keys, :members
 
       def each
         members.each do |method|

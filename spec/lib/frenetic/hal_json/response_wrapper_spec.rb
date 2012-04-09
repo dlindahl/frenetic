@@ -9,9 +9,15 @@ describe Frenetic::HalJson::ResponseWrapper do
   describe "#members" do
     subject { wrapper.members }
 
-    its(:size) { should == 2 }
+    its(:size)  { should == 2 }
     its(:first) { should == 'a' }
-    its(:last) { should == 'b' }
+    its(:last)  { should == 'b' }
+  end
+
+  describe "#keys" do
+    subject { wrapper.keys }
+
+    it { should == wrapper.members }
   end
 
   describe "#each" do
