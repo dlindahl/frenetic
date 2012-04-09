@@ -50,6 +50,7 @@ describe Frenetic::HalJson::ResponseWrapper do
         wrapper.links.should == 'foo'
       end
     end
+
     context "with a :_embedded property" do
       let(:properties) { { '_embedded' => 'foo' } }
 
@@ -57,5 +58,13 @@ describe Frenetic::HalJson::ResponseWrapper do
         wrapper.resources.should == 'foo'
       end
     end
+
+    context "with a :_embedded property" do
+      let(:properties) { { 'href' => 'foo' } }
+
+      it "should create a :url property" do
+        wrapper.url.should == 'foo'
+      end
+    end    
   end
 end

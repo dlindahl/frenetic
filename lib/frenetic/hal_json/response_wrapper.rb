@@ -30,6 +30,7 @@ class Frenetic
           method_name = case method_name
             when :_embedded then :resources
             when :_links    then :links
+            when :href      then :url
             else method_name
             end
 
