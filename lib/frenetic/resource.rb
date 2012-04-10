@@ -39,14 +39,18 @@ class Frenetic
 
   private
 
+    def metaclass
+      metaclass = class << self; self; end
+    end
+
     def load( keys, attributes )
       keys.each do |key|
         instance_variable_set "@#{key}", attributes[key.to_s]
 
-        # TODO: Ensure this is correct (and not need metaclass)
-        self.class.class_eval do
-        # metaclass.instance_eval do
-          self.send :attr_reader, key
+        metaclass.class_eval do
+          define_method key do
+            instance_variable_get( "@#{key}")
+          end
         end
       end
     end

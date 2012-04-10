@@ -31,17 +31,31 @@ describe Frenetic::Resource do
         }
       )
     end
-    let(:resource) { Frenetic::Resource.new( api_response ) }
+    let(:resource_a) { Frenetic::Resource.new( api_response ) }
+    let(:resource_b) { Frenetic::Resource.new }
 
     before do
       @client.stubs(:schema).returns( schema_stub )
 
       Frenetic::Resource.stubs(:api).returns( @client )
+
+      resource_a and resource_b
     end
 
-    it { should respond_to(:foo) }
-    it { should_not respond_to(:bar) }
-    its(:links) { should_not be_empty }
+    context "initialized with data" do
+      subject { resource_a }
+
+      its(:foo) { should == 1 }
+      it { should_not respond_to(:bar) }
+      its(:links) { should_not be_empty }
+    end
+    context "intiailized in sequence without data" do
+      subject { resource_b }
+
+      it { should_not respond_to(:foo) }
+      it { should_not respond_to(:bar) }
+      its(:links) { should be_empty }
+    end
   end
 
   describe ".api_client" do
