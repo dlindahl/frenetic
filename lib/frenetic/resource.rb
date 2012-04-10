@@ -22,7 +22,7 @@ class Frenetic
       def api_client( client = nil )
         metaclass.instance_eval do
           define_method :api do
-            @api ||= block_given? ? yield : client
+            block_given? ? yield : client
           end
         end
       end

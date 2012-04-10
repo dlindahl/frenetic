@@ -33,11 +33,16 @@ class Frenetic
     @schema ||= load_schema
   end
 
+  # A naive approach to reloading a Frenetic instance for testing purpose.
+  def reload!
+    instance_variables.each { |var| instance_variable_set(var, nil) }
+  end
+
 private
 
   def load_schema
     if response = get( @root_url ) and response.success?
-      @schema = response.body
+      response.body
     end
   end
 end

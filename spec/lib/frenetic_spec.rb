@@ -49,4 +49,18 @@ describe Frenetic do
     it { should be_a( Frenetic::HalJson::ResponseWrapper ) }
   end
 
+  describe "#reload!" do
+    before do
+      VCR.use_cassette('schema_success') do
+        client.schema
+      end
+
+      client.reload!
+    end
+
+    it "should not have any non-Nil instance variables" do
+      client.instance_variables.none? { |s| client.instance_variable_get(s).nil? }.should be_false
+    end
+  end
+
 end
