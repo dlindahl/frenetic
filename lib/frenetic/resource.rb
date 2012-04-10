@@ -31,13 +31,15 @@ class Frenetic
         if self.respond_to? :api
           class_name = self.to_s.split('::').last.downcase
 
-          api.schema.resources.schema.send(class_name).properties
+          api.description.resources.schema.send(class_name).properties
         else
           raise MissingAPIReference,
               "This Resource needs a class accessor defined as " +
               "`.api` that references an instance of Frenetic."
         end
       end
+
+    private
 
       def metaclass
         metaclass = class << self; self; end

@@ -3,7 +3,7 @@ describe Frenetic::Resource do
   @client = Frenetic.new('url' => 'http://example.org')
 
   let(:resource) { Frenetic::Resource.new }
-  let(:schema_stub) do
+  let(:description_stub) do
     Frenetic::HalJson::ResponseWrapper.new('resources' => { 'schema' => { 'resource' =>
       { 'properties' => { 'foo' => 2 } }
     } } )
@@ -35,7 +35,7 @@ describe Frenetic::Resource do
     let(:resource_b) { Frenetic::Resource.new }
 
     before do
-      @client.stubs(:schema).returns( schema_stub )
+      @client.stubs(:description).returns( description_stub )
 
       Frenetic::Resource.stubs(:api).returns( @client )
 
@@ -81,13 +81,13 @@ describe Frenetic::Resource do
 
     context "with a defined API Client" do
       before do
-        @client.stubs(:schema).returns( schema_stub )
+        @client.stubs(:description).returns( description_stub )
 
         resource.class.api_client @client
       end
 
       it "should return the schema for the specific resource" do
-        subject.should == schema_stub.resources.schema.resource.properties
+        subject.should == description_stub.resources.schema.resource.properties
       end
     end
 

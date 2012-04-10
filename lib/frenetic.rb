@@ -29,8 +29,8 @@ class Frenetic
     end
   end
 
-  def schema
-    @schema ||= load_schema
+  def description
+    @description ||= load_description
   end
 
   # A naive approach to reloading a Frenetic instance for testing purpose.
@@ -40,7 +40,7 @@ class Frenetic
 
 private
 
-  def load_schema
+  def load_description
     if response = get( @root_url ) and response.success?
       response.body
     end

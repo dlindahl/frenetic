@@ -10,7 +10,7 @@ describe Frenetic do
 
   subject { client }
 
-  it { should respond_to(:schema) }
+  it { should respond_to(:description) }
   it { should respond_to(:connection) }
   it { should respond_to(:conn) }
   it { should respond_to(:get) }
@@ -39,10 +39,10 @@ describe Frenetic do
     end
   end
  
-  describe "#schema" do
+  describe "#description" do
     subject do
-      VCR.use_cassette('schema_success') do
-        client.schema
+      VCR.use_cassette('description_success') do
+        client.description
       end
     end
 
@@ -51,8 +51,8 @@ describe Frenetic do
 
   describe "#reload!" do
     before do
-      VCR.use_cassette('schema_success') do
-        client.schema
+      VCR.use_cassette('description_success') do
+        client.description
       end
 
       client.reload!
