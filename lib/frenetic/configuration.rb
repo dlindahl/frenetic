@@ -3,12 +3,14 @@ class Frenetic
 
     class ConfigurationError < StandardError; end
 
+    # TODO: This is in desperate need of .with_indifferent_access...
+    # TODO: "content-type" should probably be within a "headers" key
     def initialize( custom_config = {} )
       config = config_file.merge custom_config
 
-      self[:url]             = config['url']     if config['url']
-      self[:username]        = config['api_key'] if config['api_key']
-      self[:headers] = {}
+      self[:url]      = config['url']     if config['url']
+      self[:username] = config['api_key'] if config['api_key']
+      self[:headers]  = config['headers'] || {}
 
       if config['content-type']
         self[:headers][:accepts] = config['content-type']
