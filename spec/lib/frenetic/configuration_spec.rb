@@ -23,7 +23,7 @@ describe Frenetic::Configuration do
         end
       end
 
-      it { should include(:user) }
+      it { should include(:username) }
       it { should include(:url) }
       it { should_not include(:unknown => 'option')}
       context "with a specified Content-Type" do
