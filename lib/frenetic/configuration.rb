@@ -6,12 +6,14 @@ class Frenetic
     def initialize( custom_config = {} )
       config = config_file.merge custom_config
 
-      self[:url]       = config['url']     if config['url']
-      self[:username]  = config['api_key'] if config['api_key']
+      self[:url]             = config['url']     if config['url']
+      self[:username]        = config['api_key'] if config['api_key']
+      self[:headers] = {}
+
       if config['content-type']
-        self[:accepts] = config['content-type']
+        self[:headers][:accepts] = config['content-type']
       else
-        self[:accepts] = "application/hal+json"
+        self[:headers][:accepts] = "application/hal+json"
       end
 
       super()

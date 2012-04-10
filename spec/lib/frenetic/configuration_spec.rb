@@ -27,12 +27,16 @@ describe Frenetic::Configuration do
       it { should include(:url) }
       it { should_not include(:unknown => 'option')}
       context "with a specified Content-Type" do
-        it { should include(:accepts => 'application/vnd.frenetic-v1-hal+json') }
+        it "should set an Accepts request header" do
+          subject[:headers].should include(:accepts => 'application/vnd.frenetic-v1-hal+json')
+        end
       end
       context "without a specified Content-Type" do
         let(:content_type) { nil }
 
-        it { should include(:accepts => 'application/hal+json') }
+        it "should set an Accepts request header" do
+          subject[:headers].should include(:accepts => 'application/hal+json')
+        end
       end
     end
 
