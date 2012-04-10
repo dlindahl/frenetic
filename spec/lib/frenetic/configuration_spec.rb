@@ -4,7 +4,10 @@ describe Frenetic::Configuration do
     { 'test' => {
         'url'          => 'http://example.org',
         'api_key'      => '1234567890',
-        'content-type' => content_type
+        'content-type' => content_type,
+        'request' => {
+          'timeout' => 10000
+        }
       }
     }
   }
@@ -25,7 +28,15 @@ describe Frenetic::Configuration do
 
       it { should include(:username) }
       it { should include(:url) }
+
       it { should_not include(:unknown => 'option')}
+      it "should set default request options" do
+        subject[:request][:timeout].should == 10000
+      end
+      it "should set a User Agent request header" do
+        subject[:headers][:user_agent].should =~ %r{Frenetic v.+; \S+$}
+      end
+
       context "with a specified Content-Type" do
         it "should set an Accepts request header" do
           subject[:headers].should include(:accepts => 'application/vnd.frenetic-v1-hal+json')
@@ -51,6 +62,12 @@ describe Frenetic::Configuration do
 
         it { should be_a( Hash ) }
         it { should_not be_empty }
+        it "should set an Accepts request header" do
+          subject[:headers].should include(:accepts => 'application/hal+json')
+        end
+        it "should set a User Agent request header" do
+          subject[:headers][:user_agent].should =~ %r{Frenetic v.+; \S+$}
+        end
       end
     end
   end

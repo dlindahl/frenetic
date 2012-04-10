@@ -1,3 +1,5 @@
+require 'socket'
+
 class Frenetic
   class Configuration < Hash
 
@@ -7,25 +9,41 @@ class Frenetic
     # TODO: "content-type" should probably be within a "headers" key
     def initialize( custom_config = {} )
       config = config_file.merge custom_config
+      config = symbolize_keys config
 
-      self[:url]      = config['url']     if config['url']
-      self[:username] = config['api_key'] if config['api_key']
-      self[:headers]  = config['headers'] || {}
+      config[:username] = config[:api_key] if config[:api_key]
+      config[:headers]  ||= {}
+      config[:request]  ||= {}
 
-      if config['content-type']
-        self[:headers][:accepts] = config['content-type']
+      if config[:"content-type"]
+        config[:headers][:accepts] = config[:"content-type"]
       else
-        self[:headers][:accepts] = "application/hal+json"
+        config[:headers][:accepts] = "application/hal+json"
       end
+
+      # Copy the config into this Configuration instance.
+      config.each { |k, v| self[k] = v }
 
       super()
 
-      validate_configuration
+      configure_user_agent
+
+      validate
     end
 
   private
 
-    def validate_configuration
+    def configure_user_agent
+      frenetic_ua = "Frenetic v#{Frenetic::VERSION}; #{Socket.gethostname}"
+
+      if self[:headers][:user_agent]
+        self[:headers][:user_agent] << " (#{frenetic_ua})"
+      else
+        self[:headers][:user_agent] = frenetic_ua
+      end
+    end
+
+    def validate
       unless self[:url]
         raise ConfigurationError, "No API URL defined!"
       end
@@ -45,6 +63,22 @@ class Frenetic
         end
       else
         {}
+      end
+    end
+
+    def symbolize_keys( arg )
+      case arg
+      when Array
+        arg.map { |elem| symbolize_keys elem }
+      when Hash
+        Hash[
+          arg.map { |key, value|  
+            k = key.is_a?(String) ? key.to_sym : key
+            v = symbolize_keys value
+            [k,v]
+          }]
+      else
+        arg
       end
     end
 
