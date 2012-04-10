@@ -20,9 +20,12 @@ class Frenetic
     # of the subclass.
     class << self
       def api_client( client = nil )
-        block_given? ? yield : client
+        metaclass.instance_eval do
+          define_method :api do
+            block_given? ? yield : client
+          end
+        end
       end
-      alias_method :api, :api_client
 
       def schema
         if self.respond_to? :api
@@ -34,6 +37,10 @@ class Frenetic
               "This Resource needs a class accessor defined as " +
               "`.api` that references an instance of Frenetic."
         end
+      end
+
+      def metaclass
+        metaclass = class << self; self; end
       end
     end
 
