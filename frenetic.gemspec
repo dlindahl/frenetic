@@ -17,6 +17,7 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency             'faraday',       '~> 0.8.0.rc2'
   gem.add_dependency             'addressable',   '~> 2.2.7'
+  gem.add_dependency             'patron',        '~> 0.4.18'
 
   gem.add_development_dependency 'guard-spork',   '~> 0.6.0'
   gem.add_development_dependency 'guard-rspec',   '~> 0.7.0'

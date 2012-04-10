@@ -25,7 +25,7 @@ class Frenetic
     @connection = Faraday.new( config ) do |builder|
       builder.use HalJson
       builder.request :basic_auth, config[:username], config[:password]
-      builder.adapter :net_http
+      builder.adapter :patron
     end
   end
 
