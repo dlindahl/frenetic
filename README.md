@@ -3,7 +3,7 @@
 [travis_status]: https://secure.travis-ci.org/dlindahl/frenetic.png
 [travis]: http://travis-ci.org/dlindahl/frenetic
 
-A Ruby-based Hypermedia API client.
+An opinionated Ruby-based Hypermedia API (HAL+JSON) client.
 
 ## Installation
 
@@ -21,7 +21,7 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Your guess is as good as mine. (*TODO*)
 
 ## Contributing
 

@@ -4,9 +4,9 @@ require File.expand_path('../lib/frenetic/version', __FILE__)
 Gem::Specification.new do |gem|
   gem.authors       = ["Derek Lindahl"]
   gem.email         = ["dlindahl@customink.com"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
-  gem.homepage      = ""
+  gem.description   = %q{An opinionated Ruby-based Hypermedia API client.}
+  gem.summary       = %q{Here lies a Ruby-based Hypermedia API client that expects HAL+JSON and makes a lot of assumptions about your API.}
+  gem.homepage      = "http://dlindahl.github.com/frenetic/"
 
   gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   gem.files         = `git ls-files`.split("\n")
