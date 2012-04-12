@@ -52,28 +52,30 @@ schema defined here.
 
 Example:
 
-    {
+```js
+{
+  "_links":{
+    "self":{"href":"/api/"},
+    "inkers":{"href":"/api/inkers"},
+  },
+  "_embedded":{
+    "schema":{
       "_links":{
-        "self":{"href":"/api/"},
-        "inkers":{"href":"/api/inkers"},
+        "self":{"href":"/api/schema"}
       },
-      "_embedded":{
-        "schema":{
-          "_links":{
-            "self":{"href":"/api/schema"}
-          },
-          "order":{
-            "description":"A widget order",
-            "type":"object",
-            "properties":{
-              "id":{"type":"integer"},
-              "first_name":{"type":"string"},
-              "last_name":{"type":"string"},
-            }
-          }
+      "order":{
+        "description":"A widget order",
+        "type":"object",
+        "properties":{
+          "id":{"type":"integer"},
+          "first_name":{"type":"string"},
+          "last_name":{"type":"string"},
         }
       }
     }
+  }
+}
+```
 
 This response will be requested by Frenetic whenever a call to
 `YourAPI.description` is made. The response is memoized so any future calls
@@ -87,15 +89,17 @@ compliance.
 
 Example:
 
-    {
-      "id":1,
-      "first_name":"Foo",
-      "last_name":"Bar",
-      "_links":{
-        "self":{"href":"/order/1"},
-        "next":{"href":"/order/2"}
-      }
-    }
+```js
+{
+  "id":1,
+  "first_name":"Foo",
+  "last_name":"Bar",
+  "_links":{
+    "self":{"href":"/order/1"},
+    "next":{"href":"/order/2"}
+  }
+}
+```
 
 The problem here is that the entire response really should be wrapped in
 `"_embedded"` and `"order"` keys.
@@ -121,16 +125,18 @@ Or install it yourself as:
 
 ### Client Initialization
 
-    MyAPI = Frenetic.new(
-      'url'          => 'https://api.yoursite.com',
-      'username'     => 'yourname',
-      'password'     => 'yourpassword',
-      'content-type' => 'application/vnd.yoursite-v1.hal+json'
-      # Optional
-      'headers' => {
-        'user-agent' => 'Your Site's API Client', # Optional custom User Agent, just 'cuz
-      }
-    )
+```ruby
+MyAPI = Frenetic.new(
+  'url'          => 'https://api.yoursite.com',
+  'username'     => 'yourname',
+  'password'     => 'yourpassword',
+  'content-type' => 'application/vnd.yoursite-v1.hal+json'
+  # Optional
+  'headers' => {
+    'user-agent' => 'Your Site's API Client', # Optional custom User Agent, just 'cuz
+  }
+)
+```
 
 ### Making Requests
 
@@ -146,20 +152,22 @@ An easier way to make requests for a resource is to have your model inherit from
 `Frenetic::Resource`. This makes it a bit easier to encapsulate all of your
 resource's API requests into one place.
 
-    class Order < Frenetic::Resource
+```ruby
+class Order < Frenetic::Resource
 
-      api_client { MyAPI }
+  api_client { MyAPI }
 
-      class << self
-        def find( id )
-          if response = api.get( api.description.links.order.href.gsub('{id}', id.to_s) ) and response.success?
-            self.new( response.body )
-          else
-            raise OrderNotFound, "No Order found for #{id}"
-          end
-        end
+  class << self
+    def find( id )
+      if response = api.get( api.description.links.order.href.gsub('{id}', id.to_s) ) and response.success?
+        self.new( response.body )
+      else
+        raise OrderNotFound, "No Order found for #{id}"
       end
     end
+  end
+end
+```
 
 The `api_client` class method merely tells `Frenetic::Resource` which API Client
 instance to use. If you lazily instantiate your client, then you should pass a
@@ -167,9 +175,11 @@ block as demonstrated above.
 
 Otherwise, you may pass by reference:
 
-    class Order < Frenetic::Resource
-      api_client MyAPI
-    end
+```ruby
+class Order < Frenetic::Resource
+  api_client MyAPI
+end
+```
 
 When your model is initialized, it will contain attribute readers for every
 property defined in your API's schema or description. In theory, this allows an
@@ -182,11 +192,15 @@ Any response body returned by a Frenetic generated API call will be returned as
 an OpenStruct-like object. This object responds to dot-notation as well as Hash
 keys and is enumerable.
 
-    response.body.resources.orders.first
+```ruby
+response.body.resources.orders.first
+```
 
 or
 
-    response.body['_embedded']['orders'][0]
+```ruby
+response.body['_embedded']['orders'][0]
+```
 
 For your convenience, certain HAL+JSON keys have been aliased by methods a bit
 more readable:
