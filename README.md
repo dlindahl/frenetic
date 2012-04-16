@@ -130,9 +130,9 @@ MyAPI = Frenetic.new(
   'url'          => 'https://api.yoursite.com',
   'username'     => 'yourname',
   'password'     => 'yourpassword',
-  'content-type' => 'application/vnd.yoursite-v1.hal+json'
-  # Optional
   'headers' => {
+    'accept' => 'application/vnd.yoursite-v1.hal+json'
+    # Optional
     'user-agent' => 'Your Site's API Client', # Optional custom User Agent, just 'cuz
   }
 )

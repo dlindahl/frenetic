@@ -4,7 +4,9 @@ describe Frenetic::Configuration do
     { 'test' => {
         'url'          => 'http://example.org',
         'api_key'      => '1234567890',
-        'content-type' => content_type,
+        'headers' => {
+          'accept' => content_type,
+        },
         'request' => {
           'timeout' => 10000
         }
@@ -37,15 +39,15 @@ describe Frenetic::Configuration do
         subject[:headers][:user_agent].should =~ %r{Frenetic v.+; \S+$}
       end
 
-      context "with a specified Content-Type" do
-        it "should set an Accepts request header" do
+      context "with a specified Accept header" do
+        it "should set an Accept request header" do
           subject[:headers].should include(:accept => 'application/vnd.frenetic-v1-hal+json')
         end
       end
-      context "without a specified Content-Type" do
+      context "without a specified Accept header" do
         let(:content_type) { nil }
 
-        it "should set an Accepts request header" do
+        it "should set an Accept request header" do
           subject[:headers].should include(:accept => 'application/hal+json')
         end
       end
