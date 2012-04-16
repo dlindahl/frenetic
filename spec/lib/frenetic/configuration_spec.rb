@@ -39,14 +39,14 @@ describe Frenetic::Configuration do
 
       context "with a specified Content-Type" do
         it "should set an Accepts request header" do
-          subject[:headers].should include(:accepts => 'application/vnd.frenetic-v1-hal+json')
+          subject[:headers].should include(:accept => 'application/vnd.frenetic-v1-hal+json')
         end
       end
       context "without a specified Content-Type" do
         let(:content_type) { nil }
 
         it "should set an Accepts request header" do
-          subject[:headers].should include(:accepts => 'application/hal+json')
+          subject[:headers].should include(:accept => 'application/hal+json')
         end
       end
     end
@@ -63,7 +63,7 @@ describe Frenetic::Configuration do
         it { should be_a( Hash ) }
         it { should_not be_empty }
         it "should set an Accepts request header" do
-          subject[:headers].should include(:accepts => 'application/hal+json')
+          subject[:headers].should include(:accept => 'application/hal+json')
         end
         it "should set a User Agent request header" do
           subject[:headers][:user_agent].should =~ %r{Frenetic v.+; \S+$}

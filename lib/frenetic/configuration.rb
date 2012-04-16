@@ -16,9 +16,9 @@ class Frenetic
       config[:request]  ||= {}
 
       if config[:"content-type"]
-        config[:headers][:accepts] = config[:"content-type"]
+        config[:headers][:accept] = config[:"content-type"]
       else
-        config[:headers][:accepts] = "application/hal+json"
+        config[:headers][:accept] = "application/hal+json"
       end
 
       # Copy the config into this Configuration instance.
