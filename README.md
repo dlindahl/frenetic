@@ -68,7 +68,7 @@ Example:
 {
   "_links":{
     "self":{"href":"/api/"},
-    "inkers":{"href":"/api/inkers"},
+    "orders":{"href":"/api/orders"},
   },
   "_embedded":{
     "schema":{
