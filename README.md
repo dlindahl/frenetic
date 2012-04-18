@@ -161,7 +161,7 @@ MyAPI = Frenetic.new(
 ### Response Caching
 
 If configured to do so, Frenetic will autotmatically cache appropriate responses
-through [Rack::Cache][rach_cache]. Only on-disk stores are supported right now.
+through [Rack::Cache][rack_cache]. Only on-disk stores are supported right now.
 
 Add the following `Rack::Cache` configuration options when initializing Frenetic:
 
@@ -248,8 +248,8 @@ or
 response.body['_embedded']['orders'][0]
 ```
 
-For your convenience, certain HAL+JSON keys have been aliased by methods a bit
-more readable:
+For your convenience, certain HAL+JSON keys have been aliased by methods to
+make your code a bit more readable:
 
   * `_embedded` can be referenced as `resources`
   * `_links` can be referenced as `links`
