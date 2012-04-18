@@ -45,6 +45,7 @@ class Frenetic
       end
     end
 
+    # TODO: Is this even being used?
     def config_file
       config_path = File.join( 'config', 'frenetic.yml' )
 
