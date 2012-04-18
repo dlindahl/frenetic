@@ -1,0 +1,310 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Frenetic by dlindahl</title>
+    
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Frenetic</h1>
+        <p>A Ruby-based Hypermedia API client.</p>
+        <p class="view"><a href="https://github.com/dlindahl/frenetic">View the Project on GitHub <small>dlindahl/frenetic</small></a></p>
+        <ul>
+          <li><a href="https://github.com/dlindahl/frenetic/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/dlindahl/frenetic/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/dlindahl/frenetic">Fork On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>Frenetic <a href="http://travis-ci.org/dlindahl/frenetic"><img src="https://secure.travis-ci.org/dlindahl/frenetic.png" alt="Build Status"></a>
+</h1>
+
+<p>An opinionated Ruby-based Hypermedia API (HAL+JSON) client.</p>
+
+<h2>About</h2>
+
+<p>fre•net•ic |frəˈnetik|<br>
+adjective<br>
+fast and energetic in a rather wild and uncontrolled way : <em>a frenetic pace of activity.</em></p>
+
+<p>So basically, this is a crazy way to interact with your Hypermedia HAL+JSON API.</p>
+
+<p>Get it? <em>Hypermedia</em>?</p>
+
+<p><em>Hyper</em>?</p>
+
+<p>...</p>
+
+<p>If you have not implemented a HAL+JSON API, then this will not work very well for you.</p>
+
+<h2>Opinions</h2>
+
+<p>Like I said, it is opinionated. It is so opinionated, it is probably the biggest
+a-hole you've ever met.</p>
+
+<p>Maybe in time, if you teach it, it will become more open-minded.</p>
+
+<h3>HAL+JSON Content Type</h3>
+
+<p>Frenetic expects all responses to be in <a href="http://stateless.co/hal_specification.html">HAL+JSON</a>. It chose that
+standard because it is trying to make JSON API's respond in a predictable
+manner, which it thinks is an awesome idea.</p>
+
+<h3>Authentication</h3>
+
+<p>Frenetic is going to try and use Basic Auth whether you like it or not. If
+that is not required, nothing will probably happen. But its going to send the
+header anyway.</p>
+
+<h3>API Description</h3>
+
+<p>The API's root URL must respond with a description, much like the
+<a href="http://api.spire.io/">Spire.io</a> API. This is crucial in order for Frenetic to work. If
+Frenetic doesn't know what the API contains, it can't parse any resource
+responses.</p>
+
+<p>It is expected that any subclasses of <code>Frenetic::Resource</code> will adhere to the
+schema defined here.</p>
+
+<p>Example:</p>
+
+<div class="highlight">
+<pre><span class="p">{</span>
+  <span class="s2">"_links"</span><span class="o">:</span><span class="p">{</span>
+    <span class="s2">"self"</span><span class="o">:</span><span class="p">{</span><span class="s2">"href"</span><span class="o">:</span><span class="s2">"/api/"</span><span class="p">},</span>
+    <span class="s2">"orders"</span><span class="o">:</span><span class="p">{</span><span class="s2">"href"</span><span class="o">:</span><span class="s2">"/api/orders"</span><span class="p">},</span>
+  <span class="p">},</span>
+  <span class="s2">"_embedded"</span><span class="o">:</span><span class="p">{</span>
+    <span class="s2">"schema"</span><span class="o">:</span><span class="p">{</span>
+      <span class="s2">"_links"</span><span class="o">:</span><span class="p">{</span>
+        <span class="s2">"self"</span><span class="o">:</span><span class="p">{</span><span class="s2">"href"</span><span class="o">:</span><span class="s2">"/api/schema"</span><span class="p">}</span>
+      <span class="p">},</span>
+      <span class="s2">"order"</span><span class="o">:</span><span class="p">{</span>
+        <span class="s2">"description"</span><span class="o">:</span><span class="s2">"A widget order"</span><span class="p">,</span>
+        <span class="s2">"type"</span><span class="o">:</span><span class="s2">"object"</span><span class="p">,</span>
+        <span class="s2">"properties"</span><span class="o">:</span><span class="p">{</span>
+          <span class="s2">"id"</span><span class="o">:</span><span class="p">{</span><span class="s2">"type"</span><span class="o">:</span><span class="s2">"integer"</span><span class="p">},</span>
+          <span class="s2">"first_name"</span><span class="o">:</span><span class="p">{</span><span class="s2">"type"</span><span class="o">:</span><span class="s2">"string"</span><span class="p">},</span>
+          <span class="s2">"last_name"</span><span class="o">:</span><span class="p">{</span><span class="s2">"type"</span><span class="o">:</span><span class="s2">"string"</span><span class="p">},</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+</div>
+
+
+<p>This response will be requested by Frenetic whenever a call to
+<code>YourAPI.description</code> is made. The response is memoized so any future calls
+will not trigger another API request.</p>
+
+<h3>API Resources</h3>
+
+<p>While HAL+JSON is awesome, not all implementations are perfect. Frenetic
+assumes a HAL+JSON response as built by <a href="https://github.com/apotonick/roar">Roar</a>, which may not be in 100%
+compliance.</p>
+
+<p>Example:</p>
+
+<div class="highlight">
+<pre><span class="p">{</span>
+  <span class="s2">"id"</span><span class="o">:</span><span class="mi">1</span><span class="p">,</span>
+  <span class="s2">"first_name"</span><span class="o">:</span><span class="s2">"Foo"</span><span class="p">,</span>
+  <span class="s2">"last_name"</span><span class="o">:</span><span class="s2">"Bar"</span><span class="p">,</span>
+  <span class="s2">"_links"</span><span class="o">:</span><span class="p">{</span>
+    <span class="s2">"self"</span><span class="o">:</span><span class="p">{</span><span class="s2">"href"</span><span class="o">:</span><span class="s2">"/order/1"</span><span class="p">},</span>
+    <span class="s2">"next"</span><span class="o">:</span><span class="p">{</span><span class="s2">"href"</span><span class="o">:</span><span class="s2">"/order/2"</span><span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+</div>
+
+
+<p>The problem here is that the entire response really should be wrapped in
+<code>"_embedded"</code> and <code>"order"</code> keys.</p>
+
+<p>So until that is fixed, Frenetic will continue to be pig headed and continue
+to do the "wrong" thing.</p>
+
+<h2>Installation</h2>
+
+<p>Add this line to your application's Gemfile:</p>
+
+<pre><code>gem 'frenetic'
+</code></pre>
+
+<p>And then execute:</p>
+
+<pre><code>$ bundle
+</code></pre>
+
+<p>Or install it yourself as:</p>
+
+<pre><code>$ gem install frenetic
+</code></pre>
+
+<h2>Usage</h2>
+
+<h3>Client Initialization</h3>
+
+<div class="highlight">
+<pre><span class="no">MyAPI</span> <span class="o">=</span> <span class="no">Frenetic</span><span class="o">.</span><span class="n">new</span><span class="p">(</span>
+  <span class="s1">'url'</span>          <span class="o">=&gt;</span> <span class="s1">'<a href="https://api.yoursite.com">https://api.yoursite.com</a>'</span><span class="p">,</span>
+  <span class="s1">'username'</span>     <span class="o">=&gt;</span> <span class="s1">'yourname'</span><span class="p">,</span>
+  <span class="s1">'password'</span>     <span class="o">=&gt;</span> <span class="s1">'yourpassword'</span><span class="p">,</span>
+  <span class="s1">'headers'</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="s1">'accept'</span> <span class="o">=&gt;</span> <span class="s1">'application/vnd.yoursite-v1.hal+json'</span>
+    <span class="c1"># Optional</span>
+    <span class="s1">'user-agent'</span> <span class="o">=&gt;</span> <span class="s1">'Your Site'</span><span class="n">s</span> <span class="no">API</span> <span class="no">Client</span><span class="s1">', # Optional custom User Agent, just '</span><span class="n">cuz</span>
+  <span class="p">}</span>
+<span class="p">)</span>
+</pre>
+</div>
+
+
+<h3>Response Caching</h3>
+
+<p>If configured to do so, Frenetic will autotmatically cache appropriate responses
+through <a href="https://github.com/rtomayko/rack-cache">Rack::Cache</a>. Only on-disk stores are supported right now.</p>
+
+<p>Add the following <code>Rack::Cache</code> configuration options when initializing Frenetic:</p>
+
+<div class="highlight">
+<pre><span class="no">MyAPI</span> <span class="o">=</span> <span class="no">Frenetic</span><span class="o">.</span><span class="n">new</span><span class="p">(</span>
+  <span class="o">.</span><span class="n">.</span><span class="o">.</span>
+  <span class="s1">'cache'</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="s1">'metastore'</span>   <span class="o">=&gt;</span> <span class="s1">'file:/path/to/where/you/want/to/store/files/meta'</span><span class="p">,</span>
+    <span class="s1">'entitystore'</span> <span class="o">=&gt;</span> <span class="s1">'file:/path/to/where/you/want/to/store/files/meta'</span>
+  <span class="p">}</span>
+<span class="p">)</span>
+</pre>
+</div>
+
+
+<p>The <code>cache</code> options are passed directly to <code>Rack::Cache</code>, so anything it
+supports can be added to the Hash.</p>
+
+<h3>Making Requests</h3>
+
+<p>Once you have created a client instance, you are free to use it however you'd
+like.</p>
+
+<p>A Frenetic instance supports any HTTP verb that <a href="https://github.com/technoweenie/faraday">Faraday</a> has
+impletented. This includes GET, POST, PUT, PATCH, and DELETE.</p>
+
+<h4>Frenetic::Resource</h4>
+
+<p>An easier way to make requests for a resource is to have your model inherit from
+<code>Frenetic::Resource</code>. This makes it a bit easier to encapsulate all of your
+resource's API requests into one place.</p>
+
+<div class="highlight">
+<pre><span class="k">class</span> <span class="nc">Order</span> <span class="o">&lt;</span> <span class="no">Frenetic</span><span class="o">::</span><span class="no">Resource</span>
+
+  <span class="n">api_client</span> <span class="p">{</span> <span class="no">MyAPI</span> <span class="p">}</span>
+
+  <span class="k">class</span> <span class="o">&lt;&lt;</span> <span class="nb">self</span>
+    <span class="k">def</span> <span class="nf">find</span><span class="p">(</span> <span class="nb">id</span> <span class="p">)</span>
+      <span class="k">if</span> <span class="n">response</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="n">api</span><span class="o">.</span><span class="n">description</span><span class="o">.</span><span class="n">links</span><span class="o">.</span><span class="n">order</span><span class="o">.</span><span class="n">href</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="s1">'{id}'</span><span class="p">,</span> <span class="nb">id</span><span class="o">.</span><span class="n">to_s</span><span class="p">)</span> <span class="p">)</span> <span class="ow">and</span> <span class="n">response</span><span class="o">.</span><span class="n">success?</span>
+        <span class="nb">self</span><span class="o">.</span><span class="n">new</span><span class="p">(</span> <span class="n">response</span><span class="o">.</span><span class="n">body</span> <span class="p">)</span>
+      <span class="k">else</span>
+        <span class="k">raise</span> <span class="no">OrderNotFound</span><span class="p">,</span> <span class="s2">"No Order found for </span><span class="si">#{</span><span class="nb">id</span><span class="si">}</span><span class="s2">"</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre>
+</div>
+
+
+<p>The <code>api_client</code> class method merely tells <code>Frenetic::Resource</code> which API Client
+instance to use. If you lazily instantiate your client, then you should pass a
+block as demonstrated above.</p>
+
+<p>Otherwise, you may pass by reference:</p>
+
+<div class="highlight">
+<pre><span class="k">class</span> <span class="nc">Order</span> <span class="o">&lt;</span> <span class="no">Frenetic</span><span class="o">::</span><span class="no">Resource</span>
+  <span class="n">api_client</span> <span class="no">MyAPI</span>
+<span class="k">end</span>
+</pre>
+</div>
+
+
+<p>When your model is initialized, it will contain attribute readers for every
+property defined in your API's schema or description. In theory, this allows an
+API to add, remove, or change properties without the need to directly update
+your model.</p>
+
+<h3>Interpretting Responses</h3>
+
+<p>Any response body returned by a Frenetic generated API call will be returned as
+an OpenStruct-like object. This object responds to dot-notation as well as Hash
+keys and is enumerable.</p>
+
+<div class="highlight">
+<pre><span class="n">response</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">resources</span><span class="o">.</span><span class="n">orders</span><span class="o">.</span><span class="n">first</span>
+</pre>
+</div>
+
+
+<p>or</p>
+
+<div class="highlight">
+<pre><span class="n">response</span><span class="o">.</span><span class="n">body</span><span class="o">[</span><span class="s1">'_embedded'</span><span class="o">][</span><span class="s1">'orders'</span><span class="o">][</span><span class="mi">0</span><span class="o">]</span>
+</pre>
+</div>
+
+
+<p>For your convenience, certain HAL+JSON keys have been aliased by methods to
+make your code a bit more readable:</p>
+
+<ul>
+<li>
+<code>_embedded</code> can be referenced as <code>resources</code>
+</li>
+<li>
+<code>_links</code> can be referenced as <code>links</code>
+</li>
+<li>
+<code>href</code> can be referenced as <code>url</code>
+</li>
+</ul><h2>Contributing</h2>
+
+<ol>
+<li>Fork it</li>
+<li>Create your feature branch (<code>git checkout -b my-new-feature</code>)</li>
+<li>Commit your changes (<code>git commit -am 'Added some feature'</code>)</li>
+<li>Push to the branch (<code>git push origin my-new-feature</code>)</li>
+<li>Create new Pull Request</li>
+</ol>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/dlindahl">dlindahl</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-30792571-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
