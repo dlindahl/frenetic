@@ -5,6 +5,9 @@
 
 An opinionated Ruby-based Hypermedia API (HAL+JSON) client.
 
+
+
+
 ## About
 
 fre&bull;net&bull;ic |frəˈnetik|<br/>
@@ -21,6 +24,9 @@ Get it? *Hypermedia*?
 
 If you have not implemented a HAL+JSON API, then this will not work very well for you.
 
+
+
+
 ## Opinions
 
 Like I said, it is opinionated. It is so opinionated, it is probably the biggest
@@ -28,17 +34,23 @@ a-hole you've ever met.
 
 Maybe in time, if you teach it, it will become more open-minded.
 
+
+
 ### HAL+JSON Content Type
 
 Frenetic expects all responses to be in [HAL+JSON][hal_json]. It chose that
 standard because it is trying to make JSON API's respond in a predictable
 manner, which it thinks is an awesome idea.
 
+
+
 ### Authentication
 
 Frenetic is going to try and use Basic Auth whether you like it or not. If
 that is not required, nothing will probably happen. But its going to send the
 header anyway.
+
+
 
 ### API Description
 
@@ -81,6 +93,8 @@ This response will be requested by Frenetic whenever a call to
 `YourAPI.description` is made. The response is memoized so any future calls
 will not trigger another API request.
 
+
+
 ### API Resources
 
 While HAL+JSON is awesome, not all implementations are perfect. Frenetic
@@ -121,7 +135,12 @@ Or install it yourself as:
 
     $ gem install frenetic
 
+
+
+
 ## Usage
+
+
 
 ### Client Initialization
 
@@ -138,6 +157,9 @@ MyAPI = Frenetic.new(
 )
 ```
 
+
+
+
 ### Making Requests
 
 Once you have created a client instance, you are free to use it however you'd
@@ -145,6 +167,8 @@ like.
 
 A Frenetic instance supports any HTTP verb that [Faraday][faraday] has
 impletented. This includes GET, POST, PUT, PATCH, and DELETE.
+
+
 
 #### Frenetic::Resource
 
@@ -186,6 +210,8 @@ property defined in your API's schema or description. In theory, this allows an
 API to add, remove, or change properties without the need to directly update
 your model.
 
+
+
 ### Interpretting Responses
 
 Any response body returned by a Frenetic generated API call will be returned as
@@ -208,6 +234,9 @@ more readable:
   * `_embedded` can be referenced as `resources`
   * `_links` can be referenced as `links`
   * `href` can be referenced as `url`
+
+
+
 
 ## Contributing
 
