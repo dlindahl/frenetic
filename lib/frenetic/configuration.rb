@@ -23,6 +23,7 @@ class Frenetic
       super()
 
       configure_user_agent
+      configure_cache
 
       validate
     end
@@ -39,10 +40,32 @@ class Frenetic
       end
     end
 
+    def configure_cache
+      if self[:cache]
+        ignore_headers = (self[:cache][:ignore_headers] || '').split(' ')
+
+        self[:cache][:ignore_headers] = (ignore_headers + %w[Set-Cookie X-Content-Digest]).uniq
+      end
+    end
+
     def validate
       unless self[:url]
         raise ConfigurationError, "No API URL defined!"
       end
+      if self[:cache]
+        raise( ConfigurationError, "No cache :metastore defined!" )               if self[:cache][:metastore].to_s == ""
+        raise( ConfigurationError, "No cache :entitystore defined!" )             if self[:cache][:entitystore].to_s == ""
+        raise( ConfigurationError, "Required cache header filters are missing!" ) if missing_required_headers?
+      end
+    end
+
+    def missing_required_headers?
+      return true if self[:cache][:ignore_headers].empty?
+
+      header_set     = self[:cache][:ignore_headers]
+      custom_headers = header_set - %w[Set-Cookie X-Content-Digest]
+
+      header_set == custom_headers
     end
 
     # TODO: Is this even being used?

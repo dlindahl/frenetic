@@ -158,6 +158,26 @@ MyAPI = Frenetic.new(
 ```
 
 
+### Response Caching
+
+If configured to do so, Frenetic will autotmatically cache appropriate responses
+through [Rack::Cache][rach_cache]. Only on-disk stores are supported right now.
+
+Add the following `Rack::Cache` configuration options when initializing Frenetic:
+
+```ruby
+MyAPI = Frenetic.new(
+  ...
+  'cache' => {
+    'metastore'   => 'file:/path/to/where/you/want/to/store/files/meta',
+    'entitystore' => 'file:/path/to/where/you/want/to/store/files/meta'
+  }
+)
+```
+
+The `cache` options are passed directly to `Rack::Cache`, so anything it
+supports can be added to the Hash.
+
 
 
 ### Making Requests
@@ -250,3 +270,4 @@ more readable:
 [spire.io]: http://api.spire.io/
 [roar]: https://github.com/apotonick/roar
 [faraday]: https://github.com/technoweenie/faraday
+[rack_cache]: https://github.com/rtomayko/rack-cache

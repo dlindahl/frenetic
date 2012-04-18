@@ -1,6 +1,8 @@
 require 'addressable/uri'
 require 'patron' # Needed to prevent https://github.com/technoweenie/faraday/issues/140
 require 'faraday'
+require 'faraday_middleware'
+require 'rack-cache'
 
 require "frenetic/configuration"
 require "frenetic/hal_json"
@@ -26,6 +28,11 @@ class Frenetic
     @connection = Faraday.new( config ) do |builder|
       builder.use HalJson
       builder.request :basic_auth, config[:username], config[:password]
+
+      if config[:cache]
+        builder.use FaradayMiddleware::RackCompatible, Rack::Cache::Context, config[:cache]
+      end
+
       builder.adapter :patron
     end
   end

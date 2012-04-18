@@ -15,14 +15,16 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = Frenetic::VERSION
 
-  gem.add_dependency             'faraday',       '~> 0.8.0.rc2'
-  gem.add_dependency             'addressable',   '~> 2.2.7'
-  gem.add_dependency             'patron',        '~> 0.4.18'
+  gem.add_dependency             'faraday',             '~> 0.8.0.rc2'
+  gem.add_dependency             'faraday_middleware',  '~> 0.8.6'
+  gem.add_dependency             'rack-cache',          '~> 1.1'
+  gem.add_dependency             'addressable',         '~> 2.2.7'
+  gem.add_dependency             'patron',              '~> 0.4.18'
 
-  gem.add_development_dependency 'guard-spork',   '~> 0.6.0'
-  gem.add_development_dependency 'guard-rspec',   '~> 0.7.0'
-  gem.add_development_dependency 'rspec',         '~> 2.9.0'
-  gem.add_development_dependency 'bourne',        '~> 1.1.2'
-  gem.add_development_dependency 'webmock',       '~> 1.8.6'
-  gem.add_development_dependency 'vcr',           '~> 2.0.1'
+  gem.add_development_dependency 'guard-spork',         '~> 0.6.0'
+  gem.add_development_dependency 'guard-rspec',         '~> 0.7.0'
+  gem.add_development_dependency 'rspec',               '~> 2.9.0'
+  gem.add_development_dependency 'bourne',              '~> 1.1.2'
+  gem.add_development_dependency 'webmock',             '~> 1.8.6'
+  gem.add_development_dependency 'vcr',                 '~> 2.0.1'
 end

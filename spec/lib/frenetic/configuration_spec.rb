@@ -70,6 +70,40 @@ describe Frenetic::Configuration do
         it "should set a User Agent request header" do
           subject[:headers][:user_agent].should =~ %r{Frenetic v.+; \S+$}
         end
+
+        context "which includes incorrect cache settings" do
+          before { Frenetic::Configuration.any_instance.stubs(:configure_cache).returns(nil) }
+
+          it "should raise a configuration error for a missing :metastore" do
+            expect {
+              Frenetic::Configuration.new('url' => 'http://example.org', 'cache' => {} )
+            }.to raise_error(
+              Frenetic::Configuration::ConfigurationError, "No cache :metastore defined!"
+            )
+          end
+
+          it "should raise a configuration error for a missing :entitystore" do
+            expect {
+              Frenetic::Configuration.new('url' => 'http://example.org', 'cache' => { 'metastore' => 'foo' } )
+            }.to raise_error(
+              Frenetic::Configuration::ConfigurationError, "No cache :entitystore defined!"
+            )
+          end
+
+          it "should raise a configuration error for missing required header filters" do
+            cache_cfg = {
+              'metastore'      => 'foo',
+              'entitystore'    => 'bar',
+              'ignore_headers' => ['baz'] # `configure_cache` method is skipped to create a bad state
+            }
+
+            expect {
+              Frenetic::Configuration.new('url' => 'http://example.org', 'cache' => cache_cfg )
+            }.to raise_error(
+              Frenetic::Configuration::ConfigurationError, "Required cache header filters are missing!"
+            )
+          end
+        end
       end
     end
   end
