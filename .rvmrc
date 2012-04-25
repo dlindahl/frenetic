@@ -1,1 +1,1 @@
-rvm --create use ruby-1.9.2-p290@frenetic > /dev/null
+rvm --create use ruby-1.9.3-p194@frenetic > /dev/null
