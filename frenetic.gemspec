@@ -15,7 +15,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = Frenetic::VERSION
 
-  gem.add_dependency             'faraday',             '~> 0.8.0.rc2'
+  gem.add_dependency             'faraday',             '~> 0.8.0'
   gem.add_dependency             'faraday_middleware',  '~> 0.8.7'
   gem.add_dependency             'rack-cache',          '~> 1.1'
   gem.add_dependency             'addressable',         '~> 2.2.7'
