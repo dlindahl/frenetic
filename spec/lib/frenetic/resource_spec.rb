@@ -20,18 +20,18 @@ describe Frenetic::Resource do
 
   context "created from a HAL-JSON response" do
     let(:api_response) do
-      Frenetic::HalJson::ResponseWrapper.new(
+      {
         '_links' => {
           '_self' => { '_href' => 'bar' }
         },
         'foo' => 1,
-        'bar' => 2,
-        '_embedded' => {
-          'baz' => 'resource'
-        }
-      )
+        'bar' => 2
+      }
     end
-    let(:resource_a) { Frenetic::Resource.new( api_response ) }
+    let(:wrapped_response) do
+      Frenetic::HalJson::ResponseWrapper.new(api_response)
+    end
+    let(:resource_a) { Frenetic::Resource.new( wrapped_response ) }
     let(:resource_b) { Frenetic::Resource.new }
 
     before do
@@ -55,6 +55,23 @@ describe Frenetic::Resource do
       it { should_not respond_to(:foo) }
       it { should_not respond_to(:bar) }
       its(:links) { should be_empty }
+    end
+    context "with embedded resources" do
+      let(:api_response) do
+        {
+          '_links' => {
+            '_self' => { '_href' => 'bar' }
+          },
+          'foo' => 1,
+          '_embedded' => {
+            'baz' => 'resource'
+          }
+        }
+      end
+
+      subject { resource_a }
+
+      it { should respond_to(:baz) }
     end
   end
 

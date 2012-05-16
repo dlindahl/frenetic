@@ -10,7 +10,11 @@ class Frenetic
         @links = []
       else
         load self.class.schema, attributes
-        load attributes.resources.members, attributes.resources
+
+        # Load embedded resources if present
+        if attributes.resources
+          load attributes.resources.members, attributes.resources
+        end
 
         @links = attributes.links
       end
