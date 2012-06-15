@@ -1,3 +1,3 @@
 class Frenetic
-  VERSION = "0.0.2.alpha3"
+  VERSION = "0.0.2.alpha4"
 end
