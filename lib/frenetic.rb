@@ -1,5 +1,4 @@
 require 'addressable/uri'
-require 'patron' # Needed to prevent https://github.com/technoweenie/faraday/issues/140
 require 'faraday'
 require 'faraday_middleware'
 require 'rack-cache'
