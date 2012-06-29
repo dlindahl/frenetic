@@ -11,6 +11,7 @@ require "frenetic/version"
 class Frenetic
 
   class MissingAPIReference < StandardError; end
+  class InvalidAPIDescription < StandardError; end
 
   extend Forwardable
   def_delegators :@connection, :get, :put, :post, :delete
@@ -50,6 +51,8 @@ private
   def load_description
     if response = get( @root_url ) and response.success?
       response.body
+    else
+      raise InvalidAPIDescription, "Status code #{response.status} encountered."
     end
   end
 end

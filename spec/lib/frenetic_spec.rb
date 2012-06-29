@@ -40,13 +40,27 @@ describe Frenetic do
   end
  
   describe "#description" do
-    subject do
-      VCR.use_cassette('description_success') do
-        client.description
+    context "for a conforming API" do
+      subject do
+        VCR.use_cassette('description_success') do
+          client.description
+        end
       end
+
+      it { should be_a( Frenetic::HalJson::ResponseWrapper ) }
     end
 
-    it { should be_a( Frenetic::HalJson::ResponseWrapper ) }
+    context "with an unauthorized request" do
+      let(:fetch!) do
+        VCR.use_cassette('description_error_unauthorized') do
+          client.description
+        end
+      end
+
+      it "should raise an error" do
+        expect{ fetch! }.to raise_error(Frenetic::InvalidAPIDescription)
+      end
+    end
   end
 
   describe "#reload!" do
