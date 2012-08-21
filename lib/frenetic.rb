@@ -22,6 +22,8 @@ class Frenetic
   def initialize( config = {} )
     config      = Configuration.new( config )
 
+    yield config if block_given?
+
     api_url     = Addressable::URI.parse( config[:url] )
     @root_url   = api_url.path
 

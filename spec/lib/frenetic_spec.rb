@@ -20,6 +20,12 @@ describe Frenetic do
 
   its(:connection) { should be_a(Faraday::Connection) }
 
+  it 'should accept a configuration block' do
+    described_class.new( config ) do |cfg|
+      cfg.should == config
+    end
+  end
+
   describe "#connection" do
     before do
       faraday_stub = Faraday.new
