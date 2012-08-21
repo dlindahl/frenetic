@@ -7,6 +7,9 @@ describe Frenetic::Configuration do
         'headers' => {
           'accept' => content_type,
         },
+        'response' => {
+          'use_logger' => true
+        },
         'request' => {
           'timeout' => 10000
         }
@@ -32,9 +35,15 @@ describe Frenetic::Configuration do
       it { should include(:url) }
 
       it { should_not include(:unknown => 'option')}
+
+      it "should set default response options" do
+        subject[:response][:use_logger].should == true
+      end
+
       it "should set default request options" do
         subject[:request][:timeout].should == 10000
       end
+
       it "should set a User Agent request header" do
         subject[:headers][:user_agent].should =~ %r{Frenetic v.+; \S+$}
       end

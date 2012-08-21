@@ -14,6 +14,7 @@ class Frenetic
       config[:username] = config[:api_key] if config[:api_key]
       config[:headers]  ||= {}
       config[:request]  ||= {}
+      config[:response] ||= {}
 
       config[:headers][:accept] ||= "application/hal+json"
 
@@ -70,20 +71,13 @@ class Frenetic
 
     # TODO: Is this even being used?
     def config_file
-      config_path = File.join( 'config', 'frenetic.yml' )
+      path       = File.join 'config/frenetic.yml'
+      config     = YAML.load_file( path )
+      env        = ENV['RAILS_ENV'] || ENV['RACK_ENV']
 
-      if File.exists? config_path
-        config = YAML.load_file( config_path )
-        env    = ENV['RAILS_ENV'] || ENV['RACK_ENV']
-
-        if config and config.has_key? env
-          config[env]
-        else
-          {}
-        end
-      else
-        {}
-      end
+      config[env] || {}
+    rescue Errno::ENOENT, NoMethodError
+      {}
     end
 
     def symbolize_keys( arg )

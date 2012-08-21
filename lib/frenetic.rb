@@ -31,6 +31,8 @@ class Frenetic
       builder.use HalJson
       builder.request :basic_auth, config[:username], config[:password]
 
+      builder.response :logger if config[:response][:use_logger]
+
       if config[:cache]
         builder.use FaradayMiddleware::RackCompatible, Rack::Cache::Context, config[:cache]
       end

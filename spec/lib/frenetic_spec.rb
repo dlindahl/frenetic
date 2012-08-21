@@ -1,9 +1,11 @@
 describe Frenetic do
-  let(:client) { Frenetic.new }
+  let(:client) { described_class.new }
+
   let(:config) { {
-    :url     => 'http://example.org:5447/api',
-    :api_key => '1234567890',
-    :version => 'v1'
+    url:     'http://example.org:5447/api',
+    api_key: '1234567890',
+    version: 'v1',
+    response: {}
   } }
 
   before { Frenetic::Configuration.stubs(:new).returns(config) }
@@ -27,21 +29,29 @@ describe Frenetic do
   end
 
   describe "#connection" do
-    before do
+    let(:connection) { client.connection }
+
+    subject { client.connection }
+
+    it { should be_a Faraday::Connection }
+
+    it "should be created" do
       faraday_stub = Faraday.new
       Faraday.stubs(:new).returns( faraday_stub )
 
       client
-    end
 
-    subject { client.connection }
-
-    it { should be_a(Faraday::Connection) }
-
-    it "should be created" do
       Faraday.should have_received(:new).with() { |config|
         config.has_key? :url
       }
+    end
+
+    describe 'logger configuration' do
+      before { config[:response][:use_logger] = true }
+
+      subject { connection.builder.handlers.collect(&:name) }
+
+      it { should include 'Faraday::Response::Logger' }
     end
   end
  
