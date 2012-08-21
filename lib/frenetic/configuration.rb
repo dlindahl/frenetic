@@ -43,7 +43,7 @@ class Frenetic
 
     def configure_cache
       if self[:cache]
-        ignore_headers = (self[:cache][:ignore_headers] || '').split(' ')
+        ignore_headers = self[:cache][:ignore_headers] || []
 
         self[:cache][:ignore_headers] = (ignore_headers + %w[Set-Cookie X-Content-Digest]).uniq
       end
