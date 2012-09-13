@@ -7,7 +7,7 @@ class Frenetic
       if attributes.is_a? Hash
         load attributes.keys, attributes
 
-        @links = []
+        @links = {}
       else
         load self.class.schema, attributes
 

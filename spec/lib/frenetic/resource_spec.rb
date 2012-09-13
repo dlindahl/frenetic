@@ -15,6 +15,7 @@ describe Frenetic::Resource do
     let(:resource) { Frenetic::Resource.new( foo: 'bar' ) }
 
     it { should respond_to(:foo) }
+    its(:links) { should be_a Hash }
     its(:links) { should be_empty }
   end
 
