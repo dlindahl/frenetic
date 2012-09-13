@@ -5,8 +5,8 @@ require 'frenetic/hal_json/response_wrapper'
 class Frenetic
 
   class HalJson < Faraday::Middleware
-    def call( env )
-      @app.call(env).on_complete { |env| on_complete(env) }
+    def call( environment )
+      @app.call(environment).on_complete { |env| on_complete(env) }
     end
 
     def on_complete( env )

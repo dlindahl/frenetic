@@ -1,31 +1,29 @@
 describe Frenetic::HalJson do
-  let(:hal_json) { Frenetic::HalJson.new }
+  let(:hal_json) { described_class.new }
+
   let(:app_callbacks_stub) do
-    stub('FaradayCallbackStubs').tap do |cb_stub|
-      cb_stub.stubs('on_complete').yields env
-    end
-  end
-  let(:app_stub) do
-    stub('FaradayAppStub').tap do |app_stub|
-      app_stub.stubs(call: app_callbacks_stub)
+    double('FaradayCallbackStubs').tap do |cb|
+      cb.stub(:on_complete).and_yield env
     end
   end
 
-  before { hal_json.instance_variable_set("@app", app_stub) }
+  let(:app_stub) do
+    double('FaradayAppStub').tap do |app|
+      app.stub(:call).and_return app_callbacks_stub
+    end
+  end
+
+  before { hal_json.instance_variable_set '@app', app_stub }
 
   subject { hal_json }
 
   describe "#call" do
-    let(:env) { Hash.new(:status => 200) }
-
-    before do
-      hal_json.stubs(:on_complete)
-
-      hal_json.call(env)
-    end
+    let(:env) { { status:200 } }
 
     it "should execute the on_complete callback" do
-      hal_json.should have_received(:on_complete).with(env)
+      hal_json.should_receive( :on_complete ).with env
+
+      hal_json.call env
     end
   end
 

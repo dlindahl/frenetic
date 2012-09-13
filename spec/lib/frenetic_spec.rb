@@ -8,7 +8,7 @@ describe Frenetic do
     response: {}
   } }
 
-  before { Frenetic::Configuration.stubs(:new).returns(config) }
+  before { Frenetic::Configuration.stub(:new).and_return config }
 
   subject { client }
 
@@ -36,14 +36,11 @@ describe Frenetic do
     it { should be_a Faraday::Connection }
 
     it "should be created" do
-      faraday_stub = Faraday.new
-      Faraday.stubs(:new).returns( faraday_stub )
+      Faraday.should_receive( :new ).with do |cfg|
+        cfg.has_key? :url
+      end
 
       client
-
-      Faraday.should have_received(:new).with() { |config|
-        config.has_key? :url
-      }
     end
 
     describe 'logger configuration' do

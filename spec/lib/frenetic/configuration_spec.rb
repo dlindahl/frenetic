@@ -81,7 +81,7 @@ describe Frenetic::Configuration do
         end
 
         context "which includes incorrect cache settings" do
-          before { Frenetic::Configuration.any_instance.stubs(:configure_cache).returns(nil) }
+          before { Frenetic::Configuration.any_instance.stub(:configure_cache).and_return nil }
 
           it "should raise a configuration error for a missing :metastore" do
             expect {
