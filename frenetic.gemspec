@@ -21,7 +21,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency             'addressable',         '~> 2.3.0'
   gem.add_dependency             'patron',              '~> 0.4.18'
 
-  gem.add_development_dependency 'guard-spork',         '~> 0.7.1'
+  gem.add_development_dependency 'guard-spork',         '~> 1.2.0'
   gem.add_development_dependency 'guard-rspec',         '~> 1.0.1'
   gem.add_development_dependency 'rspec',               '~> 2.11.0'
   gem.add_development_dependency 'bourne',              '~> 1.1.2'
