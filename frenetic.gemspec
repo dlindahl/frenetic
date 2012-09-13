@@ -25,6 +25,6 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'guard-rspec',         '~> 1.2.1'
   gem.add_development_dependency 'rspec',               '~> 2.11.0'
   gem.add_development_dependency 'bourne',              '~> 1.1.2'
-  gem.add_development_dependency 'webmock',             '~> 1.8.7'
+  gem.add_development_dependency 'webmock',             '~> 1.8.10'
   gem.add_development_dependency 'vcr',                 '~> 2.2.5'
 end
