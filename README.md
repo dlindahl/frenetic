@@ -95,31 +95,6 @@ will not trigger another API request.
 
 
 
-### API Resources
-
-While HAL+JSON is awesome, not all implementations are perfect. Frenetic
-assumes a HAL+JSON response as built by [Roar], which may not be in 100%
-compliance.
-
-Example:
-
-```js
-{
-  "id":1,
-  "first_name":"Foo",
-  "last_name":"Bar",
-  "_links":{
-    "self":{"href":"/order/1"},
-    "next":{"href":"/order/2"}
-  }
-}
-```
-
-The problem here is that the entire response really should be wrapped in
-`"_embedded"` and `"order"` keys.
-
-So until that is fixed, Frenetic will continue to be pig headed and continue
-to do the "wrong" thing.
 
 ## Installation
 
