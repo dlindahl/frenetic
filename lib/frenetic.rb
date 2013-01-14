@@ -10,9 +10,9 @@ require "frenetic/resource"
 require "frenetic/version"
 
 class Frenetic
-
-  class MissingAPIReference < StandardError; end
-  class InvalidAPIDescription < StandardError; end
+  Error                 = Class.new(StandardError)
+  MissingAPIReference   = Class.new(Error)
+  InvalidAPIDescription = Class.new(Error)
 
   extend Forwardable
   def_delegators :@connection, :get, :put, :post, :delete
