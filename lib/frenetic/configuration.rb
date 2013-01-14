@@ -19,7 +19,7 @@ class Frenetic
     }
 
     attr_accessor :cache, :url, :username, :password
-    attr_accessor :headers, :request, :response
+    attr_accessor :headers, :request, :response, :middleware
 
     def initialize( config = {} )
       config = @@defaults.deep_merge( config.symbolize_keys )
@@ -38,7 +38,7 @@ class Frenetic
     def attributes
       validate!
 
-      instance_variables.each_with_object({}) do |k, attrs|
+      (instance_variables - [:@middleware]).each_with_object({}) do |k, attrs|
         key = k.to_s.gsub( '@', '' )
 
         value = instance_variable_get( k )
@@ -55,6 +55,14 @@ class Frenetic
         raise( ConfigurationError, 'No cache :metastore defined!' )               unless @cache[:metastore].present?
         raise( ConfigurationError, "No cache :entitystore defined!" )             unless @cache[:entitystore].present?
       end
+    end
+
+    def middleware
+      @middleware ||= []
+    end
+
+    def use( *args )
+      middleware << args
     end
 
   private

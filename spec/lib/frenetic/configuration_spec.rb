@@ -19,8 +19,11 @@ describe Frenetic::Configuration do
   it { should respond_to(:headers) }
   it { should respond_to(:request) }
   it { should respond_to(:response) }
+  it { should respond_to(:middleware) }
 
   describe '#attributes' do
+    before { instance.use 'MyMiddleware' }
+
     subject { instance.attributes }
 
     it { should include(:cache) }
@@ -30,6 +33,7 @@ describe Frenetic::Configuration do
     it { should include(:headers) }
     it { should include(:request) }
     it { should include(:response) }
+    it { should_not include(:middleware) }
 
     it 'should validate the configuration' do
       instance.should_receive :validate!
@@ -166,6 +170,18 @@ describe Frenetic::Configuration do
           expect{ subject }.to_not raise_error
         end
       end
+    end
+  end
+
+  describe '#use' do
+    before do
+      stub_const 'MyMiddleware', Class.new
+
+      instance.use MyMiddleware, foo:123
+    end
+
+    it 'should use the middleware' do
+      subject.middleware.should include [ MyMiddleware, {foo:123} ]
     end
   end
 end

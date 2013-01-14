@@ -52,6 +52,20 @@ header anyway.
 
 
 
+# Middlware
+
+Frenetic supports anything that Faraday does. You may specify additional
+middleware with the `use` method:
+
+```ruby
+Frenetic.new( url:'http://example.org' ) do |config|
+  config.use :instrumentation
+  config.use MyMiddleware, { foo:123 }
+end
+```
+
+
+
 ### API Description
 
 The API's root URL must respond with a description, much like the

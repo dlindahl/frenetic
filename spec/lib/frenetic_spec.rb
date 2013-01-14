@@ -50,6 +50,22 @@ describe Frenetic do
 
       it { should include 'Faraday::Response::Logger' }
     end
+
+    describe 'middleware initialization' do
+      before { stub_const 'MyMiddleware', Class.new }
+
+      let(:client) do
+        described_class.new(config) do |cfg|
+          cfg.use MyMiddleware, foo:123
+        end
+      end
+
+      subject { connection.builder.handlers }
+
+      it 'should add the middleware to the connection' do
+        subject.should include MyMiddleware
+      end
+    end
   end
  
   describe "#description" do

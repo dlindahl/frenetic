@@ -31,6 +31,9 @@ class Frenetic
 
     @connection = Faraday.new( config.to_hash ) do |builder|
       builder.use HalJson
+
+      config.middleware.each { |mw| builder.use(*mw) }
+
       builder.request :basic_auth, config.username, config.password
 
       builder.response :logger if config.response[:use_logger]
