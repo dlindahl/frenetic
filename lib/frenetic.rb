@@ -11,6 +11,7 @@ require "frenetic/version"
 
 class Frenetic
   Error                 = Class.new(StandardError)
+  ConfigurationError    = Class.new(Error)
   MissingAPIReference   = Class.new(Error)
   InvalidAPIDescription = Class.new(Error)
 
@@ -25,17 +26,17 @@ class Frenetic
 
     yield config if block_given?
 
-    api_url     = Addressable::URI.parse( config[:url] )
+    api_url     = Addressable::URI.parse( config.url )
     @root_url   = api_url.path
 
-    @connection = Faraday.new( config ) do |builder|
+    @connection = Faraday.new( config.to_hash ) do |builder|
       builder.use HalJson
-      builder.request :basic_auth, config[:username], config[:password]
+      builder.request :basic_auth, config.username, config.password
 
-      builder.response :logger if config[:response][:use_logger]
+      builder.response :logger if config.response[:use_logger]
 
-      if config[:cache]
-        builder.use FaradayMiddleware::RackCompatible, Rack::Cache::Context, config[:cache]
+      if config.cache.present?
+        builder.use FaradayMiddleware::RackCompatible, Rack::Cache::Context, config.cache
       end
 
       builder.adapter :patron

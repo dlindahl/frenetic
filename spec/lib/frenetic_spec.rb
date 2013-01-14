@@ -1,14 +1,14 @@
 describe Frenetic do
-  let(:client) { described_class.new }
+  let(:config) do
+    {
+      url:     'http://example.org:5447/api',
+      api_key: '1234567890',
+      version: 'v1',
+      response: {}
+    }
+  end
 
-  let(:config) { {
-    url:     'http://example.org:5447/api',
-    api_key: '1234567890',
-    version: 'v1',
-    response: {}
-  } }
-
-  before { Frenetic::Configuration.stub(:new).and_return config }
+  let(:client) { described_class.new(config) }
 
   subject { client }
 
@@ -24,7 +24,7 @@ describe Frenetic do
 
   it 'should accept a configuration block' do
     described_class.new( config ) do |cfg|
-      cfg.should == config
+      cfg.should be_a described_class::Configuration
     end
   end
 

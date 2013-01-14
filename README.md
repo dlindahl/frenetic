@@ -132,6 +132,8 @@ MyAPI = Frenetic.new(
 )
 ```
 
+Symbol- or string-based keys work equally well.
+
 
 ### Response Caching
 

@@ -1,120 +1,171 @@
 describe Frenetic::Configuration do
-  let(:content_type) { 'application/vnd.frenetic-v1-hal+json' }
-  let(:yaml_config) {
-    { 'test' => {
-        'url'          => 'http://example.org',
-        'api_key'      => '1234567890',
-        'headers' => {
-          'accept' => content_type,
-        },
-        'response' => {
-          'use_logger' => true
-        },
-        'request' => {
-          'timeout' => 10000
-        }
-      }
+  let(:config) { { url:'http://example.org' } }
+
+  let(:cache_cfg) do
+    {
+      metastore:     'foo',
+      entitystore:   'bar'
     }
-  }
-  let(:config) { Frenetic::Configuration.new( unknown: :option ) }
+  end
 
-  subject { config }
+  let(:instance) { described_class.new( config ) }
 
-  describe ".configuration" do
-    include FakeFS::SpecHelpers
+  subject { instance }
 
-    context "with a proper config YAML" do
-      before do
-        FileUtils.mkdir_p("config")
-        File.open( 'config/frenetic.yml', 'w') do |f|
-          f.write( YAML::dump(yaml_config) )
-        end
-      end
+  it { should respond_to(:cache) }
+  it { should respond_to(:url) }
+  it { should respond_to(:username) }
+  it { should respond_to(:password) }
+  it { should respond_to(:headers) }
+  it { should respond_to(:request) }
+  it { should respond_to(:response) }
 
-      it { should include(:username) }
-      it { should include(:url) }
+  describe '#attributes' do
+    subject { instance.attributes }
 
-      it { should_not include(:unknown => 'option')}
+    it { should include(:cache) }
+    it { should include(:url) }
+    it { should include(:username) }
+    it { should include(:password) }
+    it { should include(:headers) }
+    it { should include(:request) }
+    it { should include(:response) }
 
-      it "should set default response options" do
-        subject[:response][:use_logger].should == true
-      end
+    it 'should validate the configuration' do
+      instance.should_receive :validate!
 
-      it "should set default request options" do
-        subject[:request][:timeout].should == 10000
-      end
-
-      it "should set a User Agent request header" do
-        subject[:headers][:user_agent].should =~ %r{Frenetic v.+; \S+$}
-      end
-
-      context "with a specified Accept header" do
-        it "should set an Accept request header" do
-          subject[:headers].should include(:accept => 'application/vnd.frenetic-v1-hal+json')
-        end
-      end
-      context "without a specified Accept header" do
-        let(:content_type) { nil }
-
-        it "should set an Accept request header" do
-          subject[:headers].should include(:accept => 'application/hal+json')
-        end
-      end
+      subject
     end
 
-    context "with no config YAML" do
-      context "and no passed options" do
-        it "should raise a configuration error" do
-          expect { Frenetic::Configuration.new }.to raise_error( Frenetic::Configuration::ConfigurationError )
-        end
-      end
-      context "and passed options" do
-        let(:config) { Frenetic::Configuration.new( 'url' => 'http://example.org' ) }
+    context 'with string keys' do
+      let(:config) { {'url' => 'https://example.org'} }
 
-        it { should be_a( Hash ) }
-        it { should_not be_empty }
-        it "should set an Accepts request header" do
-          subject[:headers].should include(:accept => 'application/hal+json')
-        end
-        it "should set a User Agent request header" do
-          subject[:headers][:user_agent].should =~ %r{Frenetic v.+; \S+$}
-        end
-
-        context "which includes incorrect cache settings" do
-          before { Frenetic::Configuration.any_instance.stub(:configure_cache).and_return nil }
-
-          it "should raise a configuration error for a missing :metastore" do
-            expect {
-              Frenetic::Configuration.new('url' => 'http://example.org', 'cache' => {} )
-            }.to raise_error(
-              Frenetic::Configuration::ConfigurationError, "No cache :metastore defined!"
-            )
-          end
-
-          it "should raise a configuration error for a missing :entitystore" do
-            expect {
-              Frenetic::Configuration.new('url' => 'http://example.org', 'cache' => { 'metastore' => 'foo' } )
-            }.to raise_error(
-              Frenetic::Configuration::ConfigurationError, "No cache :entitystore defined!"
-            )
-          end
-
-          it "should raise a configuration error for missing required header filters" do
-            cache_cfg = {
-              'metastore'      => 'foo',
-              'entitystore'    => 'bar',
-              'ignore_headers' => ['baz'] # `configure_cache` method is skipped to create a bad state
-            }
-
-            expect {
-              Frenetic::Configuration.new('url' => 'http://example.org', 'cache' => cache_cfg )
-            }.to raise_error(
-              Frenetic::Configuration::ConfigurationError, "Required cache header filters are missing!"
-            )
-          end
-        end
+      it 'should symbolize the keys' do
+        subject[:url].should == 'https://example.org'
       end
     end
   end
 
+  describe '#headers' do
+    let(:attrs) { instance.headers }
+
+    context 'Accepts' do
+      subject { attrs[:accept] }
+
+      it { should == 'application/hal+json' }
+
+      context 'with other specific headers' do
+        before { config.merge!(headers:{foo:123} )}
+
+        it { should == 'application/hal+json' }
+      end
+
+      context 'with a custom Accepts header' do
+        before { config.merge!(headers:{'accept' => 'application/vnd.yoursite-v1.hal+json'} )}
+
+        it { should == 'application/vnd.yoursite-v1.hal+json' }
+      end
+    end
+
+    context 'User-Agent' do
+      subject { attrs[:user_agent] }
+
+      it { should match %r{Frenetic v\d+\.\d+\.\d+; .+\Z} }
+
+      context 'with a custom value' do
+        before { config.merge!( headers:{user_agent:'MyApp'}) }
+
+        it { should match %r{\AMyApp \(Frenetic v\d+\.\d+\.\d+; .+\)\Z} }
+      end
+    end
+  end
+
+  describe '#cache' do
+    before { config.merge!(cache:cache_cfg) }
+
+    subject { instance.cache }
+
+    it { should include(metastore:'foo') }
+    it { should include(entitystore:'bar') }
+    it { should include(ignore_headers:%w[Set-Cookie X-Content-Digest]) }
+
+    context 'with custom ignore headers' do
+      before { cache_cfg.merge!(ignore_headers:%w{Set-Cookie X-My-Header}) }
+
+      it { should include(ignore_headers:%w[Set-Cookie X-My-Header X-Content-Digest]) }
+    end
+  end
+
+  describe '#username' do
+    subject { instance.username }
+
+    before { config.merge!(api_key:'api_key') }
+
+    it { should == 'api_key' }
+
+    context 'and an App ID' do
+      before { config.merge!(app_id:'app_id') }
+
+      it { should == 'app_id' }
+    end
+  end
+
+  describe '#password' do
+    subject { instance.password }
+
+    before { config.merge!(api_key:'api_key') }
+
+    it { should be_nil }
+
+    context 'and an App ID' do
+      before { config.merge!(app_id:'app_id') }
+
+      it { should == 'api_key' }
+    end
+  end
+
+  describe '#initialize' do
+    subject { instance.attributes }
+
+    it { should be_a Hash }
+    it { should_not be_empty }
+  end
+
+  describe '#validate!' do
+    subject { instance.validate! }
+
+    shared_examples_for 'a misconfigured instance' do
+      it 'by raising an error when empty' do
+        expect{ subject }.to raise_error Frenetic::ConfigurationError
+      end
+    end
+
+    context ':url' do
+      before { config.delete :url }
+
+      it_should_behave_like 'a misconfigured instance'
+    end
+
+    context ':cache' do
+      context 'with a missing :metastore' do
+        before { config.merge!(cache:{}) }
+
+        it_should_behave_like 'a misconfigured instance'
+      end
+
+      context 'with a missing :entitystore' do
+        before { config.merge!(cache:{metastore:'store'}) }
+
+        it_should_behave_like 'a misconfigured instance'
+      end
+
+      context 'with no missing properties' do
+        before { config.merge!(cache:{metastore:'mstore',entitystore:'estore'}) }
+
+        it 'should not raise an error' do
+          expect{ subject }.to_not raise_error
+        end
+      end
+    end
+  end
 end

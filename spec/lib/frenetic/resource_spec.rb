@@ -1,6 +1,6 @@
 describe Frenetic::Resource do
 
-  let(:client) { Frenetic.new('url' => 'http://example.org') }
+  let(:client) { Frenetic.new(url:'http://example.org') }
 
   let(:resource) { described_class.new }
 

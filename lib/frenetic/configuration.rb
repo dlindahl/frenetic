@@ -1,98 +1,92 @@
 require 'socket'
+require 'active_support/core_ext/object/blank'
+require 'active_support/core_ext/hash/keys'
+require 'active_support/core_ext/hash/deep_merge'
 
 class Frenetic
-  class Configuration < Hash
+  class Configuration
 
-    class ConfigurationError < StandardError; end
+    @@defaults = {
+      cache:    nil,
+      url:      nil,
+      username: nil,
+      password: nil,
+      headers:  {
+        accept: 'application/hal+json'
+      },
+      request:  {},
+      response: {}
+    }
 
-    # TODO: This is in desperate need of .with_indifferent_access...
-    # TODO: "content-type" should probably be within a "headers" key
-    def initialize( custom_config = {} )
-      config = config_file.merge custom_config
-      config = symbolize_keys config
+    attr_accessor :cache, :url, :username, :password
+    attr_accessor :headers, :request, :response
 
-      config[:username] = config[:api_key] if config[:api_key]
-      config[:headers]  ||= {}
-      config[:request]  ||= {}
-      config[:response] ||= {}
+    def initialize( config = {} )
+      config = @@defaults.deep_merge( config.symbolize_keys )
 
-      config[:headers][:accept] ||= "application/hal+json"
+      map_api_key_to_username config
+      append_user_agent       config
+      filter_cache_headers    config
 
-      # Copy the config into this Configuration instance.
-      config.each { |k, v| self[k] = v }
+      config.each do |k, v|
+        v.symbolize_keys! if v.is_a? Hash
 
-      super()
+        instance_variable_set "@#{k}", v
+      end
+    end
 
-      configure_user_agent
-      configure_cache
+    def attributes
+      validate!
 
-      validate
+      instance_variables.each_with_object({}) do |k, attrs|
+        key = k.to_s.gsub( '@', '' )
+
+        value = instance_variable_get( k )
+
+        attrs[key.to_sym] = value
+      end
+    end
+    alias_method :to_hash, :attributes
+
+    def validate!
+      raise(Frenetic::ConfigurationError, 'No API URL defined!') unless @url.present?
+
+      if @cache
+        raise( ConfigurationError, 'No cache :metastore defined!' )               unless @cache[:metastore].present?
+        raise( ConfigurationError, "No cache :entitystore defined!" )             unless @cache[:entitystore].present?
+      end
     end
 
   private
 
-    def configure_user_agent
-      frenetic_ua = "Frenetic v#{Frenetic::VERSION}; #{Socket.gethostname}"
+    def user_agent
+      "Frenetic v#{Frenetic::VERSION}; #{Socket.gethostname}"
+    end
 
-      if self[:headers][:user_agent]
-        self[:headers][:user_agent] << " (#{frenetic_ua})"
+    def map_api_key_to_username( config )
+      if config[:api_key]
+        if config[:app_id]
+          config[:username] = config.delete :app_id
+          config[:password] = config.delete :api_key
+        else
+          config[:username] = config.delete :api_key
+        end
+      end
+    end
+
+    def append_user_agent( config )
+      if config[:headers][:user_agent]
+        config[:headers][:user_agent] << " (#{user_agent})"
       else
-        self[:headers][:user_agent] = frenetic_ua
+        config[:headers][:user_agent] = user_agent
       end
     end
 
-    def configure_cache
-      if self[:cache]
-        ignore_headers = self[:cache][:ignore_headers] || []
+    def filter_cache_headers( config )
+      if config[:cache]
+        ignore_headers = config[:cache][:ignore_headers] || []
 
-        self[:cache][:ignore_headers] = (ignore_headers + %w[Set-Cookie X-Content-Digest]).uniq
-      end
-    end
-
-    def validate
-      unless self[:url]
-        raise ConfigurationError, "No API URL defined!"
-      end
-      if self[:cache]
-        raise( ConfigurationError, "No cache :metastore defined!" )               if self[:cache][:metastore].to_s == ""
-        raise( ConfigurationError, "No cache :entitystore defined!" )             if self[:cache][:entitystore].to_s == ""
-        raise( ConfigurationError, "Required cache header filters are missing!" ) if missing_required_headers?
-      end
-    end
-
-    def missing_required_headers?
-      return true if self[:cache][:ignore_headers].empty?
-
-      header_set     = self[:cache][:ignore_headers]
-      custom_headers = header_set - %w[Set-Cookie X-Content-Digest]
-
-      header_set == custom_headers
-    end
-
-    # TODO: Is this even being used?
-    def config_file
-      path       = File.join 'config/frenetic.yml'
-      config     = YAML.load_file( path )
-      env        = ENV['RAILS_ENV'] || ENV['RACK_ENV']
-
-      config[env] || {}
-    rescue Errno::ENOENT, NoMethodError
-      {}
-    end
-
-    def symbolize_keys( arg )
-      case arg
-      when Array
-        arg.map { |elem| symbolize_keys elem }
-      when Hash
-        Hash[
-          arg.map { |key, value|  
-            k = key.is_a?(String) ? key.to_sym : key
-            v = symbolize_keys value
-            [k,v]
-          }]
-      else
-        arg
+        config[:cache][:ignore_headers] = (ignore_headers + %w[Set-Cookie X-Content-Digest]).uniq
       end
     end
 
