@@ -18,7 +18,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency             'faraday',             '~> 0.8.1'
   gem.add_dependency             'faraday_middleware',  '~> 0.9.0'
   gem.add_dependency             'rack-cache',          '~> 1.1'
-  gem.add_dependency             'addressable',         '~> 2.3.0'
+  gem.add_dependency             'addressable',         '~> 2.2'
   gem.add_dependency             'patron',              '~> 0.4.18'
 
   gem.add_development_dependency 'guard-spork',         '~> 1.2.0'
