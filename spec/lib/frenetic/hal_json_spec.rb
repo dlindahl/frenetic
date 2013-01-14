@@ -31,8 +31,8 @@ describe Frenetic::HalJson do
     context "with a successful response" do
       let(:env) do
         {
-          :status => 200,
-          :body => JSON.generate({
+          status:200,
+          body: JSON.generate({
             '_links' => {}
           })
         }
@@ -50,17 +50,17 @@ describe Frenetic::HalJson do
     subject { hal_json.success?( env ) }
 
     context "with a 200 OK response" do
-      let(:env) { {:status => 200 } }
+      let(:env) { { status:200 } }
 
       it { should be_true }
     end
     context "with a 201 Created response" do
-      let(:env) { {:status => 201 } }
+      let(:env) { { status:201 } }
 
       it { should be_true }
     end
     context "with a 204 No Content" do
-      let(:env) { {:status => 204 } }
+      let(:env) { { status:204 } }
 
       it { should be_false }
     end
