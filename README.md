@@ -134,6 +134,31 @@ MyAPI = Frenetic.new(
 
 Symbol- or string-based keys work equally well.
 
+#### Sending API Keys
+
+If the API you are consuming requires an API Key, you can provide that in the
+config hash:
+
+```ruby
+Frenetic.new( url:'https://example.org', api_key:'abcde12345' )
+```
+
+The value will be sent as the `:username` portion of the HTTP
+Basic Authentication header.
+
+#### Sending API Keys with an App ID
+
+If the API requires both an App ID or access token in addition to an API Key,
+you can provide that in the config hash as well:
+
+```ruby
+Frenetic.new( url:'https://example.org', app_id:'abcde12345', api_key:'mysecret' )
+```
+
+The App ID will be sent as the `:username` and the API Key will be sent as the
+password portion of the HTTP Basic Authentication header.
+
+
 
 ### Response Caching
 
