@@ -1,7 +1,6 @@
 ENV['RAILS_ENV'] ||= 'test'
 
 require 'rspec'
-require 'fakefs/spec_helpers'
 require 'awesome_print'
 require 'vcr'
 require 'frenetic'
