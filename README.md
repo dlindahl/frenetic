@@ -1,5 +1,7 @@
-# Frenetic [![Build Status][travis_status]][travis]
+# Frenetic  [![Gem Version][version_badge]][version] [![Build Status][travis_status]][travis]
 
+[version_badge]: https://badge.fury.io/rb/frenetic.png
+[version]: http://badge.fury.io/rb/frenetic
 [travis_status]: https://secure.travis-ci.org/dlindahl/frenetic.png
 [travis]: http://travis-ci.org/dlindahl/frenetic
 
