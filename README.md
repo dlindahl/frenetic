@@ -184,7 +184,7 @@ supports can be added to the Hash.
 
 
 
-# Middlware
+# Middleware
 
 Frenetic supports anything that Faraday does. You may specify additional
 middleware with the `use` method:
