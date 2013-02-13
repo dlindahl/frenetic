@@ -2,22 +2,43 @@ describe Frenetic::Resource do
 
   let(:client) { Frenetic.new(url:'http://example.org') }
 
-  let(:resource) { described_class.new }
+  let(:resource) { MyResource.new }
+
+  let(:other_resource) { MyOtherResource.new }
 
   let(:description_stub) do
-    Frenetic::HalJson::ResponseWrapper.new('resources' => { 'schema' => { 'resource' =>
-      { 'properties' => { 'foo' => 2 } }
+    Frenetic::HalJson::ResponseWrapper.new('resources' => {
+      'schema' => {
+        'my_resource' => { 'properties' => { 'foo' => 'string' } },
+        'my_other_resource' => { 'properties' => {} }
     } } )
+  end
+
+  before do
+    client.stub(:description).and_return description_stub
+
+    described_class.stub(:api).and_return client
+
+    stub_const 'MyResource', Class.new(described_class)
+    stub_const 'MyOtherResource', Class.new(described_class)
   end
 
   subject { resource }
 
   context "created from a Hash" do
-    let(:resource) { described_class.new( foo: 'bar' ) }
+    let(:resource) { MyResource.new( foo: 'bar' ) }
 
     it { should respond_to(:foo) }
+    it { should respond_to(:foo=) }
     its(:links) { should be_a Hash }
     its(:links) { should be_empty }
+
+    context 'other subclasses' do
+      subject { other_resource }
+
+      it { should_not respond_to(:foo) }
+      it { should_not respond_to(:foo=) }
+    end
   end
 
   context "created from a HAL-JSON response" do
@@ -30,17 +51,16 @@ describe Frenetic::Resource do
         'bar' => 2
       }
     end
+
     let(:wrapped_response) do
       Frenetic::HalJson::ResponseWrapper.new(api_response)
     end
-    let(:resource_a) { described_class.new( wrapped_response ) }
-    let(:resource_b) { described_class.new }
+
+    let(:resource_a) { MyResource.new( wrapped_response ) }
+
+    let(:resource_b) { MyResource.new }
 
     before do
-      client.stub(:description).and_return description_stub
-
-      described_class.stub(:api).and_return client
-
       resource_a && resource_b
     end
 
@@ -55,7 +75,7 @@ describe Frenetic::Resource do
     context "intiailized in sequence without data" do
       subject { resource_b }
 
-      it { should_not respond_to(:foo) }
+      it { should respond_to(:foo) }
       it { should_not respond_to(:bar) }
       its(:links) { should be_empty }
     end
@@ -80,19 +100,29 @@ describe Frenetic::Resource do
   end
 
   describe ".api_client" do
+    before do
+      described_class.unstub! :api
+    end
+
+    subject { MyResource }
+
     context "with a block" do
-      before { resource.class.api_client { client } }
+      before { subject.api_client { client } }
 
       it "should reference the defined API client" do
-        subject.class.api.should == client
+        subject.api.should eq client
+
+        MyOtherResource.should_not respond_to :api
       end
     end
 
     context "with an argument" do
-      before { resource.class.api_client client }
+      before { MyResource.api_client client }
 
       it "should reference the defined API client" do
-        subject.class.api.should == client
+        subject.api.should eq client
+
+        MyOtherResource.should_not respond_to :api
       end
     end
   end
@@ -108,7 +138,7 @@ describe Frenetic::Resource do
       end
 
       it "should return the schema for the specific resource" do
-        subject.should == description_stub.resources.schema.resource.properties
+        subject.should == description_stub.resources.schema.my_resource.properties
       end
     end
 
