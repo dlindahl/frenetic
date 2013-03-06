@@ -9,8 +9,8 @@ describe Frenetic::Resource do
   let(:description_stub) do
     Frenetic::HalJson::ResponseWrapper.new('resources' => {
       'schema' => {
-        'my_resource' => { 'properties' => { 'foo' => 'string' } },
-        'my_other_resource' => { 'properties' => {} }
+        'my_resource'       => { 'properties' => { 'foo' => 'string' } },
+        'my_other_resource' => { 'properties' => { 'bar' => 'integer' } }
     } } )
   end
 
@@ -87,15 +87,31 @@ describe Frenetic::Resource do
             '_self' => { '_href' => 'bar' }
           },
           'foo' => 1,
-          '_embedded' => {
-            'baz' => 'resource'
-          }
+          '_embedded' => embed
         }
       end
 
       subject { resource_a }
 
-      it { should respond_to(:baz) }
+      context 'that have a Resource representation' do
+        subject { super().my_other_resource }
+
+        let(:embed) do
+          { 'my_other_resource' => { 'bar' => 123 } }
+        end
+
+        its(:bar) { should == 123 }
+      end
+
+      context 'that do not have a Resource representation' do
+        subject { super().foo }
+
+        let(:embed) do
+          { 'foo' => { 'bar' => 'baz' } }
+        end
+
+        it { should include 'bar' => 'baz' }
+      end
     end
   end
 
@@ -149,5 +165,5 @@ describe Frenetic::Resource do
         expect { subject }.to raise_error(Frenetic::MissingAPIReference)
       end
     end
-  end
+  end  
 end

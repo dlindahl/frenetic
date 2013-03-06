@@ -63,10 +63,20 @@ class Frenetic
     def build_associations( attributes )
       return unless attributes['_embedded']
 
-      attributes['_embedded'].keys.each do |key|
+      namespace = self.class.to_s.deconstantize
+
+      attributes['_embedded'].each do |key, value|
         self.class.class_eval do
           attr_reader key.to_sym
         end
+
+        assoc_class = "#{namespace}::#{key.classify}"
+
+        if assoc_class = (assoc_class.constantize rescue nil)
+          value = assoc_class.new value
+        end
+
+        instance_variable_set "@#{key}", value
       end
     end
 
