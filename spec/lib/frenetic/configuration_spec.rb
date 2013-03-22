@@ -12,6 +12,7 @@ describe Frenetic::Configuration do
 
   subject { instance }
 
+  it { should respond_to(:adapter) }
   it { should respond_to(:cache) }
   it { should respond_to(:url) }
   it { should respond_to(:username) }
@@ -26,6 +27,7 @@ describe Frenetic::Configuration do
 
     subject { instance.attributes }
 
+    it { should include(:adapter) }
     it { should include(:cache) }
     it { should include(:url) }
     it { should include(:username) }

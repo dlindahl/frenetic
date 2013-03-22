@@ -7,6 +7,7 @@ class Frenetic
   class Configuration
 
     @@defaults = {
+      adapter:  nil,
       cache:    nil,
       url:      nil,
       username: nil,
@@ -18,7 +19,7 @@ class Frenetic
       response: {}
     }
 
-    attr_accessor :cache, :url, :username, :password
+    attr_accessor :adapter, :cache, :url, :username, :password
     attr_accessor :headers, :request, :response, :middleware
 
     def initialize( config = {} )

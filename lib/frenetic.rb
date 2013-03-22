@@ -42,7 +42,7 @@ class Frenetic
         builder.use FaradayMiddleware::RackCompatible, Rack::Cache::Context, config.cache
       end
 
-      builder.adapter :patron
+      builder.adapter config.adapter || :patron
     end
   end
 

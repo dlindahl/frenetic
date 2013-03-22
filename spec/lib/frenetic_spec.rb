@@ -66,6 +66,26 @@ describe Frenetic do
         subject.should include MyMiddleware
       end
     end
+
+    describe 'Faraday adapter' do
+      subject { connection.builder.handlers }
+
+      context 'by default' do
+        it 'should be :patron' do
+          subject.should include Faraday::Adapter::Patron
+        end
+      end
+
+      context 'when explicitly set' do
+        before do
+          config.merge! adapter: :net_http
+        end
+
+        it 'should use the specified adapter' do
+          subject.should include Faraday::Adapter::NetHttp
+        end
+      end
+    end
   end
  
   describe "#description" do

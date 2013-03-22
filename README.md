@@ -123,6 +123,7 @@ Or install it yourself as:
 
 ```ruby
 MyAPI = Frenetic.new(
+  # 'adapter'      => :net_http   # Or some other Faraday-compatible Adapter. Defaults to `:patron`
   'url'          => 'https://api.yoursite.com',
   'username'     => 'yourname',
   'password'     => 'yourpassword',
