@@ -9,7 +9,7 @@ describe Frenetic::Resource do
   let(:description_stub) do
     Frenetic::HalJson::ResponseWrapper.new('resources' => {
       'schema' => {
-        'my_resource'       => { 'properties' => { 'foo' => 'string' } },
+        'my_resource'       => { 'properties' => { 'foo' => 'string', 'baz' => 'integer' } },
         'my_other_resource' => { 'properties' => { 'bar' => 'integer' } }
     } } )
   end
@@ -24,6 +24,19 @@ describe Frenetic::Resource do
   end
 
   subject { resource }
+
+  describe '#attributes' do
+    subject { resource.attributes }
+
+    it { should include 'foo' => nil }
+    it { should include 'baz' => nil }
+  end
+
+  describe '#to_hash' do
+    subject { resource.to_hash }
+
+    it { should == resource.attributes }
+  end
 
   context "created from a Hash" do
     let(:resource) { MyResource.new( foo: 'bar' ) }

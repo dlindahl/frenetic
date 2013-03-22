@@ -19,6 +19,13 @@ class Frenetic
       @_links
     end
 
+    def attributes
+      self.class.schema.keys.each_with_object({}) do |key, attrs|
+        attrs[key] = public_send key
+      end
+    end
+    alias_method :to_hash, :attributes
+
     # Attempts to retrieve the Resource Schema from the API based on the name
     # of the subclass.
     class << self
