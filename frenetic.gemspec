@@ -20,8 +20,8 @@ Gem::Specification.new do |gem|
   gem.add_dependency             'activesupport',       '>= 2'
   gem.add_dependency             'rack-cache',          '~> 1.1'
   gem.add_dependency             'addressable',         '~> 2.2'
-  gem.add_dependency             'patron',              '~> 0.4.18'
 
+  gem.add_development_dependency 'patron',              '~> 0.4.18'
   gem.add_development_dependency 'rspec',               '~> 2.13.0'
   gem.add_development_dependency 'webmock',             '~> 1.11.0'
   gem.add_development_dependency 'vcr',                 '~> 2.4.0'

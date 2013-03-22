@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: http://example.org:5447/api
+    uri: http://1234567890:@example.org:5447/api
     body:
       encoding: US-ASCII
       string: ''

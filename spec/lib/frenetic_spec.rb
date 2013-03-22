@@ -72,17 +72,17 @@ describe Frenetic do
 
       context 'by default' do
         it 'should be :patron' do
-          subject.should include Faraday::Adapter::Patron
+          subject.should include Faraday::Adapter::NetHttp
         end
       end
 
       context 'when explicitly set' do
         before do
-          config.merge! adapter: :net_http
+          config.merge! adapter: :patron
         end
 
         it 'should use the specified adapter' do
-          subject.should include Faraday::Adapter::NetHttp
+          subject.should include Faraday::Adapter::Patron
         end
       end
     end

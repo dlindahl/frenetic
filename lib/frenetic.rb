@@ -1,4 +1,3 @@
-require 'patron'
 require 'addressable/uri'
 require 'faraday'
 require 'faraday_middleware'
@@ -42,7 +41,7 @@ class Frenetic
         builder.use FaradayMiddleware::RackCompatible, Rack::Cache::Context, config.cache
       end
 
-      builder.adapter config.adapter || :patron
+      builder.adapter config.adapter || :net_http
     end
   end
 

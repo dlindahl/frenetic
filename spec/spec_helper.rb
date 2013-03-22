@@ -3,6 +3,7 @@ ENV['RAILS_ENV'] ||= 'test'
 require 'rspec'
 require 'awesome_print'
 require 'vcr'
+require 'patron'
 require 'frenetic'
 
 RSpec.configure do |config|
