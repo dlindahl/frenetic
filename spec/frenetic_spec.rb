@@ -1,7 +1,13 @@
 require 'spec_helper'
 
 describe Frenetic do
-  subject(:instance) { described_class.new }
+  let(:test_cfg) do
+    {
+      url:'http://example.org'
+    }
+  end
+
+  subject(:instance) { described_class.new( test_cfg ) }
 
   describe '#connection' do
     subject { instance.connection }
