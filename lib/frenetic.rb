@@ -11,8 +11,11 @@ class Frenetic
 
   def_delegators :connection, :get, :put, :post, :delete
 
-  Error       = Class.new(StandardError)
-  ConfigError = Class.new(Error)
+  Error        = Class.new(StandardError)
+  ConfigError  = Class.new(Error)
+  ClientError  = Class.new(Error)
+  ServerError  = Class.new(Error)
+  ParsingError = Class.new(Error)
 
   def connection
     @connection ||= begin
@@ -33,11 +36,27 @@ class Frenetic
           builder.use FaradayMiddleware::RackCompatible, Rack::Cache::Context, config.cache
         end
 
+        builder.use FaradayMiddleware::ParseJson
+
         @builder_config.call( builder ) if @builder_config
 
         builder.adapter config.adapter
       end
     end
+  end
+
+  # It is highly advised that the server responds with some cache headers and
+  # the API Client is configured to use a Faraday caching strategy
+  def description
+    if response = get( config.url.to_s ) and response.success?
+      response.body
+    elsif response.status >= 500
+      raise ServerError, response.body
+    elsif response.status
+      raise ClientError, response.body
+    end
+  rescue Faraday::Error::ParsingError => err
+    raise ParsingError, err.message
   end
 
 private

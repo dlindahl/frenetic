@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Frenetic do
   let(:test_cfg) do
     {
-      url:'http://example.org'
+      url:'http://example.com/api'
     }
   end
 
@@ -47,6 +47,42 @@ describe Frenetic do
         end.connection
 
         builder.should be_a Faraday::Connection
+      end
+    end
+  end
+
+  describe '#description' do
+    subject { instance.description }
+
+    context 'with a URL that returns a' do
+      context 'valid response' do
+        before { @stubs.api_description }
+
+        it { should include 'schema' }
+      end
+
+      context 'server error' do
+        before { @stubs.api_server_error }
+
+        it 'should raise an error' do
+          expect{ subject }.to raise_error Frenetic::ServerError
+        end
+      end
+
+      context 'client error' do
+        before { @stubs.api_client_error :json }
+
+        it 'should raise an error' do
+          expect{ subject }.to raise_error Frenetic::ClientError
+        end
+      end
+
+      context 'JSON parsing error' do
+        before { @stubs.api_client_error :text }
+
+        it 'should raise an error' do
+          expect{ subject }.to raise_error Frenetic::ParsingError
+        end
       end
     end
   end
