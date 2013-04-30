@@ -13,6 +13,42 @@ describe Frenetic do
     subject { instance.connection }
 
     it { should be_a Faraday::Connection }
+
+    context 'configured with a :username' do
+      let(:test_cfg) { super().merge username:'foo' }
+
+      subject { super().builder.handlers }
+
+      it { should include Faraday::Request::BasicAuthentication }
+    end
+
+    context 'configured with a :api_token' do
+      let(:test_cfg) { super().merge api_token:'API_TOKEN' }
+
+      subject { super().builder.handlers }
+
+      it { should include Faraday::Request::TokenAuthentication }
+    end
+
+    context 'configured to use Rack::Cache' do
+      let(:test_cfg) { super().merge cache: :rack }
+
+      subject { super().builder.handlers }
+
+      it { should include FaradayMiddleware::RackCompatible }
+    end
+
+    context 'when Frenetic is initialized with a block' do
+      it 'should yield the Faraday builder to the block argument' do
+        builder = nil
+
+        described_class.new(test_cfg) do |b|
+          builder = b
+        end.connection
+
+        builder.should be_a Faraday::Connection
+      end
+    end
   end
 
   describe '#get' do
