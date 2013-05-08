@@ -12,11 +12,12 @@ class Frenetic
 
   def_delegators :connection, :get, :put, :post, :delete
 
-  Error        = Class.new(StandardError)
-  ConfigError  = Class.new(Error)
-  ClientError  = Class.new(Error)
-  ServerError  = Class.new(Error)
-  ParsingError = Class.new(Error)
+  Error           = Class.new(StandardError)
+  ConfigError     = Class.new(Error)
+  ClientError     = Class.new(Error)
+  ServerError     = Class.new(Error)
+  ParsingError    = Class.new(Error)
+  HypermediaError = Class.new(Error)
 
   def connection
     @connection ||= begin

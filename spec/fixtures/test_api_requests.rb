@@ -38,12 +38,15 @@ class HttpStubs
         schema: {
           href: '/api/schema'
         },
-        my_resources: {
-          href: '/api/my_resources'
+        my_temp_resources: {
+          href: '/api/my_temp_resources'
         },
-        my_resource: {
-          href: '/api/my_resource/{id}',
+        my_temp_resource: {
+          href: '/api/my_temp_resources/{id}',
           templated: true
+        },
+        abstract_resource: {
+          href: '/api/abstract_resource'
         }
       }
     }

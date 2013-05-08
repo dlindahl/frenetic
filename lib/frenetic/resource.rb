@@ -3,10 +3,12 @@ require 'active_support/inflector'
 require 'active_support/core_ext/hash/indifferent_access'
 
 require 'frenetic/concerns/structured'
+require 'frenetic/concerns/hal_linked'
 
 class Frenetic
   class Resource < Delegator
     include Structured
+    include HalLinked
 
     def api
       self.class.api
