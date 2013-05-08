@@ -1,3 +1,5 @@
+require 'active_support/inflector'
+
 class Frenetic
   class Resource
 
@@ -14,6 +16,16 @@ class Frenetic
         @api_client.call
       else
         @api_client
+      end
+    end
+
+    def self.namespace( namespace = nil )
+      if namespace
+        @namespace = namespace.to_s
+      elsif @namespace
+        @namespace
+      else
+        @namespace = self.to_s.demodulize.underscore
       end
     end
 
