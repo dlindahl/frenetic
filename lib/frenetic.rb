@@ -3,6 +3,7 @@ require 'faraday'
 require 'faraday_middleware'
 
 require 'frenetic/concerns/configurable'
+require 'frenetic/resource'
 require 'frenetic/version'
 
 class Frenetic
