@@ -60,6 +60,10 @@ class Frenetic
     raise ParsingError, err.message
   end
 
+  def schema
+    description['_embedded']['schema']
+  end
+
 private
 
   def __require__( *args )

@@ -58,7 +58,7 @@ describe Frenetic do
       context 'valid response' do
         before { @stubs.api_description }
 
-        it { should include 'schema' }
+        it { should include '_embedded', '_links' }
       end
 
       context 'server error' do
@@ -85,6 +85,14 @@ describe Frenetic do
         end
       end
     end
+  end
+
+  describe '.schema' do
+    subject { instance.schema }
+
+    before { @stubs.api_description }
+
+    it { should include 'my_temp_resource' }
   end
 
   describe '#get' do

@@ -27,9 +27,23 @@ class HttpStubs
 
   def schema
     {
-      schema: {
+      _embedded: {
+        schema: {
+          my_temp_resource: {
+            name: 'string'
+          }
+        }
+      },
+      _links: {
+        schema: {
+          href: '/api/schema'
+        },
+        my_resources: {
+          href: '/api/my_resources'
+        },
         my_resource: {
-          name: 'string'
+          href: '/api/my_resource/{id}',
+          templated: true
         }
       }
     }
