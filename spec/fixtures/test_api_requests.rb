@@ -25,6 +25,16 @@ class HttpStubs
       .to_return body:schema.to_json, status:200
   end
 
+  def unknown_resource
+    @rspec.stub_request( :get, 'example.com/api/my_temp_resources/1' )
+      .to_return status:404, body:{ 'error' => '404 Not Found' }
+  end
+
+  def known_resource
+    @rspec.stub_request( :get, 'example.com/api/my_temp_resources/1' )
+      .to_return status:200, body:{ 'name' => 'Resource Name' }
+  end
+
   def schema
     {
       _embedded: {

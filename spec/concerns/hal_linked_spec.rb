@@ -17,10 +17,10 @@ describe Frenetic::HalLinked do
     MyTempResource.send :include, described_class
   end
 
-  describe '.get_url' do
+  describe '.member_url' do
     let(:args) {}
 
-    subject { MyTempResource.get_url args }
+    subject { MyTempResource.member_url args }
 
     before { @stubs.api_description }
 
