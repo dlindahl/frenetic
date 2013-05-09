@@ -95,7 +95,7 @@ class Frenetic
     end
 
     def api_schema
-      api.schema[namespace] or raise HypermediaError, %Q{Could not find schema definition for the resource "#{namespace}"}
+      (api.schema[namespace]||{})['properties'] or raise HypermediaError, %Q{Could not find schema definition for the resource "#{namespace}"}
     end
 
   end

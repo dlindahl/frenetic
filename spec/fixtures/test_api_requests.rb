@@ -40,7 +40,10 @@ class HttpStubs
       _embedded: {
         schema: {
           my_temp_resource: {
-            name: 'string'
+            description: 'Humanized resource description',
+            properties: {
+              name: 'string'
+            }
           }
         }
       },
