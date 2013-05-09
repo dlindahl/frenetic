@@ -42,11 +42,15 @@ class Frenetic
       end
     end
 
+    def self.properties
+      (api.schema[namespace]||{})['properties'] or raise HypermediaError, %Q{Could not find schema definition for the resource "#{namespace}"}
+    end
+
     def initialize( p = {} )
       @params = (p || {}).with_indifferent_access
       @attrs  = {}
 
-      api_schema.keys.each do |k|
+      properties.keys.each do |k|
         @attrs[k] = @params[k]
       end
 
@@ -94,8 +98,8 @@ class Frenetic
       self.class.namespace
     end
 
-    def api_schema
-      (api.schema[namespace]||{})['properties'] or raise HypermediaError, %Q{Could not find schema definition for the resource "#{namespace}"}
+    def properties
+      self.class.properties
     end
 
   end

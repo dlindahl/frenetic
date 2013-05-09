@@ -130,6 +130,28 @@ describe Frenetic::Resource do
     end
   end
 
+  describe '.properties' do
+    before { @stubs.api_description }
+
+    subject { MyNamespace::MyTempResource.properties }
+
+    context 'for a known resource' do
+      it 'should return a list of properties defined by the API' do
+        subject.should_not be_empty
+      end
+    end
+
+    context 'for an unknown resource' do
+      before do
+        MyNamespace::MyTempResource.stub(:namespace).and_return Time.now.to_i.to_s
+      end
+
+      it 'should raise an error' do
+        expect{ subject }.to raise_error Frenetic::HypermediaError
+      end
+    end
+  end
+
   describe '#initialize' do
     before { @stubs.api_description }
 
