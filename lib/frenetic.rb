@@ -3,6 +3,7 @@ require 'faraday'
 require 'faraday_middleware'
 
 require 'frenetic/concerns/configurable'
+require 'frenetic/middleware/hal_json'
 require 'frenetic/resource'
 require 'frenetic/version'
 
@@ -32,13 +33,13 @@ class Frenetic
           builder.request :token_auth, config.api_token
         end
 
+        builder.response :hal_json
+
         if config.cache[:metastore]
           __require__ 'rack-cache'
 
           builder.use FaradayMiddleware::RackCompatible, Rack::Cache::Context, config.cache
         end
-
-        builder.use FaradayMiddleware::ParseJson
 
         @builder_config.call( builder ) if @builder_config
 
@@ -52,13 +53,7 @@ class Frenetic
   def description
     if response = get( config.url.to_s ) and response.success?
       response.body
-    elsif response.status >= 500
-      raise ServerError, response.body
-    elsif response.status
-      raise ClientError, response.body
     end
-  rescue Faraday::Error::ParsingError => err
-    raise ParsingError, err.message
   end
 
   def schema

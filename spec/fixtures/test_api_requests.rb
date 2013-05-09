@@ -6,33 +6,47 @@ class HttpStubs
     @rspec = rspec
   end
 
+  def defaults
+    {
+      status:  200,
+      headers: { 'Content-Type'=>'application/json' },
+      body:    {}
+    }
+  end
+
+  def response( params = {} )
+    defaults.merge( params ).tap do |p|
+      p[:body] = p[:body].to_json
+    end
+  end
+
   def api_server_error
     @rspec.stub_request( :any, 'example.com/api' )
-      .to_return body:{error:'500 Server Error'}, status:500
+      .to_return response( body:{error:'500 Server Error'}, status:500 )
   end
 
   def api_client_error( type = :json )
     body = '404 Not Found'
 
-    body = { 'error' => body } if type == :json
+    body = { 'error' => body }.to_json if type == :json
 
     @rspec.stub_request( :any, 'example.com/api' )
-      .to_return body:body, status:404
+      .to_return defaults.merge( body:body, status:404 )
   end
 
   def api_description
     @rspec.stub_request( :any, 'example.com/api' )
-      .to_return body:schema.to_json, status:200
+      .to_return response( body:schema )
   end
 
   def unknown_resource
     @rspec.stub_request( :get, 'example.com/api/my_temp_resources/1' )
-      .to_return status:404, body:{ 'error' => '404 Not Found' }
+      .to_return response( body:{ 'error' => '404 Not Found' }, status:404 )
   end
 
   def known_resource
     @rspec.stub_request( :get, 'example.com/api/my_temp_resources/1' )
-      .to_return status:200, body:{ 'name' => 'Resource Name' }
+      .to_return response( body:{ 'name' => 'Resource Name' } )
   end
 
   def schema
