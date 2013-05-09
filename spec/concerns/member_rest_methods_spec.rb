@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Frenetic::RestMethods do
+describe Frenetic::MemberRestMethods do
   let(:test_cfg) { { url:'http://example.com/api' } }
 
   let(:my_temp_resource) do

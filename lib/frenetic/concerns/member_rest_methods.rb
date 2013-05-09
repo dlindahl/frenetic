@@ -1,7 +1,7 @@
 require 'active_support/concern'
 
 class Frenetic
-  module RestMethods
+  module MemberRestMethods
     extend ActiveSupport::Concern
 
     module ClassMethods

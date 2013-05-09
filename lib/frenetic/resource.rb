@@ -4,13 +4,13 @@ require 'active_support/core_ext/hash/indifferent_access'
 
 require 'frenetic/concerns/structured'
 require 'frenetic/concerns/hal_linked'
-require 'frenetic/concerns/rest_methods'
+require 'frenetic/concerns/member_rest_methods'
 
 class Frenetic
   class Resource < Delegator
     include Structured
     include HalLinked
-    include RestMethods
+    include MemberRestMethods
 
     def api
       self.class.api

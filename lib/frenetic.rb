@@ -5,6 +5,7 @@ require 'faraday_middleware'
 require 'frenetic/concerns/configurable'
 require 'frenetic/middleware/hal_json'
 require 'frenetic/resource'
+require 'frenetic/resource_collection'
 require 'frenetic/version'
 
 class Frenetic

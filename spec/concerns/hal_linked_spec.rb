@@ -17,6 +17,57 @@ describe Frenetic::HalLinked do
     MyTempResource.send :include, described_class
   end
 
+  describe '#links' do
+    before { @stubs.api_description }
+
+    let(:_links) do
+      {
+        '_links' => { 'self' => { 'href' => '/api/self' }}
+      }
+    end
+
+    subject { MyTempResource.new(_links).links }
+
+    it 'should return the instances links' do
+      subject.should include 'self'
+    end
+  end
+
+  describe '#member_url' do
+    before { @stubs.api_description }
+
+    subject { MyTempResource.new(_links).member_url }
+
+      let(:_links) do
+        {
+          '_links' => {
+            'self' => { 'href' => '/api/self' },
+            'my_temp_resource' => {
+              'href' => '/api/my_temp_resource/{id}', 'templated' => true
+            }
+          }
+        }
+      end
+
+    context 'with a link that matches the resource name' do
+      it 'should return the named link' do
+        subject.should == '/api/my_temp_resource/'
+      end
+    end
+
+    context 'with an implied self link' do
+      let(:_links) do
+        {
+          '_links' => { 'self' => { 'href' => '/api/self' }}
+        }
+      end
+
+      it 'should return the :self link' do
+        subject.should == '/api/self'
+      end
+    end
+  end
+
   describe '.member_url' do
     let(:args) {}
 
@@ -48,7 +99,7 @@ describe Frenetic::HalLinked do
       context 'and a non-Hash argument' do
         let(:args) { 1 }
 
-        it 'should interpolate the URL' do
+        it 'should expand the URL template' do
           subject.should == '/api/my_temp_resources/1'
         end
       end
