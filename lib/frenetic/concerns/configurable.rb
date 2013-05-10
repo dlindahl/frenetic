@@ -31,5 +31,29 @@ class Frenetic
       raise( ConfigError, 'A URL must be defined' ) unless config.url
     end
 
+    def configure_authentication( builder )
+      if config.username
+        builder.request :basic_auth, config.username, config.password
+      end
+
+      if config.api_token
+        builder.request :token_auth, config.api_token
+      end
+    end
+
+    def configure_caching( builder )
+      if config.cache[:metastore]
+        dependency 'rack-cache'
+
+        builder.use FaradayMiddleware::RackCompatible, Rack::Cache::Context, config.cache
+      end
+    end
+
+    def dependency( lib = nil )
+      lib ? require(lib) : yield
+    rescue NameError, LoadError => err
+      raise ConfigError, "Missing dependency for #{self}: #{err.message}"
+    end
+
   end
 end

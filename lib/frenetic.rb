@@ -26,21 +26,11 @@ class Frenetic
       validate_configuration!
 
       Faraday.new( config ) do |builder|
-        if config.username
-          builder.request :basic_auth, config.username, config.password
-        end
-
-        if config.api_token
-          builder.request :token_auth, config.api_token
-        end
+        configure_authentication builder
 
         builder.response :hal_json
 
-        if config.cache[:metastore]
-          __require__ 'rack-cache'
-
-          builder.use FaradayMiddleware::RackCompatible, Rack::Cache::Context, config.cache
-        end
+        configure_caching builder
 
         @builder_config.call( builder ) if @builder_config
 
@@ -59,14 +49,6 @@ class Frenetic
 
   def schema
     description['_embedded']['schema']
-  end
-
-private
-
-  def __require__( *args )
-    require( *args )
-  rescue LoadError => err
-    raise ConfigError, "#{err.class} - #{err.message}. Install with `gem install #{args.first}`"
   end
 
 end
