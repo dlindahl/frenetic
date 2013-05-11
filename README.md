@@ -99,6 +99,29 @@ more information.
 
 
 
+## New in Version 0.0.20
+
+Version 0.0.20 features a complete top-to-bottom rewrite. Mostly this removes
+a lot of the meta-programming magic that I previously used to created Ruby
+object representations of resources.
+
+The overall API should remain pretty similar, but there may be some spots that
+are different.
+
+In general, writing custom `Frenetic::Resource`s should require *a lot* less
+code now as Frenetic handles the common use cases for you.
+
+### TODO Items
+
+* Support `POST`
+* Support `PUT`
+* Support `PATCH`
+* Support `DELETE`
+
+
+
+
+
 ## Configuring
 
 ### Client Initialization
