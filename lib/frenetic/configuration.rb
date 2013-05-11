@@ -16,7 +16,7 @@ class Frenetic
     end
 
     def adapter
-      @_cfg[:adapter] || :net_http
+      @_cfg[:adapter] || Faraday.default_adapter
     end
 
     def api_token
