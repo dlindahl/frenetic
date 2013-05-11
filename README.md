@@ -210,6 +210,23 @@ the Rack::Cache middleware.
 **TODO**
 
 
+#### Faraday Adapters
+
+By default, Frenetic is configured to use Faraday's default adapter (usually
+Net::HTTP). You can change this with the `adapter` option:
+
+```ruby
+Frenetic.new( url:url, adapter: :patron )
+```
+
+Frenetic accepts any of the [Faraday adapter shortcuts][adapters], or an instance
+of the adapter itself:
+
+```ruby
+Frenetic.new( url:url, adapter:Faraday::Adapter::Patron )
+```
+
+
 #### Faraday Middleware
 
 Frenetic will yield its internal Faraday connection during initialization:
@@ -301,5 +318,6 @@ ideas on how to support other Hypermedia formats like [Collection+JSON][coll_jso
 [spire.io]: http://api.spire.io/
 [caching]: #response-caching
 [faraday]: https://github.com/technoweenie/faraday
+[adapters]: https://github.com/lostisland/faraday/blob/c26a060acdd9eae356409c2ca79f1c22f8263de9/lib/faraday/adapter.rb#L7-L17
 [rack_cache]: https://github.com/rtomayko/rack-cache
 [coll_json]: http://amundsen.com/media-types/collection/
