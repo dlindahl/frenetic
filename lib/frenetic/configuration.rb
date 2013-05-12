@@ -28,6 +28,7 @@ class Frenetic
         adapter:   adapter,
         api_token: api_token,
         cache:     cache,
+        default_root_cache_age: default_root_cache_age,
         headers:   headers,
         password:  password,
         url:       url,
@@ -45,6 +46,10 @@ class Frenetic
       else
         {}
       end
+    end
+
+    def default_root_cache_age
+      @_cfg[:default_root_cache_age]
     end
 
     def headers

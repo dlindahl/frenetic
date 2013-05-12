@@ -24,4 +24,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'rspec',               '~> 2.13.0'
   gem.add_development_dependency 'rack-cache',          '~> 1.2'
   gem.add_development_dependency 'webmock',             '~> 1.11.0'
+  gem.add_development_dependency 'timecop',             '~> 0.6.1'
 end

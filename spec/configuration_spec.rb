@@ -15,6 +15,7 @@ describe Frenetic::Configuration do
     it { should include :adapter }
     it { should include :api_token }
     it { should include :cache }
+    it { should include :default_root_cache_age }
     it { should include :headers }
     it { should include :password }
     it { should include :url }
@@ -45,6 +46,16 @@ describe Frenetic::Configuration do
         subject.should include ignore_headers:%w{Authorization Set-Cookie X-Content-Digest}
       end
     end
+  end
+
+  describe '#default_root_cache_age' do
+    let(:cfg) do
+      { default_root_cache_age:3600 }
+    end
+
+    subject { instance.default_root_cache_age }
+
+    it { should == 3600 }
   end
 
   describe '#headers' do

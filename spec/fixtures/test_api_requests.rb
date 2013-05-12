@@ -15,7 +15,12 @@ class HttpStubs
   end
 
   def response( params = {} )
-    defaults.merge( params ).tap do |p|
+    defs    = defaults.dup
+    headers = params.delete :headers
+
+    defs[:headers].merge! headers || {}
+
+    defs.merge( params ).tap do |p|
       p[:body] = p[:body].to_json
     end
   end
@@ -36,7 +41,7 @@ class HttpStubs
 
   def api_description
     @rspec.stub_request( :any, 'example.com/api' )
-      .to_return response( body:schema )
+      .to_return response( body:schema, headers:{ 'Cache-Control' => 'max-age=3600, public' } )
   end
 
   def unknown_resource

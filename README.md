@@ -91,10 +91,17 @@ the API contains, it can't navigate around it or parse any of it's responses.
 This response will be requested by Frenetic whenever a call to
 `YourAPI.description` is made.
 
-**Note:** It is highly advised that you implement some sort of caching in both
-your API server as well as your API client. Refer to the [Caching][caching] section for
-more information.
+**Note:** It is highly advised that your API return Cache-Control headers in
+this response. Frenetic needs to frequently refer to the API description to see
+what is possible. This will result in lots of HTTP requests if you don't tell
+it how long to wait before checking again.
 
+If the API does return Cache-Control headers, Frenetic will always cache this
+response regardless of which caching middleware you have configured or even if
+you have caching disabled.
+
+If you have no control over the API, refer to the
+[Default Root Cache Age][root_cache] section.
 
 
 
@@ -250,6 +257,17 @@ Frenetic.new( url:url, adapter:Faraday::Adapter::Patron )
 ```
 
 
+#### Default Root Cache Age
+
+If you have no control over the API, you can explicitly tell Frenetic how long
+to cache the API description for:
+
+```ruby
+Frenetic.new( url:url, default_root_cache_age:1.hour )
+```
+
+
+
 #### Faraday Middleware
 
 Frenetic will yield its internal Faraday connection during initialization:
@@ -341,6 +359,7 @@ ideas on how to support other Hypermedia formats like [Collection+JSON][coll_jso
 [spire.io]: http://api.spire.io/
 [caching]: #response-caching
 [faraday]: https://github.com/technoweenie/faraday
+[root_cache]: #default-root-cache-age
 [adapters]: https://github.com/lostisland/faraday/blob/c26a060acdd9eae356409c2ca79f1c22f8263de9/lib/faraday/adapter.rb#L7-L17
 [rack_cache]: https://github.com/rtomayko/rack-cache
 [coll_json]: http://amundsen.com/media-types/collection/
