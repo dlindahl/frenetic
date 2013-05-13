@@ -1,0 +1,1 @@
+require 'frenetic/concerns/resource_mockery'

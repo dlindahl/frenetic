@@ -47,14 +47,14 @@ class Frenetic
     end
 
     def initialize( p = {} )
-      @params = (p || {}).with_indifferent_access
+      build_params p
       @attrs  = {}
 
       properties.keys.each do |k|
         @attrs[k] = @params[k]
       end
 
-      @structure = structure.new( *@attrs.values )
+      build_structure
     end
 
     def attributes
@@ -74,7 +74,7 @@ class Frenetic
     end
 
     def inspect
-      attrs = @structure.each_pair.collect do |k,v|
+      attrs = attributes.collect do |k,v|
         val = v.is_a?(String) ? "\"#{v}\"" : v || 'nil'
         "#{k}=#{val}"
       end.join(' ')
@@ -93,6 +93,14 @@ class Frenetic
     end
 
   private
+
+    def build_params( p )
+      @params = (p || {}).with_indifferent_access
+    end
+
+    def build_structure
+      @structure = structure.new( *@attrs.values )
+    end
 
     def namespace
       self.class.namespace

@@ -340,9 +340,54 @@ the schema has changed. If so, it will redefine the the getter methods available
 on your Class. This is what Hypermedia APIs are all about, a loose coupling
 between client and server.
 
+#### Mocking Resources
 
+Sometimes, when you are writing tests for your API client, it is helpful to have
+a mock instance of your API resource to play with.
 
+Frenetic provides a mixin that removes some of the HTTP interactions required
+when interacting with a Hypermedia API. It essentially turns your resource
+into a fancy OpenStruct, allowing you to assign whatever attributes you want.
 
+You can enable this by directly mixing in the behavior into your resource:
+
+```ruby
+require 'frenetic/resource_mockery'
+
+MyResource.send :include, Frenetic::ResourceMockery
+```
+
+Or by creating a special Class specifically for testing (which is recommended)
+
+```ruby
+# models/my_mock_resource.rb
+require 'frenetic/resource_mockery'
+
+class MyMockResource < MyResource
+  include Frenetic::ResourceMockery
+
+  def default_attributes
+    {
+      name: 'Mock Name',
+      city: 'Mock City'
+    }
+  end
+end
+
+# spec/integrations/my_integration_spec.rb
+describe 'My contrived integration test' do
+  it 'returns a Resource' do
+    MyResource.stub(:find).and_return MyMockResource.new city:'Washington, DC'
+
+    do_my_thing
+
+    payee.city.should == 'Washington, DC'
+  end
+end
+```
+
+As you can see, this allows you to supply some default values for the attributes
+of your resource to ease object creation in testing.
 
 ## Contributing
 
