@@ -70,6 +70,16 @@ describe Frenetic::Configuration do
       subject.should include accept:'MIME'
       subject.should include x_foo:'BAR'
     end
+
+    context 'with a custom User-Agent' do
+      let(:cfg) do
+        { headers:{ user_agent:'Foo v1.1' } }
+      end
+
+      it 'should append the Frenentic User-Agent' do
+        subject[:user_agent].should match %r{\AFoo v1.1 \(Frenetic v.[^;]*; [^)]*\)\Z}
+      end
+    end
   end
 
   describe '#password' do

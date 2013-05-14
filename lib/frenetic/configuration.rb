@@ -53,7 +53,13 @@ class Frenetic
     end
 
     def headers
-      @@defaults[:headers].merge( @_cfg[:headers] || {} )
+      @@defaults[:headers].merge( @_cfg[:headers] || {} ).tap do |h|
+        if @_cfg[:headers] && @_cfg[:headers][:user_agent]
+          if h[:user_agent] != @@defaults[:headers][:user_agent]
+            h[:user_agent] = "#{h[:user_agent]} (#{@@defaults[:headers][:user_agent]})"
+          end
+        end
+      end
     end
 
     def password
