@@ -74,7 +74,7 @@ describe Frenetic::ResourceCollection do
   end
 
   describe '#get' do
-    before { @stubs.known_resource }
+    before { @stubs.known_instance }
 
     subject { super().get(1) }
 

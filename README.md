@@ -340,6 +340,19 @@ the schema has changed. If so, it will redefine the the getter methods available
 on your Class. This is what Hypermedia APIs are all about, a loose coupling
 between client and server.
 
+#### Requesting Resources
+
+Given the above `Order` example, and a supporting API, you can query the API
+like so:
+
+```ruby
+> Order.find(1)
+# <Order id=1 total=54.47>
+
+> Order.all
+# [<Order id=1 total=54.47>,<Order id=2 total=42.00>]
+```
+
 #### Mocking Resources
 
 Sometimes, when you are writing tests for your API client, it is helpful to have

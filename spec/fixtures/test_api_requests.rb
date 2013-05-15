@@ -53,14 +53,25 @@ class HttpStubs
       .to_return response( body:schema, headers:{ 'Cache-Control' => 'max-age=3600, public' } )
   end
 
-  def unknown_resource
+  def unknown_instance
     @rspec.stub_request( :get, 'example.com/api/my_temp_resources/1' )
       .to_return response( body:{ 'error' => '404 Not Found' }, status:404 )
   end
 
-  def known_resource
+  def known_instance
     @rspec.stub_request( :get, 'example.com/api/my_temp_resources/1' )
       .to_return response( body:{ 'name' => 'Resource Name' } )
+  end
+
+  def known_resource
+    @rspec.stub_request( :get, 'example.com/api/my_temp_resources' )
+      .to_return response( body:{
+        '_embedded' => {
+          'my_temp_resources' => [
+            { 'name' => 'Resource Name' }
+          ]
+        }
+      } )
   end
 
   def schema

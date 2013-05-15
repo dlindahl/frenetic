@@ -10,6 +10,12 @@ class Frenetic
           new response.body
         end
       end
+
+      def all
+        if response = api.get( collection_url ) and response.success?
+          Frenetic::ResourceCollection.new self, response.body
+        end
+      end
     end
   end
 end
