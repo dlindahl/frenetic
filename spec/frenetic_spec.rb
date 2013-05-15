@@ -78,10 +78,28 @@ describe Frenetic do
       end
 
       context 'JSON parsing error' do
-        before { @stubs.api_client_error :text }
+        context 'for an otherwise successful response' do
+          before { @stubs.api_html_response }
 
-        it 'should raise an error' do
-          expect{ subject }.to raise_error Frenetic::ParsingError
+          it 'should raise an error' do
+            expect{ subject }.to raise_error Frenetic::ParsingError
+          end
+        end
+
+        context 'for a server error' do
+          before { @stubs.api_server_error :text }
+
+          it 'should raise an error' do
+            expect{ subject }.to raise_error Frenetic::ServerError, '500 Error encountered'
+          end
+        end
+
+        context 'for a client error' do
+          before { @stubs.api_client_error :text }
+
+          it 'should raise an error' do
+            expect{ subject }.to raise_error Frenetic::ClientError, '404 Error encountered'
+          end
         end
       end
     end

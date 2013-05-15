@@ -13,7 +13,13 @@ class Frenetic
           raise ClientError, env[:body]['error']
         end
       rescue Faraday::Error::ParsingError => err
-        raise ParsingError, err.message
+        if (500...599).include? env[:status]
+          raise ServerError, "#{env[:status]} Error encountered"
+        elsif (400...499).include? env[:status]
+          raise ClientError, "#{env[:status]} Error encountered"
+        else
+          raise ParsingError, err.message
+        end
       end
 
     end

@@ -25,9 +25,18 @@ class HttpStubs
     end
   end
 
-  def api_server_error
+  def api_html_response
     @rspec.stub_request( :any, 'example.com/api' )
-      .to_return response( body:{error:'500 Server Error'}, status:500 )
+      .to_return response( body:'Non-JSON response', status:200 )
+  end
+
+  def api_server_error( type = :json )
+    body = '500 Server Error'
+
+    body = { 'error' => body }.to_json if type == :json
+
+    @rspec.stub_request( :any, 'example.com/api' )
+      .to_return response( body:body, status:500 )
   end
 
   def api_client_error( type = :json )
