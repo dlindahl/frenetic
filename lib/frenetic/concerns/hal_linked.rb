@@ -28,6 +28,12 @@ class Frenetic
         parse_link link, params
       end
 
+      def collection_url
+        link = links[namespace.pluralize] or raise HypermediaError, %Q{No Hypermedia GET Url found for the resource "#{namespace.pluralize}"}
+
+        link['href']
+      end
+
       def parse_link( link, params = {} )
         if link['templated']
           expand_link link, params

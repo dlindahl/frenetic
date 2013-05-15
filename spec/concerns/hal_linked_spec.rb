@@ -113,4 +113,26 @@ describe Frenetic::HalLinked do
       end
     end
   end
+
+  describe '.collection_url' do
+    subject { MyTempResource.collection_url }
+
+    before { @stubs.api_description }
+
+    context 'for an unknown resource' do
+      before do
+        MyTempResource.stub(:namespace).and_return Time.now.to_i.to_s
+      end
+
+      it 'should raise an error' do
+        expect{ subject }.to raise_error Frenetic::HypermediaError
+      end
+    end
+
+    context 'with a non-templated URL' do
+      it 'simply return the URL' do
+        subject.should == '/api/my_temp_resources'
+      end
+    end
+  end
 end
