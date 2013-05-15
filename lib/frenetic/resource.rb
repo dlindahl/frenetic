@@ -69,8 +69,10 @@ class Frenetic
       @structure
     end
 
-    def __setobj__
-      @structure
+    def __setobj__( obj )
+      @attributes = nil
+
+      @structure = obj
     end
 
     def inspect
