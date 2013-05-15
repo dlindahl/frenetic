@@ -31,6 +31,7 @@ class Frenetic
         default_root_cache_age: default_root_cache_age,
         headers:   headers,
         password:  password,
+        ssl:       ssl,
         url:       url,
         username:  username
       }
@@ -64,6 +65,10 @@ class Frenetic
 
     def password
       @_cfg[:password] || @_cfg[:api_key]
+    end
+
+    def ssl
+      @_cfg[:ssl] || { verify:true }
     end
 
     def url

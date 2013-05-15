@@ -18,6 +18,7 @@ describe Frenetic::Configuration do
     it { should include :default_root_cache_age }
     it { should include :headers }
     it { should include :password }
+    it { should include :ssl }
     it { should include :url }
     it { should include :username }
   end
@@ -92,6 +93,12 @@ describe Frenetic::Configuration do
 
       it { should == 'API_KEY' }
     end
+  end
+
+  describe '#ssl' do
+    subject { instance.ssl }
+
+    it { should include verify:true }
   end
 
   describe '#url' do
