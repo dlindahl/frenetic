@@ -5,8 +5,10 @@ class Frenetic
     extend ActiveSupport::Concern
 
     module ClassMethods
-      def find( id = nil )
-        if response = api.get( member_url(id) ) and response.success?
+      def find( params = {} )
+        params = { id:params } unless params.is_a? Hash
+
+        if response = api.get( member_url(params) ) and response.success?
           new response.body
         end
       end

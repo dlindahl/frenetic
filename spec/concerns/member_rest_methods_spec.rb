@@ -28,6 +28,14 @@ describe Frenetic::MemberRestMethods do
       it 'should return the instance' do
         expect(subject).to be_a MyTempResource
       end
+
+      context 'and a Hash argument' do
+        subject { MyTempResource.find id:1 }
+
+        it 'should return the instance' do
+          expect(subject).to be_a MyTempResource
+        end
+      end
     end
 
     context 'for an unknown instance' do
