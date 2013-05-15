@@ -38,16 +38,16 @@ describe Frenetic::HalLinked do
 
     subject { MyTempResource.new(_links).member_url }
 
-      let(:_links) do
-        {
-          '_links' => {
-            'self' => { 'href' => '/api/self' },
-            'my_temp_resource' => {
-              'href' => '/api/my_temp_resource/{id}', 'templated' => true
-            }
+    let(:_links) do
+      {
+        '_links' => {
+          'self' => { 'href' => '/api/self' },
+          'my_temp_resource' => {
+            'href' => '/api/my_temp_resource/{id}', 'templated' => true
           }
         }
-      end
+      }
+    end
 
     context 'with a link that matches the resource name' do
       it 'should return the named link' do
