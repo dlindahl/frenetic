@@ -67,6 +67,12 @@ describe Frenetic::ResourceCollection do
     subject.links.should_not be_empty
   end
 
+  context 'for a non-embedded resource' do
+    subject { described_class.new(MyTempResource) }
+
+    it { should be_empty }
+  end
+
   describe '#get' do
     before { @stubs.known_resource }
 

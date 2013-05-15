@@ -9,7 +9,7 @@ class Frenetic
     def initialize( resource, params = {} )
       @resource_class = resource
       @resources      = []
-      @params         = params
+      @params         = params || {}
 
       extract_resources!
     end
@@ -37,9 +37,13 @@ class Frenetic
   private
 
     def extract_resources!
-      @resources = @params['_embedded'][collection_key].collect do |resource|
+      @resources = embedded_collection.collect do |resource|
         @resource_class.new resource
       end
+    end
+
+    def embedded_collection
+      @params.fetch('_embedded',{}).fetch(collection_key, [])
     end
 
   end
