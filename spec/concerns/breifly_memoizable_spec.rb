@@ -53,6 +53,16 @@ describe BrieflyMemoizable do
 
           instance.fetch
         end
+
+        context 'after it has been reloaded' do
+          before { instance.reload_fetch! }
+
+          it 'should be called' do
+            instance.should_receive(:external_call).once.and_call_original
+
+            instance.fetch
+          end
+        end
       end
     end
   end

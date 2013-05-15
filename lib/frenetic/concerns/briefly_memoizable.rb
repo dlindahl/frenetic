@@ -23,6 +23,10 @@ module BrieflyMemoizable
                                                                                  #
           #{memoized_ivar} ||= #{original_method}(*args)                         #   @mime_type ||= _unmemoized_mime_type(*args)
         end                                                                      # end
+
+        def reload_#{symbol}!                                                    # def reload_mime_type!
+          #{memoized_ivar} = nil                                                 #   @mime_type = nil
+        end                                                                      # end
       EOS
     end
   end
