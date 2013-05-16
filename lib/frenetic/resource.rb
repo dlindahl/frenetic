@@ -46,6 +46,14 @@ class Frenetic
       (api.schema[namespace]||{})['properties'] or raise HypermediaError, %Q{Could not find schema definition for the resource "#{namespace}"}
     end
 
+    def self.as_mock( params = {} )
+      raise Frenetic::ClientError, "Mock resource not defined for #{namespace}." \
+                                    " Subclass #{self} and mixin Frenetic::ResourceMockery" \
+                                    " to define a mock" unless @mock_class
+
+      @mock_class.new params
+    end
+
     def initialize( p = {} )
       build_params p
       @attrs  = {}
@@ -110,6 +118,10 @@ class Frenetic
 
     def properties
       self.class.properties
+    end
+
+    def self.test_mode?
+      api_client.config.test_mode
     end
 
   end

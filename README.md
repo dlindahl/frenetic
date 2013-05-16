@@ -402,6 +402,43 @@ end
 As you can see, this allows you to supply some default values for the attributes
 of your resource to ease object creation in testing.
 
+
+
+### Integration Testing
+
+When it comes time to write integration tests for your API client, you can either
+stub out all of the HTTP requests with something like WebMock or VCR, or you can
+use Frenetic in `test_mode`
+
+```ruby
+Frenetic.new( url:url, test_mode:true )
+# ...or...
+api = Frenetic.new(url:url)
+api.config.test_mode = true
+```
+
+Doing so will allow `Frenetic::Resource.find` to return a mock resource instead
+of querying your API for what is available.
+
+Example:
+
+```ruby
+class MyResource < Frenetic::Resource
+  api_client { Frenetic.new(url) }
+end
+
+class MyMockResource < MyResource
+  include Frenetic::ResourceMockery
+end
+
+> MyResource.api_client.config.test_mode = true
+# true
+> MyResource.find(99)
+# <MyMockResource id=99>
+```
+
+
+
 ## Contributing
 
 1. Fork it

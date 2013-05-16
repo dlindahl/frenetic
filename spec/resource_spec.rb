@@ -152,6 +152,32 @@ describe Frenetic::Resource do
     end
   end
 
+  describe '.as_mock' do
+    subject { MyNamespace::MyTempResource.as_mock id:99 }
+
+    context 'without a defined Mock-class' do
+      it 'should raise an error' do
+        expect{subject}.to raise_error Frenetic::ClientError
+      end
+    end
+
+    context 'with a defined Mock-class' do
+      before do
+        stub_const 'MyNamespace::MyMockResource', Class.new(MyNamespace::MyTempResource)
+
+        MyNamespace::MyMockResource.send :include, Frenetic::ResourceMockery
+      end
+
+      it 'should return a mock instance of the resource' do
+        expect(subject).to be_an_instance_of MyNamespace::MyMockResource
+      end
+
+      it 'should initialize the mock with the provided values' do
+        expect(subject.id).to eq 99
+      end
+    end
+  end
+
   describe '#initialize' do
     before { @stubs.api_description }
 

@@ -1,7 +1,15 @@
 require 'ostruct'
+require 'active_support/concern'
 
 class Frenetic
   module ResourceMockery
+    extend ActiveSupport::Concern
+
+    included do
+      # I'm sure this violates some sort of CS principle or best practice,
+      # but it solves the problem for now.
+      superclass.send :instance_variable_set, '@mock_class', self
+    end
 
     def attributes
       @params

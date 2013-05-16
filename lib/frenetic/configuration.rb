@@ -32,6 +32,7 @@ class Frenetic
         headers:   headers,
         password:  password,
         ssl:       ssl,
+        test_mode: test_mode,
         url:       url,
         username:  username
       }
@@ -69,6 +70,10 @@ class Frenetic
 
     def ssl
       @_cfg[:ssl] || { verify:true }
+    end
+
+    def test_mode
+      @_cfg[:test_mode] || false
     end
 
     def url

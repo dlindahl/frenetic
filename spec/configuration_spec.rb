@@ -19,6 +19,7 @@ describe Frenetic::Configuration do
     it { should include :headers }
     it { should include :password }
     it { should include :ssl }
+    it { should include :test_mode }
     it { should include :url }
     it { should include :username }
   end
@@ -99,6 +100,12 @@ describe Frenetic::Configuration do
     subject { instance.ssl }
 
     it { should include verify:true }
+  end
+
+  describe '#test_mode' do
+    subject { instance.test_mode }
+
+    it { should be_false }
   end
 
   describe '#url' do

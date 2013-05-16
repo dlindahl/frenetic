@@ -45,6 +45,20 @@ describe Frenetic::MemberRestMethods do
         expect{ subject }.to raise_error Frenetic::ClientError
       end
     end
+
+    context 'in test mode' do
+      let(:test_cfg) { { url:'http://example.com/api', test_mode:true } }
+
+      before do
+        stub_const 'MyMockResource', Class.new(MyTempResource)
+
+        MyMockResource.send :include, Frenetic::ResourceMockery
+      end
+
+      it 'should return a mock resource' do
+        expect(subject).to be_an_instance_of MyMockResource
+      end
+    end
   end
 
   describe '.all' do
@@ -61,6 +75,14 @@ describe Frenetic::MemberRestMethods do
 
       it 'should instantiate all resources in the collection' do
         expect(subject.first).to be_an_instance_of MyTempResource
+      end
+    end
+
+    context 'in test mode' do
+      let(:test_cfg) { { url:'http://example.com/api', test_mode:true } }
+
+      it 'should return an empty collection' do
+        expect(subject).to be_empty
       end
     end
   end
