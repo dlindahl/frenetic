@@ -176,7 +176,7 @@ end
 
 #### Authentication
 
-Frenetic supports both Basic Auth and Tokens Auth via the appropriate Faraday
+Frenetic supports both Basic Auth and Token Auth via the appropriate Faraday
 middleware.
 
 ##### Basic Auth
