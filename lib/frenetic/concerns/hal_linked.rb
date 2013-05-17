@@ -34,7 +34,9 @@ class Frenetic
         link['href']
       end
 
-      def parse_link( link, params = {} )
+      def parse_link( link, params )
+        params ||= {}
+
         if link['templated']
           expand_link link, params
         else
@@ -51,6 +53,13 @@ class Frenetic
           params = infer_url_template_values tmpl, params
         end
 
+        unless expandable?( tmpl, params )
+          raise LinkTemplateError,  "Hyperlink template not expandable, not " \
+                                    "enough parameters (" \
+                                    "template: \"#{link['href']}\", " \
+                                    "parameters: #{params})"
+        end
+
         tmpl.expand( params ).to_s
       end
 
@@ -58,6 +67,10 @@ class Frenetic
         key = tmpl.variables.first
 
         { key => params }
+      end
+
+      def expandable?( tmpl, params )
+        (tmpl.variables & params.keys.map(&:to_s)).any?
       end
 
     end

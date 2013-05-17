@@ -36,7 +36,9 @@ describe Frenetic::HalLinked do
   describe '#member_url' do
     before { @stubs.api_description }
 
-    subject { MyTempResource.new(_links).member_url }
+    subject { MyTempResource.new(_links).member_url params }
+
+    let(:params) {}
 
     let(:_links) do
       {
@@ -50,8 +52,18 @@ describe Frenetic::HalLinked do
     end
 
     context 'with a link that matches the resource name' do
-      it 'should return the named link' do
-        subject.should == '/api/my_temp_resource/'
+      context 'and there are not enough parameters to satisfy the template' do
+        it 'should raise an error' do
+          expect{subject}.to raise_error Frenetic::LinkTemplateError
+        end
+      end
+
+      context 'and enough parameters to satisfy the template' do
+        let(:params) { { id:1 } }
+
+        it 'should return the named link' do
+          subject.should == '/api/my_temp_resource/1'
+        end
       end
     end
 
