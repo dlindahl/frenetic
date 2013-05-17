@@ -12,14 +12,6 @@ class Frenetic
     include HalLinked
     include MemberRestMethods
 
-    def api
-      self.class.api
-    end
-
-    def self.api
-      api_client
-    end
-
     def self.api_client( client = nil )
       if client
         @api_client = client
@@ -31,6 +23,8 @@ class Frenetic
         @api_client
       end
     end
+    # Alias class method hack
+    def self.api; api_client; end
 
     def self.namespace( namespace = nil )
       if namespace
@@ -64,6 +58,11 @@ class Frenetic
 
       build_structure
     end
+
+    def api_client
+      self.class.api_client
+    end
+    alias :api :api_client
 
     def attributes
       @attributes ||= begin
