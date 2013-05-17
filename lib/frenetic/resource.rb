@@ -91,7 +91,7 @@ class Frenetic
         "#{k}=#{val}"
       end.join(' ')
 
-      ivars = (instance_variables - [:@structure]).map do |k|
+      ivars = (instance_variables - [:@structure, :@attributes]).map do |k|
         val = instance_variable_get k
         val = val.is_a?(String) ? "\"#{val}\"" : val || 'nil'
 
