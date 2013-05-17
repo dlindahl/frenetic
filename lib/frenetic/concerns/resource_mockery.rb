@@ -27,6 +27,12 @@ class Frenetic
       {}
     end
 
+    module ClassMethods
+      def api_client
+        superclass.api_client
+      end
+    end
+
   private
 
     def build_params( p )
