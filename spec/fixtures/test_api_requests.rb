@@ -81,7 +81,15 @@ class HttpStubs
           my_temp_resource: {
             description: 'Humanized resource description',
             properties: {
+              id:   'number',
               name: 'string'
+            }
+          },
+          abstract_resource: {
+            description: 'A random thing',
+            properties: {
+              id:    'number',
+              genus: 'string'
             }
           }
         }

@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Frenetic::Resource do
   let(:test_cfg) { { url:'http://example.com/api' } }
 
-  let(:my_temp_resource) do
+  def abstract_resource
     cfg = test_cfg
 
     Class.new(described_class) do
@@ -12,7 +12,7 @@ describe Frenetic::Resource do
   end
 
   before do
-    stub_const 'MyNamespace::MyTempResource', my_temp_resource
+    stub_const 'MyNamespace::MyTempResource', abstract_resource
   end
 
   describe '.api_client' do
@@ -90,7 +90,7 @@ describe Frenetic::Resource do
 
   describe '.namespace' do
     before do
-      stub_const 'MyNamespace::MyTempResource', my_temp_resource
+      stub_const 'MyNamespace::MyTempResource', abstract_resource
     end
 
     subject { MyNamespace::MyTempResource.namespace }
@@ -207,6 +207,35 @@ describe Frenetic::Resource do
       it 'should set the appropriate values' do
         subject.name.should == 'foo'
       end
+
+      context 'and an embedded resource' do
+        let(:args) do
+          super().merge({
+            '_embedded' => {
+              'abstract_resource' => {
+                'id' => 99,
+                'genus' => 'canine'
+              }
+            }
+          })
+        end
+
+        context 'this is of a known type' do
+          before do
+            stub_const 'MyNamespace::AbstractResource', abstract_resource
+          end
+
+          it 'should instantiate the embedded resource' do
+            expect(subject.abstract_resource).to be_an_instance_of MyNamespace::AbstractResource
+          end
+        end
+
+        context 'this is of a known type' do
+          it 'should instantiate a shim of the embedded resource' do
+            expect(subject.abstract_resource).to be_an_instance_of OpenStruct
+          end
+        end
+      end
     end
 
     context 'with unknown attributes' do
@@ -239,9 +268,9 @@ describe Frenetic::Resource do
   describe '#attributes' do
     before { @stubs.api_description }
 
-    subject { MyNamespace::MyTempResource.new(name:'me').attributes }
+    subject { MyNamespace::MyTempResource.new(id:54, name:'me').attributes }
 
-    it { should == { 'name' => 'me' } }
+    it { should == { 'id' => 54, 'name' => 'me' } }
   end
 
 end

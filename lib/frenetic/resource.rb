@@ -1,4 +1,5 @@
 require 'delegate'
+require 'ostruct'
 require 'active_support/inflector'
 require 'active_support/core_ext/hash/indifferent_access'
 
@@ -59,6 +60,8 @@ class Frenetic
         @attrs[k] = @params[k]
       end
 
+      extract_embedded_resources
+
       build_structure
     end
 
@@ -108,6 +111,21 @@ class Frenetic
 
     def build_params( p )
       @params = (p || {}).with_indifferent_access
+    end
+
+    def extract_embedded_resources
+      class_namespace = self.class.to_s.deconstantize
+
+      @params.fetch('_embedded',{}).each do |k,v|
+        class_name = "#{class_namespace}::#{k.classify}"
+        klass      = class_name.constantize rescue OpenStruct
+
+        @attrs[k] = if self.class.test_mode? || is_a?(ResourceMockery)
+          klass.as_mock v
+        else
+          klass.new v
+        end
+      end
     end
 
     def build_structure
