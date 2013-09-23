@@ -14,7 +14,7 @@ class Frenetic
   include Configurable
   include BrieflyMemoizable
 
-  def_delegators :connection, :get, :put, :post, :delete
+  def_delegators :connection, :get, :put, :patch, :post, :delete
 
   Error           = Class.new(StandardError)
   ConfigError     = Class.new(Error)

@@ -133,6 +133,16 @@ describe Frenetic do
     end
   end
 
+  describe '#patch' do
+    subject { instance.patch '/foo' }
+
+    it 'should delegate to Faraday' do
+      instance.connection.should_receive :patch
+
+      subject
+    end
+  end
+
   describe '#post' do
     subject { instance.post '/foo' }
 
