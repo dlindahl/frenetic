@@ -41,13 +41,17 @@ class Frenetic
     def cache
       if @_cfg[:cache] == :rack
         {
-          metastore:     'file:tmp/rack/meta',
-          entitystore:   'file:tmp/rack/body',
+          metastore:     "file:tmp/rack/meta/#{cache_key}",
+          entitystore:   "file:tmp/rack/body/#{cache_key}",
           ignore_headers: %w{Authorization Set-Cookie X-Content-Digest}
         }
       else
         {}
       end
+    end
+
+    def cache_key
+      Digest::MD5.hexdigest url.hostname
     end
 
     def default_root_cache_age

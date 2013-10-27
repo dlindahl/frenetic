@@ -39,12 +39,12 @@ describe Frenetic::Configuration do
 
     context 'with a value of :rack' do
       let(:cfg) do
-        { cache: :rack }
+        { cache: :rack, url:'http://example.com' }
       end
 
       it 'should return Rack::Cache options' do
-        subject.should include metastore:'file:tmp/rack/meta'
-        subject.should include entitystore:'file:tmp/rack/body'
+        subject.should include metastore:'file:tmp/rack/meta/5ababd603b22780302dd8d83498e5172'
+        subject.should include entitystore:'file:tmp/rack/body/5ababd603b22780302dd8d83498e5172'
         subject.should include ignore_headers:%w{Authorization Set-Cookie X-Content-Digest}
       end
     end
