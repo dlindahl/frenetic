@@ -1,5 +1,6 @@
 require 'active_support/concern'
-require 'addressable/template'
+
+require 'frenetic/hypermedia_link_set'
 
 class Frenetic
   module HalLinked
@@ -14,7 +15,7 @@ class Frenetic
 
       link = links[resource] || links['self'] or raise HypermediaError, %Q{No Hypermedia GET Url found for the resource "#{resource}"}
 
-      self.class.parse_link link, params
+      HypermediaLinkSet.new( link ).href params
     end
 
     module ClassMethods
@@ -25,52 +26,13 @@ class Frenetic
       def member_url( params = {} )
         link = links[namespace] or raise HypermediaError, %Q{No Hypermedia GET Url found for the resource "#{namespace}"}
 
-        parse_link link, params
+        HypermediaLinkSet.new( link ).href params
       end
 
       def collection_url
         link = links[namespace.pluralize] or raise HypermediaError, %Q{No Hypermedia GET Url found for the resource "#{namespace.pluralize}"}
 
-        link['href']
-      end
-
-      def parse_link( link, params )
-        params ||= {}
-
-        if link['templated']
-          expand_link link, params
-        else
-          link['href']
-        end
-      end
-
-    private
-
-      def expand_link( link, params )
-        tmpl = Addressable::Template.new link['href']
-
-        if params && !params.is_a?(Hash)
-          params = infer_url_template_values tmpl, params
-        end
-
-        unless expandable?( tmpl, params )
-          raise LinkTemplateError,  "Hyperlink template not expandable, not " \
-                                    "enough parameters (" \
-                                    "template: \"#{link['href']}\", " \
-                                    "parameters: #{params})"
-        end
-
-        tmpl.expand( params ).to_s
-      end
-
-      def infer_url_template_values( tmpl, params )
-        key = tmpl.variables.first
-
-        { key => params }
-      end
-
-      def expandable?( tmpl, params )
-        (tmpl.variables & params.keys.map(&:to_s)).any?
+        HypermediaLinkSet.new( link ).href
       end
 
     end

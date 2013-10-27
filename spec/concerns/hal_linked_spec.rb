@@ -36,34 +36,33 @@ describe Frenetic::HalLinked do
   describe '#member_url' do
     before { @stubs.api_description }
 
-    subject { MyTempResource.new(_links).member_url params }
-
-    let(:params) {}
-
-    let(:_links) do
-      {
-        '_links' => {
-          'self' => { 'href' => '/api/self' },
-          'my_temp_resource' => {
-            'href' => '/api/my_temp_resource/{id}', 'templated' => true
-          }
-        }
-      }
-    end
+    subject { MyTempResource.new(_links).member_url }
 
     context 'with a link that matches the resource name' do
-      context 'and there are not enough parameters to satisfy the template' do
-        it 'should raise an error' do
-          expect{subject}.to raise_error Frenetic::LinkTemplateError
-        end
+      let(:_links) do
+        {
+          '_links' => {
+            'self' => { 'href' => '/api/self' },
+            'my_temp_resource' => {
+              'href' => '/api/my_temp_resource'
+            }
+          }
+        }
       end
 
-      context 'and enough parameters to satisfy the template' do
-        let(:params) { { id:1 } }
+      it 'should process the link' do
+        Frenetic::HypermediaLinkSet.any_instance
+          .should_receive( :href )
+          .with( {} )
+          .and_call_original
 
-        it 'should return the named link' do
-          subject.should == '/api/my_temp_resource/1'
-        end
+        subject
+      end
+
+      it 'should find the appropriate link' do
+        # Admittedly, this isn't the best test in the world, but I wanted to
+        # ensure that the correct link is found out of the set
+        expect(subject).to eq '/api/my_temp_resource'
       end
     end
 
@@ -74,55 +73,37 @@ describe Frenetic::HalLinked do
         }
       end
 
+      it 'should process the link' do
+        Frenetic::HypermediaLinkSet.any_instance
+          .should_receive( :href )
+          .with( {} )
+          .and_call_original
+
+        subject
+      end
+
       it 'should return the :self link' do
+        # Admittedly, this isn't the best test in the world, but I wanted to
+        # ensure that the correct link is found out of the set
         subject.should == '/api/self'
       end
     end
   end
 
   describe '.member_url' do
-    let(:args) {}
+    let(:params) { { id:1 } }
 
-    subject { MyTempResource.member_url args }
+    subject { MyTempResource.member_url params }
 
     before { @stubs.api_description }
 
-    context 'for an unknown resource' do
-      before do
-        MyTempResource.stub(:namespace).and_return Time.now.to_i.to_s
-      end
+    it 'should process the link' do
+      Frenetic::HypermediaLinkSet.any_instance
+        .should_receive( :href )
+        .with( params )
+        .and_call_original
 
-      it 'should raise an error' do
-        expect{ subject }.to raise_error Frenetic::HypermediaError
-      end
-    end
-
-    context 'with a non-templated URL' do
-      before do
-        MyTempResource.stub(:namespace).and_return 'abstract_resource'
-      end
-
-      it 'simply return the URL' do
-        subject.should == '/api/abstract_resource'
-      end
-    end
-
-    context 'with a templated URL' do
-      context 'and a non-Hash argument' do
-        let(:args) { 1 }
-
-        it 'should expand the URL template' do
-          subject.should == '/api/my_temp_resources/1'
-        end
-      end
-
-      context 'with a Hash argument' do
-        let(:args) { { id:1 } }
-
-        it 'should interpolate the URL' do
-          subject.should == '/api/my_temp_resources/1'
-        end
-      end
+      subject
     end
   end
 
@@ -141,9 +122,13 @@ describe Frenetic::HalLinked do
       end
     end
 
-    context 'with a non-templated URL' do
-      it 'simply return the URL' do
-        subject.should == '/api/my_temp_resources'
+    context 'for a known resource' do
+      it 'should process the link' do
+        Frenetic::HypermediaLinkSet.any_instance
+          .should_receive( :href )
+          .and_call_original
+
+        subject
       end
     end
   end
