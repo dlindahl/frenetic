@@ -171,7 +171,7 @@ describe Frenetic::Resource do
 
     context 'without a defined Mock-class' do
       it 'should raise an error' do
-        expect{subject}.to raise_error Frenetic::ClientError
+        expect{subject}.to raise_error Frenetic::UndefinedResourceMock
       end
     end
 

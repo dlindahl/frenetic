@@ -65,7 +65,7 @@ describe Frenetic do
         before { @stubs.api_server_error }
 
         it 'should raise an error' do
-          expect{ subject }.to raise_error Frenetic::ServerError
+          expect{ subject }.to raise_error Frenetic::ServerParsingError
         end
       end
 
@@ -82,7 +82,7 @@ describe Frenetic do
           before { @stubs.api_html_response }
 
           it 'should raise an error' do
-            expect{ subject }.to raise_error Frenetic::ParsingError
+            expect{ subject }.to raise_error Frenetic::UnknownParsingError
           end
         end
 
@@ -90,7 +90,7 @@ describe Frenetic do
           before { @stubs.api_server_error :text }
 
           it 'should raise an error' do
-            expect{ subject }.to raise_error Frenetic::ServerError, '500 Error encountered'
+            expect{ subject }.to raise_error Frenetic::ServerParsingError
           end
         end
 
@@ -98,7 +98,7 @@ describe Frenetic do
           before { @stubs.api_client_error :text }
 
           it 'should raise an error' do
-            expect{ subject }.to raise_error Frenetic::ClientError, '404 Error encountered'
+            expect{ subject }.to raise_error Frenetic::ClientParsingError
           end
         end
       end

@@ -42,10 +42,7 @@ class Frenetic
     end
 
     def self.mock_class
-      @mock_class or raise Frenetic::ClientError,
-                            "Mock resource not defined for #{namespace}." \
-                            " Subclass #{self} and mixin Frenetic::ResourceMockery" \
-                            " to define a mock"
+      @mock_class or raise Frenetic::UndefinedResourceMock.new(namespace, self)
     end
 
     def self.as_mock( params = {} )

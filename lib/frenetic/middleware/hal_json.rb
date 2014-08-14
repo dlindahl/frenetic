@@ -7,21 +7,17 @@ class Frenetic
       def process_response(env)
         super
 
-        if (500...599).include? env[:status]
-          raise ServerError, env[:body]['error']
-        elsif (400...499).include? env[:status]
-          raise ClientError, env[:body]['error']
+        case env[:status]
+        when 500...599 then raise ServerError.new(env)
+        when 400...499 then raise ClientError.new(env)
         end
       rescue Faraday::Error::ParsingError => err
-        if (500...599).include? env[:status]
-          raise ServerError, "#{env[:status]} Error encountered"
-        elsif (400...499).include? env[:status]
-          raise ClientError, "#{env[:status]} Error encountered"
-        else
-          raise ParsingError, err.message
+        case env[:status]
+        when 500...599 then raise ServerParsingError.new(env)
+        when 400...499 then raise ClientParsingError.new(env)
+        else raise UnknownParsingError.new(env, err)
         end
       end
-
     end
   end
 end

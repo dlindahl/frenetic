@@ -3,6 +3,7 @@ require 'faraday'
 require 'faraday_middleware'
 
 require 'frenetic/version'
+require 'frenetic/errors'
 require 'frenetic/concerns/configurable'
 require 'frenetic/concerns/briefly_memoizable'
 require 'frenetic/middleware/hal_json'
@@ -15,14 +16,6 @@ class Frenetic
   include BrieflyMemoizable
 
   def_delegators :connection, :delete, :get, :head, :options, :patch, :post, :put
-
-  Error             = Class.new(StandardError)
-  ConfigError       = Class.new(Error)
-  ClientError       = Class.new(Error)
-  ServerError       = Class.new(Error)
-  ParsingError      = Class.new(Error)
-  HypermediaError   = Class.new(Error)
-  LinkTemplateError = Class.new(Error)
 
   def connection
     @connection ||= begin
