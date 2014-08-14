@@ -7,11 +7,11 @@ describe Frenetic::HypermediaLinkSet do
     context 'with a single link' do
       let(:links) { { href:'foo' } }
 
-      it 'should convert the argument to an array' do
+      it 'converts the argument to an array' do
         expect(subject.size).to eq 1
       end
 
-      it 'should transform it into HypermediaLink' do
+      it 'transforms it into HypermediaLink' do
         expect(subject.first).to be_an_instance_of Frenetic::HypermediaLink
       end
     end
@@ -30,10 +30,10 @@ describe Frenetic::HypermediaLinkSet do
 
         let(:links) { [link_a] }
 
-        it 'should return the HREF of the first link' do
-          link_a.should_receive( :href ).and_call_original
-
+        it 'returns the HREF of the first link' do
+          allow(link_a).to receive(:href).and_call_original
           expect(subject).to eq '/foo/bar'
+          expect(link_a).to have_received(:href)
         end
       end
 
@@ -45,7 +45,7 @@ describe Frenetic::HypermediaLinkSet do
           ]
         end
 
-        it 'should return the first link in the set' do
+        it 'returns the first link in the set' do
           expect(subject).to eq '/foo/bar'
         end
       end
@@ -60,18 +60,16 @@ describe Frenetic::HypermediaLinkSet do
 
       let(:links) { [link_a] }
 
-      it 'should find most relevant link' do
-        instance.should_receive :find_relevant_link
-
+      it 'finds most relevant link' do
+        allow(instance).to receive(:find_relevant_link)
         subject
+        expect(instance).to have_received(:find_relevant_link)
       end
 
-      it 'should pass along the template data' do
-        link_a.should_receive( :href )
-          .with( tmpl_data )
-          .and_call_original
-
+      it 'passes along the template data' do
+        allow(link_a).to receive(:href).and_call_original
         subject
+        expect(link_a).to have_received(:href).with(tmpl_data)
       end
     end
   end
@@ -88,7 +86,7 @@ describe Frenetic::HypermediaLinkSet do
         ]
       end
 
-      it 'should return the matching link' do
+      it 'returns the matching link' do
         expect(subject).to be_an_instance_of Frenetic::HypermediaLink
       end
     end
@@ -105,7 +103,7 @@ describe Frenetic::HypermediaLinkSet do
         ]
       end
 
-      it 'should return the first matching link' do
+      it 'returns the first matching link' do
         expect(subject).to eq link_a
       end
     end
@@ -118,7 +116,7 @@ describe Frenetic::HypermediaLinkSet do
         ]
       end
 
-      it 'should raise an error' do
+      it 'raises an error' do
         expect{ subject }.to raise_error Frenetic::HypermediaError
       end
     end
@@ -141,13 +139,17 @@ describe Frenetic::HypermediaLinkSet do
     context 'for a relation that exists' do
       let(:rel) { :bar }
 
-      it { should eq link_b }
+      it 'returns the desired link' do
+        expect(subject).to eq link_b
+      end
     end
 
     context 'for a relation that does not exist' do
       let(:rel) { :baz }
 
-      it { should be_nil }
+      it 'returns nothing' do
+        expect(subject).to be_nil
+      end
     end
   end
 end

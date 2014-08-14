@@ -1,13 +1,12 @@
 require 'spec_helper'
 
 describe Frenetic::Middleware::HalJson do
-
   def process(body, content_type = nil, options = {}, status = 200)
     env = {
-      body:             body,
-      request:          options,
-      response_headers: Faraday::Utils::Headers.new( headers ),
-      status:           status
+      body: body,
+      request: options,
+      response_headers: Faraday::Utils::Headers.new(headers),
+      status: status
     }
     env[:response_headers]['content-type'] = content_type if content_type
 
@@ -15,9 +14,7 @@ describe Frenetic::Middleware::HalJson do
   end
 
   let(:options) { Hash.new }
-
   let(:headers) { Hash.new }
-
   let(:middleware) do
     described_class.new(lambda {|env|
       Faraday::Response.new(env)
@@ -51,7 +48,7 @@ describe Frenetic::Middleware::HalJson do
 
     subject { process(body) }
 
-    it 'should parse the body' do
+    it 'parses the body' do
       expect(subject.body).to include 'name' => 'My Name'
     end
   end
@@ -61,23 +58,24 @@ describe Frenetic::Middleware::HalJson do
 
     context 'from the server' do
       let(:status) { 500 }
+      let(:error) do
+        { 'status' => status.to_s, error:'500 Server Error' }.to_json
+      end
 
-      let(:error) { { 'status' => status.to_s, error:'500 Server Error' }.to_json }
-
-      it 'should raise an error' do
+      it 'raises an error' do
         expect{ subject }.to raise_error Frenetic::ServerError
       end
     end
 
     context 'cause by the client' do
       let(:status) { 404 }
+      let(:error) do
+        { 'status' => status.to_s, error:'404 Not Found' }.to_json
+      end
 
-      let(:error) { { 'status' => status.to_s, error:'404 Not Found' }.to_json }
-
-      it 'should raise an error' do
+      it 'raises an error' do
         expect{ subject }.to raise_error Frenetic::ClientError
       end
     end
   end
-
 end

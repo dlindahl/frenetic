@@ -17,7 +17,6 @@ describe Frenetic::ResourceMockery do
 
   before do
     stub_const 'MyNamespace::MyMockedResource', my_mocked_resource
-
     MyNamespace::MyMockedResource.send :include, described_class
   end
 
@@ -25,32 +24,32 @@ describe Frenetic::ResourceMockery do
 
   subject { MyNamespace::MyMockedResource.new params }
 
-  it 'should violate some basic CS principles by telling the parent-class of its existence' do
+  it 'violates some basic CS principles by telling the parent-class of its existence' do
     expect(my_temp_resource.instance_variables).to include :@mock_class
   end
 
   describe '#properties' do
     subject { super().properties }
 
-    it 'should return a hash of available properties' do
-      subject.should include 'foo' => 'fixnum'
-      subject.should include 'bar' => 'string'
+    it 'returns a hash of available properties' do
+      expect(subject).to include 'foo' => 'fixnum'
+      expect(subject).to include 'bar' => 'string'
     end
   end
 
   describe '#attributes' do
     subject { super().attributes }
 
-    it 'should return a hash of the resources attributes' do
-      subject.should include 'foo' => 1
-      subject.should include 'bar' => 'baz'
-      subject.should include 'qux' => 'qux'
+    it 'returns a hash of the resources attributes' do
+      expect(subject).to include 'foo' => 1
+      expect(subject).to include 'bar' => 'baz'
+      expect(subject).to include 'qux' => 'qux'
     end
   end
 
   describe '#default_attributes' do
-    it 'should allow implementors to specify sane defaults' do
-      subject.qux.should == 'qux'
+    it 'allows implementors to specify sane defaults' do
+      expect(subject.qux).to eq 'qux'
     end
   end
 end

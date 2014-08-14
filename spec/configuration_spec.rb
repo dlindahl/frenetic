@@ -1,10 +1,12 @@
+require 'spec_helper'
+
 describe Frenetic::Configuration do
   let(:cfg) { Hash.new }
 
-  subject(:instance) { described_class.new cfg }
+  subject { described_class.new cfg }
 
   describe '#adapter' do
-    subject { instance.adapter }
+    subject { super().adapter }
 
     it 'defaults to Net::HTTP' do
       expect(subject).to eq :net_http
@@ -12,7 +14,7 @@ describe Frenetic::Configuration do
   end
 
   describe '#attributes' do
-    subject { instance.attributes }
+    subject { super().attributes }
 
     it 'includes expected attributes' do
       expect(subject).to include :adapter
@@ -33,23 +35,25 @@ describe Frenetic::Configuration do
       { api_token:'API_TOKEN' }
     end
 
-    subject { instance.api_token }
+    subject { super().api_token }
 
-    it { should == 'API_TOKEN' }
+    it 'returns the Api Token' do
+      expect(subject).to eq 'API_TOKEN'
+    end
   end
 
   describe '#cache' do
-    subject { instance.cache }
+    subject { super().cache }
 
     context 'with a value of :rack' do
       let(:cfg) do
         { cache: :rack, url:'http://example.com' }
       end
 
-      it 'should return Rack::Cache options' do
-        subject.should include metastore:'file:tmp/rack/meta/5ababd603b22780302dd8d83498e5172'
-        subject.should include entitystore:'file:tmp/rack/body/5ababd603b22780302dd8d83498e5172'
-        subject.should include ignore_headers:%w{Authorization Set-Cookie X-Content-Digest}
+      it 'returns Rack::Cache options' do
+        expect(subject).to include metastore:'file:tmp/rack/meta/5ababd603b22780302dd8d83498e5172'
+        expect(subject).to include entitystore:'file:tmp/rack/body/5ababd603b22780302dd8d83498e5172'
+        expect(subject).to include ignore_headers:%w{Authorization Set-Cookie X-Content-Digest}
       end
     end
   end
@@ -59,9 +63,11 @@ describe Frenetic::Configuration do
       { default_root_cache_age:3600 }
     end
 
-    subject { instance.default_root_cache_age }
+    subject { super().default_root_cache_age }
 
-    it { should == 3600 }
+    it 'returns the cache age' do
+      expect(subject).to eq 3600
+    end
   end
 
   describe '#headers' do
@@ -69,12 +75,12 @@ describe Frenetic::Configuration do
       { headers:{ accept:'MIME', x_foo:'BAR' } }
     end
 
-    subject { instance.headers }
+    subject { super().headers }
 
-    it 'should properly merge in nested header values' do
-      subject.should include :user_agent
-      subject.should include accept:'MIME'
-      subject.should include x_foo:'BAR'
+    it 'properly merges in nested header values' do
+      expect(subject).to include :user_agent
+      expect(subject).to include accept:'MIME'
+      expect(subject).to include x_foo:'BAR'
     end
 
     context 'with a custom User-Agent' do
@@ -82,34 +88,40 @@ describe Frenetic::Configuration do
         { headers:{ user_agent:'Foo v1.1' } }
       end
 
-      it 'should append the Frenentic User-Agent' do
-        subject[:user_agent].should match %r{\AFoo v1.1 \(Frenetic v.[^;]*; [^)]*\)\Z}
+      it 'appends the Frenentic User-Agent' do
+        expect(subject[:user_agent]).to match %r{\AFoo v1.1 \(Frenetic v.[^;]*; [^)]*\)\Z}
       end
     end
   end
 
   describe '#password' do
-    subject { instance.password }
+    subject { super().password }
 
     context 'with a specifed Api key' do
       let(:cfg) do
         { api_key:'API_KEY' }
       end
 
-      it { should == 'API_KEY' }
+      it 'returns the Api key' do
+        expect(subject).to eq 'API_KEY'
+      end
     end
   end
 
   describe '#ssl' do
-    subject { instance.ssl }
+    subject { super().ssl }
 
-    it { should include verify:true }
+    it 'returns SSL options' do
+      expect(subject).to include verify:true
+    end
   end
 
   describe '#test_mode' do
-    subject { instance.test_mode }
+    subject { super().test_mode }
 
-    it { should be_falsey }
+    it 'returns FALSE' do
+      expect(subject).to eq false
+    end
   end
 
   describe '#url' do
@@ -117,20 +129,24 @@ describe Frenetic::Configuration do
       { url:'http://example.org' }
     end
 
-    subject { instance.url }
+    subject { super().url }
 
-    it { should be_a Addressable::URI }
+    it 'converts the value into an Addressable URI' do
+      expect(subject).to be_an Addressable::URI
+    end
   end
 
   describe '#username' do
-    subject { instance.username }
+    subject { super().username }
 
     context 'with a specifed App Id' do
       let(:cfg) do
         { app_id:'APP_ID' }
       end
 
-      it { should == 'APP_ID' }
+      it 'returns the App ID' do
+        expect(subject).to eq 'APP_ID'
+      end
     end
   end
 end

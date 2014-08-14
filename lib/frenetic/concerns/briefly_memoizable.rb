@@ -30,5 +30,4 @@ module BrieflyMemoizable
       EOS
     end
   end
-
 end

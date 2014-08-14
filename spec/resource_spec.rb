@@ -34,26 +34,22 @@ describe Frenetic::Resource do
       end
 
       context 'a block argument' do
-        before do
-          configure_with_block!
-        end
+        before { configure_with_block! }
 
         subject { MyNamespace::MyTempResource.instance_variable_get '@api_client' }
 
-        it 'should save a reference to the argument' do
-          subject.should be_a Proc
+        it 'saves a reference to the argument' do
+          expect(subject).to be_a Proc
         end
       end
 
       context 'a Frenetic instance' do
-        before do
-          configure_with_instance!
-        end
+        before { configure_with_instance! }
 
         subject { MyNamespace::MyTempResource.instance_variable_get '@api_client' }
 
-        it 'should save a reference to the argument' do
-          subject.should be_an_instance_of Frenetic
+        it 'saves a reference to the argument' do
+          expect(subject).to be_an_instance_of Frenetic
         end
       end
 
@@ -62,25 +58,24 @@ describe Frenetic::Resource do
 
         context 'and a previously stored @api_client' do
           context 'Proc' do
-            before do
-              configure_with_block!
+            before { configure_with_block! }
+
+            let(:api_client) do
+              MyNamespace::MyTempResource.instance_variable_get('@api_client')
             end
 
-            it 'should call the Proc' do
-              MyNamespace::MyTempResource.instance_variable_get('@api_client')
-                .should_receive 'call'
-
+            it 'calls the Proc' do
+              allow(api_client).to receive(:call)
               subject
+              expect(api_client).to have_received(:call)
             end
           end
 
           context 'Frenetic instance' do
-            before do
-              configure_with_instance!
-            end
+            before { configure_with_instance! }
 
-            it 'should return the instance' do
-              subject.should be_an_instance_of Frenetic
+            it 'returns the instance' do
+              expect(subject).to be_an_instance_of Frenetic
             end
           end
         end
@@ -95,6 +90,10 @@ describe Frenetic::Resource do
 
     subject { MyNamespace::MyTempResource.namespace }
 
+    let(:namespace) do
+      MyNamespace::MyTempResource.instance_variable_get('@namespace')
+    end
+
     context 'with an argument' do
       before do
         MyNamespace::MyTempResource.class_eval do
@@ -102,30 +101,24 @@ describe Frenetic::Resource do
         end
       end
 
-      it 'should return that value' do
-        subject.should == 'test_spec'
+      it 'returns that value' do
+        expect(subject).to eq 'test_spec'
       end
 
-      it 'should internally save the value' do
+      it 'internally saves the value' do
         subject
-
-        ns = MyNamespace::MyTempResource.instance_variable_get '@namespace'
-
-        ns.should == 'test_spec'
+        expect(namespace).to eq 'test_spec'
       end
     end
 
     context 'with no argument' do
-      it 'should infer the value' do
-        subject.should == 'my_temp_resource'
+      it 'infers the value' do
+        expect(subject).to eq 'my_temp_resource'
       end
 
-      it 'should cache the inferrence' do
+      it 'caches the inferrence' do
         subject
-
-        ns = MyNamespace::MyTempResource.instance_variable_get '@namespace'
-
-        ns.should == 'my_temp_resource'
+        expect(namespace).to eq 'my_temp_resource'
       end
     end
   end
@@ -136,18 +129,20 @@ describe Frenetic::Resource do
     subject { MyNamespace::MyTempResource.properties }
 
     context 'for a known resource' do
-      it 'should return a list of properties defined by the API' do
-        subject.should_not be_empty
+      it 'returns a list of properties defined by the API' do
+        expect(subject).to_not be_empty
       end
     end
 
     context 'for an unknown resource' do
       before do
-        MyNamespace::MyTempResource.stub(:namespace).and_return Time.now.to_i.to_s
+        allow(MyNamespace::MyTempResource)
+          .to receive(:namespace)
+          .and_return(Time.now.to_i.to_s)
       end
 
-      it 'should raise an error' do
-        expect{ subject }.to raise_error Frenetic::HypermediaError
+      it 'raises an error' do
+        expect{subject}.to raise_error Frenetic::HypermediaError
       end
     end
   end
@@ -157,11 +152,10 @@ describe Frenetic::Resource do
 
     before do
       stub_const 'MyNamespace::MyMockResource', Class.new(MyNamespace::MyTempResource)
-
       MyNamespace::MyMockResource.send :include, Frenetic::ResourceMockery
     end
 
-    it 'should initialize the mock with the provided values' do
+    it 'initializes the mock with the provided values' do
       expect(subject.id).to eq 99
     end
   end
@@ -170,7 +164,7 @@ describe Frenetic::Resource do
     subject { MyNamespace::MyTempResource.mock_class }
 
     context 'without a defined Mock-class' do
-      it 'should raise an error' do
+      it 'raises an error' do
         expect{subject}.to raise_error Frenetic::UndefinedResourceMock
       end
     end
@@ -178,11 +172,10 @@ describe Frenetic::Resource do
     context 'with a defined Mock-class' do
       before do
         stub_const 'MyNamespace::MyMockResource', Class.new(MyNamespace::MyTempResource)
-
         MyNamespace::MyMockResource.send :include, Frenetic::ResourceMockery
       end
 
-      it 'should return a mock instance of the resource' do
+      it 'returns a mock instance of the resource' do
         expect(subject).to eq MyNamespace::MyMockResource
       end
     end
@@ -196,16 +189,16 @@ describe Frenetic::Resource do
     context 'with no arguments' do
       let(:args) {}
 
-      it 'should have default attributes' do
-        subject.name.should be_nil
+      it 'has default attributes' do
+        expect(subject.name).to be_nil
       end
     end
 
     context 'with known attributes' do
       let(:args) { { name:'foo' } }
 
-      it 'should set the appropriate values' do
-        subject.name.should == 'foo'
+      it 'sets the appropriate values' do
+        expect(subject.name).to eq 'foo'
       end
 
       context 'and an embedded resource' do
@@ -225,13 +218,13 @@ describe Frenetic::Resource do
             stub_const 'MyNamespace::AbstractResource', abstract_resource
           end
 
-          it 'should instantiate the embedded resource' do
+          it 'instantiates the embedded resource' do
             expect(subject.abstract_resource).to be_an_instance_of MyNamespace::AbstractResource
           end
         end
 
         context 'this is of a known type' do
-          it 'should instantiate a shim of the embedded resource' do
+          it 'instantiates a shim of the embedded resource' do
             expect(subject.abstract_resource).to be_an_instance_of OpenStruct
           end
         end
@@ -241,14 +234,13 @@ describe Frenetic::Resource do
     context 'with unknown attributes' do
       let(:args) { { gender:'male' } }
 
-      it 'should not create accessors' do
+      it 'does not create accessors' do
         expect{ subject.gender }.to raise_error NoMethodError
       end
 
-      it 'should be accessible in @params' do
-        params = subject.instance_variable_get( '@params' )
-
-        params.should include 'gender' => 'male'
+      it 'is accessible in @params' do
+        params = subject.instance_variable_get('@params')
+        expect(params).to include 'gender' => 'male'
       end
     end
 
@@ -256,11 +248,13 @@ describe Frenetic::Resource do
       let(:args) {}
 
       before do
-        MyNamespace::MyTempResource.stub(:namespace).and_return Time.now.to_i.to_s
+        allow(MyNamespace::MyTempResource)
+          .to receive(:namespace)
+          .and_return(Time.now.to_i.to_s)
       end
 
-      it 'should raise an error' do
-        expect{ subject }.to raise_error Frenetic::HypermediaError
+      it 'raises an error' do
+        expect{subject}.to raise_error Frenetic::HypermediaError
       end
     end
   end
@@ -270,7 +264,8 @@ describe Frenetic::Resource do
 
     subject { MyNamespace::MyTempResource.new(id:54, name:'me').attributes }
 
-    it { should == { 'id' => 54, 'name' => 'me' } }
+    it 'returns attributes of the resource' do
+      expect(subject).to eq({'id' => 54, 'name' => 'me'})
+    end
   end
-
 end

@@ -10,7 +10,6 @@ describe BrieflyMemoizable do
     MyClass.class_eval do
       def fetch
         @fetch_age = Time.now + 3600
-
         external_call
       end
       briefly_memoize :fetch
@@ -27,40 +26,33 @@ describe BrieflyMemoizable do
     context 'for an expensive method' do
       before do
         Timecop.freeze
-
         instance.fetch
+        allow(instance).to receive(:external_call).and_call_original
       end
 
       context 'which is called again outside the memoize window' do
-        before do
-          Timecop.travel Time.now + 5400
-        end
+        before { Timecop.travel Time.now + 5400 }
 
-        it 'should be called' do
-          instance.should_receive(:external_call).once.and_call_original
-
+        it 'is called' do
           instance.fetch
+          expect(instance).to have_received(:external_call).once
         end
       end
 
       context 'which is called again within the memoize window' do
-        before do
-          Timecop.travel Time.now + 1800
-        end
+        before { Timecop.travel Time.now + 1800 }
 
-        it 'should not be called' do
-          instance.should_receive(:external_call).never.and_call_original
-
+        it 'is not called' do
           instance.fetch
+          expect(instance).to_not have_received(:external_call)
         end
 
         context 'after it has been reloaded' do
           before { instance.reload_fetch! }
 
-          it 'should be called' do
-            instance.should_receive(:external_call).once.and_call_original
-
+          it 'is called' do
             instance.fetch
+            expect(instance).to have_received(:external_call).once
           end
         end
       end

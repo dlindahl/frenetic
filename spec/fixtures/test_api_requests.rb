@@ -1,7 +1,6 @@
 require 'json'
 
 class HttpStubs
-
   def initialize( rspec )
     @rspec = rspec
   end
@@ -111,7 +110,6 @@ class HttpStubs
       }
     }
   end
-
 end
 
 RSpec.configure do |c|

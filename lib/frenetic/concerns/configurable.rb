@@ -17,7 +17,6 @@ class Frenetic
 
     def initialize( cfg = {} )
       config.merge! Frenetic::Configuration.new(cfg).attributes
-
       @builder_config = Proc.new if block_given?
     end
 
@@ -44,7 +43,6 @@ class Frenetic
     def configure_caching( builder )
       if config.cache[:metastore]
         dependency 'rack-cache'
-
         builder.use FaradayMiddleware::RackCompatible, Rack::Cache::Context, config.cache
       end
     end
@@ -54,6 +52,5 @@ class Frenetic
     rescue NameError, LoadError => err
       raise ConfigError, "Missing dependency for #{self}: #{err.message}"
     end
-
   end
 end

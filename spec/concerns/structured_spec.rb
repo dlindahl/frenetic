@@ -9,74 +9,77 @@ describe Frenetic::Structured do
     end
   end
 
+  let(:signatures) do
+    described_class.class_variable_get('@@signatures')
+  end
+
+  let(:signature) do
+    { 'MyTempResourceFreneticResourceStruct' => 'barfoo' }
+  end
+
   before do
     stub_const 'MyTempResource', my_temp_resource
     MyTempResource.send :include, described_class
   end
 
-  after do
-    RSpec::Mocks.proxy_for(instance).reset
-    instance.destroy_structure!
-  end
+  after { instance.destroy_structure! }
 
   subject(:instance) { MyTempResource.new( foo:'foo', bar:'bar' ) }
 
   describe '#struct_key' do
-    subject { instance.struct_key }
+    subject { super().struct_key }
 
-    it 'should return a valid, unique Ruby constant name' do
-      subject.should == 'MyTempResourceFreneticResourceStruct'
+    it 'returns a valid, unique Ruby constant name' do
+      expect(subject).to eq 'MyTempResourceFreneticResourceStruct'
     end
   end
 
   describe '#signature' do
-    subject { instance.signature }
+    subject { super().signature }
 
-    it 'should return a unique and predictable key' do
-      subject.should == 'barfoo'
+    it 'returns a unique and predictable key' do
+      expect(subject).to eq 'barfoo'
     end
   end
 
   describe '#structure' do
-    subject { instance.structure }
+    subject { super().structure }
 
     context 'with no previously defined signature' do
       before do
-        instance.stub( :structure_expired? ).and_return true
+        allow(instance).to receive(:structure_expired?).and_return(true)
       end
 
-      it 'should rebuild the structure' do
-        instance.should_receive :rebuild_structure!
-
+      it 'rebuilds the structure' do
+        allow(instance).to receive(:rebuild_structure!).and_call_original
         subject
+        expect(instance).to have_received(:rebuild_structure!)
       end
     end
 
     context 'with a fresh signature' do
       before do
         instance.structure
-
-        instance.stub( :structure_expired? ).and_return false
+        allow(instance).to receive(:structure_expired?).and_return(false)
       end
 
-      it 'should not rebuild the structure' do
-        instance.should_receive( :rebuild_structure! ).never
-
+      it 'does not rebuild the structure' do
+        allow(instance).to receive(:rebuild_structure!)
         subject
+        expect(instance).to_not have_received(:rebuild_structure!)
       end
     end
 
     context 'with an expired signature' do
       before do
         instance.structure
-
-        instance.stub( :structure_expired? ).and_return true
+        allow(instance).to receive(:structure_expired?).and_return(true)
       end
 
-      it 'should rebuild the structure' do
-        instance.should_receive :rebuild_structure!
-
+      it 'rebuilds the structure' do
+        allow(instance).to receive(:rebuild_structure!)
         subject
+        expect(instance).to have_received(:rebuild_structure!)
       end
     end
   end
@@ -84,42 +87,40 @@ describe Frenetic::Structured do
   describe '#fetch_structure' do
     before { instance.structure }
 
-    subject { instance.fetch_structure }
+    subject { super().fetch_structure }
 
-    it "should return the resource's Struct class" do
-      subject.should == Struct::MyTempResourceFreneticResourceStruct
+    it 'returns the Struct class of the resource' do
+      expect(subject).to eq Struct::MyTempResourceFreneticResourceStruct
     end
   end
 
   describe '#rebuild_structure!' do
     before{ instance.structure }
 
-    subject { instance.rebuild_structure! }
+    subject { super().rebuild_structure! }
 
-    it 'should destroy the previous Struct' do
-      instance.should_receive(:destroy_structure!).and_call_original
-
+    it 'destroys the previous Struct' do
+      allow(instance).to receive(:destroy_structure!).and_call_original
       subject
+      expect(instance).to have_received(:destroy_structure!)
     end
 
-    it "should add cache the resource's signature" do
-      sigs = described_class.class_variable_get('@@signatures')
-
-      sigs.should include
+    it 'caches the signature of the resource' do
+      subject
+      expect(signatures).to include signature
     end
 
-    it "should build the resource's Struct" do
+    it 'builds the Struct resource' do
       subject
-
-      instance.fetch_structure.members.should == [:foo, :bar]
+      expect(instance.fetch_structure.members).to eq [:foo, :bar]
     end
   end
 
   describe '#structure_expired?' do
-    subject { instance.structure_expired? }
+    subject { super().structure_expired? }
 
     before do
-      instance.stub( :signature ).and_return new_sig
+      allow(instance).to receive(:signature).and_return(new_sig)
       described_class.class_variable_set '@@signatures', {
         'MyTempResourceFreneticResourceStruct' => old_sig
       }
@@ -129,84 +130,80 @@ describe Frenetic::Structured do
       let(:old_sig) { 'fresh' }
       let(:new_sig) { 'fresh' }
 
-      it { should be_falsey }
+      it 'return FALSE' do
+        expect(subject).to eq false
+      end
     end
 
     context 'with no predefined signature' do
       let(:old_sig) { nil }
       let(:new_sig) { 'new' }
 
-      it { should be_truthy }
+      it 'returns TRUE' do
+        expect(subject).to eq true
+      end
     end
 
     context 'with an expired signature' do
       let(:old_sig) { 'old' }
       let(:new_sig) { 'new' }
 
-      it { should be_truthy }
+      it 'returns TRUE' do
+        expect(subject).to eq true
+      end
     end
   end
 
   describe '#structure_defined?' do
-    subject { instance.structure_defined? }
-
     let(:consts) { Struct.constants || [] }
 
     before do
-      Struct.stub(:constants).and_return consts
+      allow(Struct).to receive(:constants).and_return(consts)
     end
 
-    after { RSpec::Mocks.proxy_for(Struct).reset }
+    subject { super().structure_defined? }
 
-    it 'should check if the structure is defined' do
-      instance.stub(:struct_key).and_return 'Foo'
-
-      consts.should_receive( :include? ).with :Foo
-
+    it 'checks if the structure is defined' do
+      allow(instance).to receive(:struct_key).and_return('Foo')
+      allow(consts).to receive(:include?)
       subject
+      expect(consts).to have_received(:include?).with(:Foo)
     end
   end
 
   describe '#destroy_structure!' do
     before { instance.structure }
 
-    subject { instance.destroy_structure! }
+    subject { super().destroy_structure! }
 
     context 'with an undefined structure' do
       before { instance.destroy_structure! }
 
-      it "should not attempt to remove the structure's constant" do
-        Struct.should_receive( :remove_const ).never
-
+      it 'does not attempt to remove the constant from the Struct' do
+        allow(Struct).to receive(:remove_const)
         subject
+        expect(Struct).to_not have_received(:remove_const)
       end
 
-      it 'should not remove the signature from the cache' do
-        described_class.class_variable_get('@@signatures').should_receive( :delete ).never
-
+      it 'does not remove the signature from the cache' do
+        allow(signatures).to receive(:delete)
         subject
+        expect(signatures).to_not receive(:delete)
       end
     end
 
     context 'with an predefined structure' do
-      it 'should remove the constant' do
-        Struct.constants.should include instance.struct_key.to_sym
-
+      it 'removes the constant' do
+        expect(Struct.constants).to include instance.struct_key.to_sym
         subject
-
-        Struct.constants.should_not include instance.struct_key.to_sym
+        expect(Struct.constants).to_not include instance.struct_key.to_sym
       end
 
-      it 'should remove the signature from the cache' do
-        signature = { 'MyTempResourceFreneticResourceStruct' => 'barfoo' }
-
-        described_class.class_variable_get('@@signatures').should include signature
-
+      it 'removes the signature from the cache' do
+        expect(signatures).to include signature
         subject
-
-        described_class.class_variable_get('@@signatures').should_not include signature
+        expect(signatures).to_not include signature
       end
     end
   end
-
 end

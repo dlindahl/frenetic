@@ -13,7 +13,6 @@ describe Frenetic::HalLinked do
 
   before do
     stub_const 'MyTempResource', my_temp_resource
-
     MyTempResource.send :include, described_class
   end
 
@@ -28,8 +27,8 @@ describe Frenetic::HalLinked do
 
     subject { MyTempResource.new(_links).links }
 
-    it 'should return the instances links' do
-      subject.should include 'self'
+    it 'returns the instances links' do
+      expect(subject).to include 'self'
     end
   end
 
@@ -50,16 +49,13 @@ describe Frenetic::HalLinked do
         }
       end
 
-      it 'should process the link' do
-        Frenetic::HypermediaLinkSet.any_instance
-          .should_receive( :href )
-          .with( {} )
-          .and_call_original
-
+      it 'processes the link' do
+        expect_any_instance_of(Frenetic::HypermediaLinkSet)
+          .to receive(:href).with({}).and_call_original
         subject
       end
 
-      it 'should find the appropriate link' do
+      it 'finds the appropriate link' do
         # Admittedly, this isn't the best test in the world, but I wanted to
         # ensure that the correct link is found out of the set
         expect(subject).to eq '/api/my_temp_resource'
@@ -73,19 +69,16 @@ describe Frenetic::HalLinked do
         }
       end
 
-      it 'should process the link' do
-        Frenetic::HypermediaLinkSet.any_instance
-          .should_receive( :href )
-          .with( {} )
-          .and_call_original
-
+      it 'processes the link' do
+        expect_any_instance_of(Frenetic::HypermediaLinkSet)
+          .to receive(:href).with({}).and_call_original
         subject
       end
 
-      it 'should return the :self link' do
+      it 'returns the :self link' do
         # Admittedly, this isn't the best test in the world, but I wanted to
         # ensure that the correct link is found out of the set
-        subject.should == '/api/self'
+        expect(subject).to eq '/api/self'
       end
     end
   end
@@ -93,41 +86,38 @@ describe Frenetic::HalLinked do
   describe '.member_url' do
     let(:params) { { id:1 } }
 
-    subject { MyTempResource.member_url params }
-
     before { @stubs.api_description }
 
-    it 'should process the link' do
-      Frenetic::HypermediaLinkSet.any_instance
-        .should_receive( :href )
-        .with( params )
-        .and_call_original
+    subject { MyTempResource.member_url params }
 
+    it 'processes the link' do
+      expect_any_instance_of(Frenetic::HypermediaLinkSet)
+        .to receive(:href).with( params ).and_call_original
       subject
     end
   end
 
   describe '.collection_url' do
-    subject { MyTempResource.collection_url }
-
     before { @stubs.api_description }
+
+    subject { MyTempResource.collection_url }
 
     context 'for an unknown resource' do
       before do
-        MyTempResource.stub(:namespace).and_return Time.now.to_i.to_s
+        allow(MyTempResource)
+          .to receive(:namespace)
+            .and_return(Time.now.to_i.to_s)
       end
 
-      it 'should raise an error' do
-        expect{ subject }.to raise_error Frenetic::HypermediaError
+      it 'raises an error' do
+        expect{subject}.to raise_error Frenetic::HypermediaError
       end
     end
 
     context 'for a known resource' do
-      it 'should process the link' do
-        Frenetic::HypermediaLinkSet.any_instance
-          .should_receive( :href )
-          .and_call_original
-
+      it 'processes the link' do
+        expect_any_instance_of(Frenetic::HypermediaLinkSet)
+          .to receive(:href).and_call_original
         subject
       end
     end

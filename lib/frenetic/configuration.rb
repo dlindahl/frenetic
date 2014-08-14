@@ -87,6 +87,5 @@ class Frenetic
     def username
       @_cfg[:username] || @_cfg[:app_id]
     end
-
   end
 end

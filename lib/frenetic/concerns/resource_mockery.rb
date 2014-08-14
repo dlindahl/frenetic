@@ -43,6 +43,5 @@ class Frenetic
     def build_structure
       @structure = OpenStruct.new( @attrs )
     end
-
   end
 end

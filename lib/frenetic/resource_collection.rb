@@ -45,6 +45,5 @@ class Frenetic
     def embedded_collection
       @params.fetch('_embedded',{}).fetch(collection_key, [])
     end
-
   end
 end

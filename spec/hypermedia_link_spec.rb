@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Frenetic::HypermediaLink do
-
   let(:basic_link) do
     { href:'/api/my_link' }
   end
@@ -14,17 +13,16 @@ describe Frenetic::HypermediaLink do
     { href:'/api/foo', rel:'foo' }
   end
 
-  subject { described_class.new( link ) }
+  subject { described_class.new(link) }
 
   describe '#href' do
     subject { super().href data }
 
     context 'with a non-templated link' do
       let(:link) { basic_link }
-
       let(:data) {}
 
-      it 'should correctly transform the data' do
+      it 'correctly transforms the data' do
         expect(subject).to eq '/api/my_link'
       end
     end
@@ -35,7 +33,7 @@ describe Frenetic::HypermediaLink do
       context 'and complate template data' do
         let(:data) { { id:1, title:'title' } }
 
-        it 'should correctly transform the data' do
+        it 'correctly transforms the data' do
           expect(subject).to eq '/api/my_link/1-title'
         end
       end
@@ -43,7 +41,7 @@ describe Frenetic::HypermediaLink do
       context 'and incomplete template data' do
         let(:data) { { id:1 } }
 
-        it 'should raise an error' do
+        it 'raises an error' do
           expect{subject}.to raise_error Frenetic::HypermediaError
         end
       end
@@ -55,7 +53,7 @@ describe Frenetic::HypermediaLink do
 
         let(:data) { 1 }
 
-        it 'should infer the template data' do
+        it 'infers the template data' do
           expect(subject).to eq '/api/my_link/1'
         end
       end
@@ -68,13 +66,17 @@ describe Frenetic::HypermediaLink do
     context 'with a non-templated link' do
       let(:link) { basic_link }
 
-      it { should be_falsey }
+      it 'returns FALSE' do
+        expect(subject).to eq false
+      end
     end
 
     context 'with a templated link' do
       let(:link) { templated_link }
 
-      it { should be_truthy }
+      it 'returns TRUE' do
+        expect(subject).to eq true
+      end
     end
   end
 
@@ -86,19 +88,25 @@ describe Frenetic::HypermediaLink do
     context 'when the data can fully fulfill the template requirements' do
       let(:data) { { id:1, title:'title' } }
 
-      it { should be_truthy }
+      it 'returns TRUE' do
+        expect(subject).to eq true
+      end
     end
 
     context 'when the data cannot fully fulfill the template requirements' do
       let(:data) { { id:1 } }
 
-      it { should be_falsey }
+      it 'returns FALSE' do
+        expect(subject).to eq false
+      end
     end
 
     context 'when the data provides more than the template requires' do
       let(:data) { { id:1, title:'title', garbage:true } }
 
-      it { should be_truthy }
+      it 'returns TRUE' do
+        expect(subject).to eq true
+      end
     end
 
     context 'with a non-template URL' do
@@ -106,7 +114,9 @@ describe Frenetic::HypermediaLink do
 
       let(:data) { { id:1 } }
 
-      it { should be_falsey }
+      it 'returns FALSE' do
+        expect(subject).to eq false
+      end
     end
   end
 
@@ -115,7 +125,9 @@ describe Frenetic::HypermediaLink do
 
     let(:link) { templated_link }
 
-    it { should be_an_instance_of Addressable::Template }
+    it 'returns an Addressable Template' do
+      expect(subject).to be_an_instance_of Addressable::Template
+    end
   end
 
   describe '#as_json' do
@@ -123,9 +135,9 @@ describe Frenetic::HypermediaLink do
 
     let(:link) { templated_link }
 
-    it 'should return a Hash representation of the link' do
-      subject.should include 'href'      => '/api/my_link/{id}-{title}'
-      subject.should include 'templated' => true
+    it 'returns a Hash representation of the link' do
+      expect(subject).to include 'href' => '/api/my_link/{id}-{title}'
+      expect(subject).to include 'templated' => true
     end
   end
 
@@ -134,7 +146,8 @@ describe Frenetic::HypermediaLink do
 
     let(:link) { relation_link }
 
-    it { should eq 'foo' }
+    it 'returns the relation name' do
+      expect(subject).to eq 'foo'
+    end
   end
-
 end

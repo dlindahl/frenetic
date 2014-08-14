@@ -13,7 +13,6 @@ describe Frenetic::MemberRestMethods do
 
   before do
     stub_const 'MyTempResource', my_temp_resource
-
     MyTempResource.send :include, described_class
   end
 
@@ -25,14 +24,14 @@ describe Frenetic::MemberRestMethods do
     context 'for a known instance' do
       before { @stubs.known_instance }
 
-      it 'should return the instance' do
+      it 'returns the instance' do
         expect(subject).to be_a MyTempResource
       end
 
       context 'and a Hash argument' do
         subject { MyTempResource.find id:1 }
 
-        it 'should return the instance' do
+        it 'returns the instance' do
           expect(subject).to be_a MyTempResource
         end
       end
@@ -41,8 +40,8 @@ describe Frenetic::MemberRestMethods do
     context 'for an unknown instance' do
       before { @stubs.unknown_instance }
 
-      it 'should raise an error' do
-        expect{ subject }.to raise_error Frenetic::ClientError
+      it 'raises an error' do
+        expect{subject}.to raise_error Frenetic::ClientError
       end
     end
 
@@ -51,11 +50,10 @@ describe Frenetic::MemberRestMethods do
 
       before do
         stub_const 'MyMockResource', Class.new(MyTempResource)
-
         MyMockResource.send :include, Frenetic::ResourceMockery
       end
 
-      it 'should return a mock resource' do
+      it 'returns a mock resource' do
         expect(subject).to be_an_instance_of MyMockResource
       end
     end
@@ -69,11 +67,11 @@ describe Frenetic::MemberRestMethods do
     context 'for a known resource' do
       before { @stubs.known_resource }
 
-      it 'should return a resource collection' do
+      it 'returns a resource collection' do
         expect(subject).to be_an_instance_of Frenetic::ResourceCollection
       end
 
-      it 'should instantiate all resources in the collection' do
+      it 'instantiates all resources in the collection' do
         expect(subject.first).to be_an_instance_of MyTempResource
       end
     end
@@ -81,7 +79,7 @@ describe Frenetic::MemberRestMethods do
     context 'in test mode' do
       let(:test_cfg) { { url:'http://example.com/api', test_mode:true } }
 
-      it 'should return an empty collection' do
+      it 'returns an empty collection' do
         expect(subject).to be_empty
       end
     end

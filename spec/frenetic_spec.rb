@@ -10,70 +10,81 @@ describe Frenetic do
   subject(:instance) { described_class.new( test_cfg ) }
 
   describe '#connection' do
-    subject { instance.connection }
+    subject { super().connection }
 
-    it { should be_a Faraday::Connection }
-
-    context 'configured with a :username' do
-      let(:test_cfg) { super().merge username:'foo' }
-
-      subject { super().builder.handlers }
-
-      it { should include Faraday::Request::BasicAuthentication }
-    end
-
-    context 'configured with a :api_token' do
-      let(:test_cfg) { super().merge api_token:'API_TOKEN' }
-
-      subject { super().builder.handlers }
-
-      it { should include Faraday::Request::TokenAuthentication }
-    end
-
-    context 'configured to use Rack::Cache' do
-      let(:test_cfg) { super().merge cache: :rack }
-
-      subject { super().builder.handlers }
-
-      it { should include FaradayMiddleware::RackCompatible }
+    it 'returns a Faraday Connection' do
+      expect(subject).to be_a Faraday::Connection
     end
 
     context 'when Frenetic is initialized with a block' do
-      it 'should yield the Faraday builder to the block argument' do
+      subject do
         builder = nil
-
         described_class.new(test_cfg) do |b|
           builder = b
         end.connection
+        builder
+      end
 
-        builder.should be_a Faraday::Connection
+      it 'yields the Faraday builder to the block argument' do
+        expect(subject).to be_a Faraday::Connection
+      end
+    end
+
+    describe 'middleware' do
+      subject { super().builder.handlers }
+
+      context 'configured with a :username' do
+        let(:test_cfg) { super().merge username:'foo' }
+
+        it 'includes Basic Auth middleware' do
+          expect(subject).to include Faraday::Request::BasicAuthentication
+        end
+      end
+
+      context 'configured with a :api_token' do
+        let(:test_cfg) { super().merge api_token:'API_TOKEN' }
+
+        it 'includes Token Authentication middleware' do
+          expect(subject).to include Faraday::Request::TokenAuthentication
+        end
+      end
+
+      context 'configured to use Rack::Cache' do
+        let(:test_cfg) { super().merge cache: :rack }
+
+        it 'includes Rack middleware' do
+          expect(subject).to include FaradayMiddleware::RackCompatible
+        end
       end
     end
   end
 
   describe '#description' do
-    subject { instance.description }
+    subject { super().description }
 
     context 'with a URL that returns a' do
       context 'valid response' do
         before { @stubs.api_description }
 
-        it { should include '_embedded', '_links' }
+        it 'includes meta Hypermedia properties' do
+          expect(subject).to include '_embedded'
+          expect(subject).to include '_links'
+        end
       end
 
       context 'server error' do
         before { @stubs.api_server_error }
 
-        it 'should raise an error' do
-          expect{ subject }.to raise_error Frenetic::ServerParsingError
+        it 'raises an error' do
+          expect{subject}.to raise_error Frenetic::ServerParsingError
         end
       end
 
       context 'client error' do
         before { @stubs.api_client_error :json }
 
-        it 'should raise an error' do
-          expect{ subject }.to raise_error Frenetic::ClientError
+        it 'raises an error' do
+          expect{subject}.to raise_error Frenetic::ClientError
         end
       end
 
@@ -81,24 +92,24 @@ describe Frenetic do
         context 'for an otherwise successful response' do
           before { @stubs.api_html_response }
 
-          it 'should raise an error' do
-            expect{ subject }.to raise_error Frenetic::UnknownParsingError
+          it 'raises an error' do
+            expect{subject}.to raise_error Frenetic::UnknownParsingError
           end
         end
 
         context 'for a server error' do
           before { @stubs.api_server_error :text }
 
-          it 'should raise an error' do
-            expect{ subject }.to raise_error Frenetic::ServerParsingError
+          it 'raises an error' do
+            expect{subject}.to raise_error Frenetic::ServerParsingError
           end
         end
 
         context 'for a client error' do
           before { @stubs.api_client_error :text }
 
-          it 'should raise an error' do
-            expect{ subject }.to raise_error Frenetic::ClientParsingError
+          it 'raises an error' do
+            expect{subject}.to raise_error Frenetic::ClientParsingError
           end
         end
       end
@@ -106,80 +117,82 @@ describe Frenetic do
   end
 
   describe '.schema' do
-    subject { instance.schema }
-
     before { @stubs.api_description }
 
-    it { should include 'my_temp_resource' }
+    subject { super().schema }
+
+    it 'includes a list of defined resources' do
+      expect(subject).to include 'my_temp_resource'
+    end
   end
 
   describe '#get' do
-    subject { instance.get '/foo' }
+    subject { super().get '/foo' }
 
-    it 'should delegate to Faraday' do
-      instance.connection.should_receive :get
-
+    it 'delegates to Faraday' do
+      allow(instance.connection).to receive(:get)
       subject
+      expect(instance.connection).to have_received(:get)
     end
   end
 
   describe '#put' do
-    subject { instance.put '/foo' }
+    subject { super().put '/foo' }
 
-    it 'should delegate to Faraday' do
-      instance.connection.should_receive :put
-
+    it 'delegates to Faraday' do
+      allow(instance.connection).to receive(:put)
       subject
+      expect(instance.connection).to have_received(:put)
     end
   end
 
   describe '#patch' do
-    subject { instance.patch '/foo' }
+    subject { super().patch '/foo' }
 
-    it 'should delegate to Faraday' do
-      instance.connection.should_receive :patch
-
+    it 'delegates to Faraday' do
+      allow(instance.connection).to receive(:patch)
       subject
+      expect(instance.connection).to have_received(:patch)
     end
   end
 
   describe '#head' do
     subject { instance.head '/foo' }
 
-    it 'should delegate to Faraday' do
-      instance.connection.should_receive :head
-
+    it 'delegates to Faraday' do
+      allow(instance.connection).to receive(:head)
       subject
+      expect(instance.connection).to have_received(:head)
     end
   end
 
   describe '#options' do
     subject { instance.options '/foo' }
 
-    it 'should delegate to Faraday' do
-      instance.connection.should_receive :options
-
+    it 'delegates to Faraday' do
+      allow(instance.connection).to receive(:options)
       subject
+      expect(instance.connection).to have_received(:options)
     end
   end
 
   describe '#post' do
-    subject { instance.post '/foo' }
+    subject { super().post '/foo' }
 
-    it 'should delegate to Faraday' do
-      instance.connection.should_receive :post
-
+    it 'delegates to Faraday' do
+      allow(instance.connection).to receive(:post)
       subject
+      expect(instance.connection).to have_received(:post)
     end
   end
 
   describe '#delete' do
-    subject { instance.delete '/foo' }
+    subject { super().delete '/foo' }
 
-    it 'should delegate to Faraday' do
-      instance.connection.should_receive :delete
-
+    it 'delegates to Faraday' do
+      allow(instance.connection).to receive(:delete)
       subject
+      expect(instance.connection).to have_received(:delete)
     end
   end
 end

@@ -21,7 +21,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency             'addressable',         '~> 2.3.4'
 
   gem.add_development_dependency 'awesome_print'
-  gem.add_development_dependency 'rspec',               '~> 2.99.0'
+  gem.add_development_dependency 'rspec',               '~> 3.0.0'
   gem.add_development_dependency 'rack-cache',          '~> 1.2'
   gem.add_development_dependency 'webmock',             '~> 1.11.0'
   gem.add_development_dependency 'timecop',             '~> 0.6.1'

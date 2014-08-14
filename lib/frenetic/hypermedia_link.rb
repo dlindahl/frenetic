@@ -3,7 +3,6 @@ require 'active_support/core_ext/hash/indifferent_access'
 
 class Frenetic
   class HypermediaLink
-
     def initialize( link )
       @link = link.with_indifferent_access
     end
@@ -71,6 +70,5 @@ class Frenetic
 
       { key => data }
     end
-
   end
 end

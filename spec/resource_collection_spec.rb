@@ -43,34 +43,36 @@ describe Frenetic::ResourceCollection do
 
   subject(:instance) { described_class.new(MyTempResource, collection_response) }
 
-  it 'should know where the resources are located' do
-    subject.collection_key.should == 'my_temp_resources'
+  it 'knows where the resources are located' do
+    expect(subject.collection_key).to eq 'my_temp_resources'
   end
 
-  it 'should know which resource it represents' do
-    subject.resource_type.should == 'my_temp_resource'
+  it 'knows which resource it represents' do
+    expect(subject.resource_type).to eq 'my_temp_resource'
   end
 
-  it 'should extract the embedded resources' do
-    subject.size.should == 2
+  it 'extracts the embedded resources' do
+    expect(subject.size).to eq 2
   end
 
-  it 'should parse the embedded resources' do
-    subject.first.should be_a MyTempResource
+  it 'parses the embedded resources' do
+    expect(subject.first).to be_a MyTempResource
   end
 
-  it 'should be able to make API calls' do
-    subject.api.should be_an_instance_of Frenetic
+  it 'is able to make API calls' do
+    expect(subject.api).to be_an_instance_of Frenetic
   end
 
-  it 'should have links' do
-    subject.links.should_not be_empty
+  it 'has links' do
+    expect(subject.links).to_not be_empty
   end
 
   context 'for a non-embedded resource' do
     subject { described_class.new(MyTempResource) }
 
-    it { should be_empty }
+    it 'is empty' do
+      expect(subject).to be_empty
+    end
   end
 
   describe '#get' do
@@ -78,9 +80,8 @@ describe Frenetic::ResourceCollection do
 
     subject { super().get(1) }
 
-    it 'should GET the full representation' do
-      subject.should be_an_instance_of MyTempResource
+    it 'issues a GET the full representation' do
+      expect(subject).to be_an_instance_of MyTempResource
     end
   end
-
 end

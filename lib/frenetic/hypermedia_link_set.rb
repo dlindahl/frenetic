@@ -5,7 +5,6 @@ require 'frenetic/hypermedia_link'
 
 class Frenetic
   class HypermediaLinkSet < Delegator
-
     def initialize( link_set = [] )
       link_set = [link_set] unless link_set.is_a? Array
 
@@ -40,6 +39,5 @@ class Frenetic
     def __getobj__
       @link_set
     end
-
   end
 end

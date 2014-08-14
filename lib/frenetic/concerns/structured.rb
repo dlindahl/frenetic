@@ -1,6 +1,5 @@
 class Frenetic
   module Structured
-
     # Stores the unique signature of each Resource Structure
     # Used to determine when a Structure has changed and thus
     # needs to be redefined.
@@ -28,9 +27,7 @@ class Frenetic
 
     def rebuild_structure!
       destroy_structure!
-
       @@signatures[struct_key] = signature
-
       Struct.new( struct_key, *@attrs.keys )
     end
 
@@ -44,9 +41,7 @@ class Frenetic
 
     def destroy_structure!
       return unless structure_defined?
-
       @@signatures.delete struct_key
-
       Struct.send :remove_const, struct_key
     end
   end
