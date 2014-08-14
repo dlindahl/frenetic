@@ -6,22 +6,26 @@ describe Frenetic::Configuration do
   describe '#adapter' do
     subject { instance.adapter }
 
-    it { should == :net_http }
+    it 'defaults to Net::HTTP' do
+      expect(subject).to eq :net_http
+    end
   end
 
   describe '#attributes' do
     subject { instance.attributes }
 
-    it { should include :adapter }
-    it { should include :api_token }
-    it { should include :cache }
-    it { should include :default_root_cache_age }
-    it { should include :headers }
-    it { should include :password }
-    it { should include :ssl }
-    it { should include :test_mode }
-    it { should include :url }
-    it { should include :username }
+    it 'includes expected attributes' do
+      expect(subject).to include :adapter
+      expect(subject).to include :api_token
+      expect(subject).to include :cache
+      expect(subject).to include :default_root_cache_age
+      expect(subject).to include :headers
+      expect(subject).to include :password
+      expect(subject).to include :ssl
+      expect(subject).to include :test_mode
+      expect(subject).to include :url
+      expect(subject).to include :username
+    end
   end
 
   describe '#api_token' do
@@ -105,7 +109,7 @@ describe Frenetic::Configuration do
   describe '#test_mode' do
     subject { instance.test_mode }
 
-    it { should be_false }
+    it { should be_falsey }
   end
 
   describe '#url' do
@@ -116,8 +120,6 @@ describe Frenetic::Configuration do
     subject { instance.url }
 
     it { should be_a Addressable::URI }
-
-    its(:to_s) { should == 'http://example.org' }
   end
 
   describe '#username' do

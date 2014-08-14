@@ -11,13 +11,11 @@ describe Frenetic::Structured do
 
   before do
     stub_const 'MyTempResource', my_temp_resource
-
     MyTempResource.send :include, described_class
   end
 
   after do
-    instance.rspec_reset
-
+    RSpec::Mocks.proxy_for(instance).reset
     instance.destroy_structure!
   end
 
@@ -131,21 +129,21 @@ describe Frenetic::Structured do
       let(:old_sig) { 'fresh' }
       let(:new_sig) { 'fresh' }
 
-      it { should be_false }
+      it { should be_falsey }
     end
 
     context 'with no predefined signature' do
       let(:old_sig) { nil }
       let(:new_sig) { 'new' }
 
-      it { should be_true }
+      it { should be_truthy }
     end
 
     context 'with an expired signature' do
       let(:old_sig) { 'old' }
       let(:new_sig) { 'new' }
 
-      it { should be_true }
+      it { should be_truthy }
     end
   end
 
@@ -158,7 +156,7 @@ describe Frenetic::Structured do
       Struct.stub(:constants).and_return consts
     end
 
-    after { Struct.rspec_reset }
+    after { RSpec::Mocks.proxy_for(Struct).reset }
 
     it 'should check if the structure is defined' do
       instance.stub(:struct_key).and_return 'Foo'

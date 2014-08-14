@@ -10,7 +10,9 @@ describe Frenetic::Configurable do
   describe '#config' do
     subject { instance.config }
 
-    it { should_not be_empty }
+    it 'is not empty' do
+      expect(subject).to_not be_empty
+    end
   end
 
   describe '#configure' do

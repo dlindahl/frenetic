@@ -68,13 +68,13 @@ describe Frenetic::HypermediaLink do
     context 'with a non-templated link' do
       let(:link) { basic_link }
 
-      it { should be_false }
+      it { should be_falsey }
     end
 
     context 'with a templated link' do
       let(:link) { templated_link }
 
-      it { should be_true }
+      it { should be_truthy }
     end
   end
 
@@ -86,19 +86,19 @@ describe Frenetic::HypermediaLink do
     context 'when the data can fully fulfill the template requirements' do
       let(:data) { { id:1, title:'title' } }
 
-      it { should be_true }
+      it { should be_truthy }
     end
 
     context 'when the data cannot fully fulfill the template requirements' do
       let(:data) { { id:1 } }
 
-      it { should be_false }
+      it { should be_falsey }
     end
 
     context 'when the data provides more than the template requires' do
       let(:data) { { id:1, title:'title', garbage:true } }
 
-      it { should be_true }
+      it { should be_truthy }
     end
 
     context 'with a non-template URL' do
@@ -106,7 +106,7 @@ describe Frenetic::HypermediaLink do
 
       let(:data) { { id:1 } }
 
-      it { should be_false }
+      it { should be_falsey }
     end
   end
 
