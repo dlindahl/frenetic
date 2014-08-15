@@ -14,6 +14,7 @@ Gem::Specification.new do |gem|
   gem.name          = "frenetic"
   gem.require_paths = ["lib"]
   gem.version       = Frenetic::VERSION
+  gem.required_ruby_version = '>= 1.9.3'
 
   gem.add_dependency             'faraday',             '~> 0.8.7'
   gem.add_dependency             'faraday_middleware',  '~> 0.9.0'
