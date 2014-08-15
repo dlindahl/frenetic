@@ -44,8 +44,7 @@ class Frenetic
   # If no Cache-Control header is returned, then the results are not memoized.
   def description
     if response = get( config.url.to_s ) and response.success?
-      @description_age = cache_control_age( response.headers )
-
+      @description_age = cache_control_age(response.headers)
       response.body
     end
   end
@@ -60,7 +59,6 @@ private
   def cache_control_age( headers )
     if cache_age = headers['Cache-Control']
       age = cache_age.match(%r{max-age=(?<max_age>\d+)})[:max_age]
-
       Time.now + age.to_i
     else
       config.default_root_cache_age
