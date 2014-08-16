@@ -20,17 +20,12 @@ class Frenetic
   def connection
     @connection ||= begin
       validate_configuration!
-
       Faraday.new( config ) do |builder|
-        configure_authentication builder
-
-        builder.response :hal_json
-
+        configure_authentication(builder)
+        builder.response(:hal_json)
         configure_caching builder
-
-        @builder_config.call( builder ) if @builder_config
-
-        builder.adapter config.adapter
+        @builder_config.call(builder) if @builder_config
+        builder.adapter(config.adapter)
       end
     end
   end
@@ -43,7 +38,7 @@ class Frenetic
   #
   # If no Cache-Control header is returned, then the results are not memoized.
   def description
-    if response = get( config.url.to_s ) and response.success?
+    if response = get(config.url.to_s) and response.success?
       @description_age = cache_control_age(response.headers)
       response.body
     end
