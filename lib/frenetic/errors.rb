@@ -1,9 +1,28 @@
+require 'active_support/inflector'
+require 'active_support/core_ext/array/conversions'
+
 class Frenetic
   # Generic Frenetic exception class.
   Error = Class.new(StandardError)
 
   # Raised when there is a configuration error
-  ConfigError = Class.new(Error)
+  class ConfigError < Error
+    def initialize(model)
+      @model = model
+      super(message)
+    end
+
+    def message
+      if @model.is_a? String
+        @model
+      else
+        errs = @model.errors.collect do |key, msg|
+          "#{key.to_s.titleize} #{msg}"
+        end
+        "Invalid Configuration: #{errs.to_sentence}"
+      end
+    end
+  end
 
   # Raised when there is a Hypermedia error
   HypermediaError = Class.new(Error)

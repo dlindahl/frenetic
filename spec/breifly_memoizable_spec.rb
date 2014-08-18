@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe BrieflyMemoizable do
+describe Frenetic::BrieflyMemoizable do
   let(:my_class) { Class.new }
 
   before do

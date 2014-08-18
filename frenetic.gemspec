@@ -24,6 +24,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'awesome_print'
   gem.add_development_dependency 'rspec',               '~> 3.0.0'
   gem.add_development_dependency 'rack-cache',          '~> 1.2'
+  gem.add_development_dependency 'faraday-http-cache',  '~> 0.4.2'
   gem.add_development_dependency 'webmock',             '~> 1.18.0'
   gem.add_development_dependency 'timecop',             '~> 0.7.1'
 end
