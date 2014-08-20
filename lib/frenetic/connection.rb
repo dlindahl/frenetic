@@ -29,7 +29,7 @@ class Frenetic
     end
 
     def process_config(raw_cfg)
-      cfg = {}.merge(raw_cfg.to_h)
+      cfg = {}.merge(raw_cfg.to_hash)
       cfg[:url] = Addressable::URI.parse(raw_cfg[:url]) if raw_cfg[:url]
       cfg
     end
