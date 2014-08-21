@@ -85,13 +85,13 @@ class Frenetic
     description['_embedded']['schema']
   end
 
-private
-
   def reset_connection!
     @connection = nil
   end
 
-  def cache_control_age( headers )
+private
+
+  def cache_control_age(headers)
     if cache_age = headers['Cache-Control']
       age = cache_age.match(%r{max-age=(?<max_age>\d+)})[:max_age]
       Time.now + age.to_i
