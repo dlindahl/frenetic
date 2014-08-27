@@ -1,18 +1,18 @@
 require 'ostruct'
+require 'delegate'
 require 'active_support/concern'
 
 class Frenetic
   module ResourceMockery
+    extend Forwardable
     extend ActiveSupport::Concern
+
+    def_delegators :@params, :attributes, :to_json
 
     included do
       # I'm sure this violates some sort of CS principle or best practice,
       # but it solves the problem for now.
       superclass.send :instance_variable_set, '@mock_class', self
-    end
-
-    def attributes
-      @params
     end
 
     def properties
