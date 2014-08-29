@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Frenetic::Resource do
   let(:test_cfg) { { url:'http://example.com/api' } }
 
-  def abstract_resource
+  let(:abstract_resource) do
     cfg = test_cfg
 
     Class.new(described_class) do
@@ -143,6 +143,29 @@ describe Frenetic::Resource do
 
       it 'raises an error' do
         expect{subject}.to raise_error Frenetic::HypermediaError
+      end
+    end
+
+    context 'in test mode' do
+      let(:mock_abstract_resource) do
+        Class.new(MyNamespace::MyTempResource) do
+          include Frenetic::ResourceMockery
+
+          def self.default_attributes
+            { foo:123 }
+          end
+        end
+      end
+
+      before do
+        stub_const 'MyNamespace::MockMyTempResource', mock_abstract_resource
+        allow(MyNamespace::MyTempResource)
+          .to receive(:test_mode?)
+          .and_return(true)
+      end
+
+      it 'returns the default attributes of the mock' do
+        expect(subject).to eq(foo:123)
       end
     end
   end

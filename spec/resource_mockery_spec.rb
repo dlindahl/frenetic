@@ -9,7 +9,7 @@ describe Frenetic::ResourceMockery do
 
   let(:my_mocked_resource) do
     Class.new(my_temp_resource) do
-      def default_attributes
+      def self.default_attributes
         { qux:'qux' }
       end
     end
@@ -47,9 +47,23 @@ describe Frenetic::ResourceMockery do
     end
   end
 
-  describe '#default_attributes' do
+  describe '.default_attributes' do
+    let(:my_mocked_resource) { Class.new(my_temp_resource) }
+
+    subject { MyNamespace::MyMockedResource.default_attributes }
+
     it 'allows implementors to specify sane defaults' do
-      expect(subject.qux).to eq 'qux'
+      expect(subject).to eq Hash.new
+    end
+  end
+
+  describe '#default_attributes' do
+    let(:my_mocked_resource) { Class.new(my_temp_resource) }
+
+    subject { MyNamespace::MyMockedResource.new.default_attributes }
+
+    it 'proxies to the class method' do
+      expect(subject).to eq Hash.new
     end
   end
 end

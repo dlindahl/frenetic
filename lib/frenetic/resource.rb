@@ -38,6 +38,7 @@ class Frenetic
     end
 
     def self.properties
+      return mock_class.default_attributes if test_mode?
       (api.schema[namespace]||{})['properties'] or raise HypermediaError, %Q{Could not find schema definition for the resource "#{namespace}"}
     end
 

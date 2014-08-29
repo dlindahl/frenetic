@@ -25,15 +25,19 @@ class Frenetic
       end
     end
 
-    # Provides a place for a Resources that are mocked to declare reasonable
-    # default values for Mock Resources
     def default_attributes
-      {}
+      self.class.default_attributes
     end
 
     module ClassMethods
       def api_client
         superclass.api_client
+      end
+
+      # Provides a place for a Resources that are mocked to declare reasonable
+      # default values for Mock Resources
+      def default_attributes
+        {}
       end
     end
 
