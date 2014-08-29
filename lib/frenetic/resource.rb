@@ -51,7 +51,7 @@ class Frenetic
 
     def initialize( p = {} )
       build_params p
-      @attrs  = {}
+      @attrs = {}
 
       properties.keys.each do |k|
         @attrs[k] = @params[k]

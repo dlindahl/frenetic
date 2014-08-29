@@ -7,9 +7,7 @@ class Frenetic
     module ClassMethods
       def find( params )
         params = { id:params } unless params.is_a? Hash
-
         return as_mock(params) if test_mode?
-
         if response = api.get( member_url(params) ) and response.success?
           new response.body
         end
