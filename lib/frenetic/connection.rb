@@ -79,7 +79,7 @@ class Frenetic
 
     def use_rails_cache(builder)
       require_lib 'faraday-http-cache', 'Frenetic Rails caching strategy'
-      builder.use(Faraday::HttpCache, store:Rails.cache)
+      builder.use(Faraday::HttpCache, store:Rails.cache, logger:Rails.logger)
     end
 
     def cache_key
