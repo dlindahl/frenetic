@@ -22,4 +22,5 @@ class Frenetic
   end
 end
 
-Faraday.register_middleware :response, hal_json:lambda { Frenetic::Middleware::HalJson }
+Faraday::Response.register_middleware \
+  hal_json:lambda { Frenetic::Middleware::HalJson }

@@ -34,8 +34,16 @@ describe Frenetic::Connection do
   describe '#process_config' do
     subject { super().process_config(url:url) }
 
+    it 'returns a Faraday builder-compatible config' do
+      expect(subject[0]).to be_a Hash
+    end
+
+    it 'returns a Faraday::Connection-compatible config' do
+      expect(subject[1]).to include :url
+    end
+
     it 'converts URLs to URIs' do
-      expect(subject[:url]).to be_a Addressable::URI
+      expect(subject[1]).to include url:kind_of(Addressable::URI)
     end
   end
 

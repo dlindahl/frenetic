@@ -16,8 +16,8 @@ Gem::Specification.new do |gem|
   gem.version       = Frenetic::VERSION
   gem.required_ruby_version = '>= 1.9.3'
 
-  gem.add_dependency             'faraday',             '~> 0.8.7'
-  gem.add_dependency             'faraday_middleware',  '~> 0.9.0'
+  gem.add_dependency             'faraday',             '>= 0.8'
+  gem.add_dependency             'faraday_middleware',  '>= 0.8'
   gem.add_dependency             'activesupport',       '>= 3'
   gem.add_dependency             'addressable',         '~> 2.3.4'
 
@@ -27,4 +27,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'faraday-http-cache',  '~> 0.4.2'
   gem.add_development_dependency 'webmock',             '~> 1.18.0'
   gem.add_development_dependency 'timecop',             '~> 0.7.1'
+  gem.add_development_dependency 'appraisal',           '~> 1.0.2'
 end
