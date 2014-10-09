@@ -30,6 +30,9 @@ class Frenetic
     def process_config(raw_cfg)
       @config = {}.merge(raw_cfg.to_hash)
       @config[:url] = Addressable::URI.parse(raw_cfg[:url])
+      if @config[:url] && @config[:url].port.nil?
+        @config[:url].port = @config[:url].inferred_port
+      end
       cfgs = @config.inject({builder:{}, conn:{}}) do |conf, (k,v)|
         if ConnectionConfigKeys.include?(k)
           conf[:conn][k] = v
