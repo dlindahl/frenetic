@@ -42,8 +42,20 @@ describe Frenetic::Connection do
       expect(subject[1]).to include :url
     end
 
-    it 'converts URLs to URIs' do
-      expect(subject[1]).to include url:kind_of(Addressable::URI)
+    context 'with specific port' do
+      let(:url) { 'https://example.com:8443' }
+      it 'converts URLs to URIs' do
+        expect(subject[1]).to include url:kind_of(Addressable::URI)
+        expect(subject[1][:url].port).to eq(8443)
+      end
+    end
+
+    context 'with no specific port' do
+      let(:url) { 'https://example.com' }
+      it 'converts URLs to URIs with port inferred from scheme' do
+        expect(subject[1]).to include url:kind_of(Addressable::URI)
+        expect(subject[1][:url].port).to eq(443)
+      end
     end
   end
 
