@@ -1,6 +1,7 @@
 require 'ostruct'
 require 'delegate'
 require 'active_support/concern'
+require 'active_support/core_ext/hash/deep_merge'
 
 class Frenetic
   module ResourceMockery
@@ -44,8 +45,9 @@ class Frenetic
   private
 
     def build_params( p )
+      raw_params = (p || {}).with_indifferent_access
       defaults = default_attributes.with_indifferent_access
-      @params  = defaults.merge( (p || {}).with_indifferent_access )
+      @params = defaults.deep_merge(raw_params)
     end
 
     def build_structure

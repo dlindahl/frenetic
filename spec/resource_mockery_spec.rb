@@ -10,17 +10,37 @@ describe Frenetic::ResourceMockery do
   let(:my_mocked_resource) do
     Class.new(my_temp_resource) do
       def self.default_attributes
-        { qux:'qux' }
+        {
+          qux: 'qux',
+          _embedded: {
+            embedded_resource: {
+              plugh: 'xyzzy'
+            }
+          }
+        }
       end
     end
+  end
+
+  let(:params) do
+    {
+      foo: 1,
+      bar: 'baz',
+      _embedded: {
+        embedded_resource: {
+          grault: 'garply'
+        },
+        another_resource: {
+          waldo: 'fred'
+        }
+      }
+    }
   end
 
   before do
     stub_const 'MyNamespace::MyMockedResource', my_mocked_resource
     MyNamespace::MyMockedResource.send :include, described_class
   end
-
-  let(:params) { { foo:1, bar:'baz' } }
 
   subject { MyNamespace::MyMockedResource.new params }
 
@@ -44,6 +64,9 @@ describe Frenetic::ResourceMockery do
       expect(subject).to include 'foo' => 1
       expect(subject).to include 'bar' => 'baz'
       expect(subject).to include 'qux' => 'qux'
+      expect(subject['_embedded']['embedded_resource']).to include 'plugh' => 'xyzzy'
+      expect(subject['_embedded']['embedded_resource']).to include 'grault' => 'garply'
+      expect(subject['_embedded']['another_resource']).to include 'waldo' => 'fred'
     end
   end
 
