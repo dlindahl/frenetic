@@ -236,7 +236,7 @@ describe Frenetic::Resource do
           })
         end
 
-        context 'this is of a known type' do
+        context 'that is of a known type' do
           before do
             stub_const 'MyNamespace::AbstractResource', abstract_resource
           end
@@ -246,7 +246,7 @@ describe Frenetic::Resource do
           end
         end
 
-        context 'this is of a known type' do
+        context 'that is of an unknown type' do
           it 'instantiates a shim of the embedded resource' do
             expect(subject.abstract_resource).to be_an_instance_of OpenStruct
           end
