@@ -137,7 +137,7 @@ class Frenetic
     end
 
     def self.test_mode?
-      api_client.config.test_mode
+      !api_client || api_client.config.test_mode
     end
   end
 end
