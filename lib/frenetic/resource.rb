@@ -113,15 +113,13 @@ class Frenetic
 
     def extract_embedded_resources
       class_namespace = self.class.to_s.deconstantize
-
-      @params.fetch('_embedded',{}).each do |k,v|
+      @params.fetch('_embedded',{}).each do |k, attrs|
         class_name = "#{class_namespace}::#{k.classify}"
-        klass      = class_name.constantize rescue OpenStruct
-
-        @attrs[k] = if self.class.test_mode? || is_a?(ResourceMockery)
-          klass.as_mock v
+        klass = class_name.constantize rescue OpenStruct
+        @attrs[k] = if self.class.test_mode? && klass.respond_to?(:as_mock)
+          klass.as_mock(attrs)
         else
-          klass.new v
+          klass.new(attrs)
         end
       end
     end

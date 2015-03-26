@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe Frenetic::Resource do
   let(:test_cfg) { { url:'http://example.com/api' } }
-
   let(:abstract_resource) do
     cfg = test_cfg
 
@@ -10,9 +9,15 @@ describe Frenetic::Resource do
       api_client { Frenetic.new(cfg) }
     end
   end
+  let(:mock_abstract_resource) do
+    Class.new(MyNamespace::MyTempResource) do
+      include Frenetic::ResourceMockery
+    end
+  end
 
   before do
     stub_const 'MyNamespace::MyTempResource', abstract_resource
+    stub_const 'MyNamespace::MockMyTempResource', mock_abstract_resource
   end
 
   describe '.api_client' do
@@ -187,6 +192,8 @@ describe Frenetic::Resource do
     subject { MyNamespace::MyTempResource.mock_class }
 
     context 'without a defined Mock-class' do
+      let(:mock_abstract_resource) { Class.new }
+
       it 'raises an error' do
         expect{subject}.to raise_error Frenetic::UndefinedResourceMock
       end
@@ -228,7 +235,7 @@ describe Frenetic::Resource do
         let(:args) do
           super().merge({
             '_embedded' => {
-              'abstract_resource' => {
+              'embedded_resource' => {
                 'id' => 99,
                 'genus' => 'canine'
               }
@@ -238,17 +245,27 @@ describe Frenetic::Resource do
 
         context 'that is of a known type' do
           before do
-            stub_const 'MyNamespace::AbstractResource', abstract_resource
+            stub_const 'MyNamespace::EmbeddedResource', abstract_resource
           end
 
           it 'instantiates the embedded resource' do
-            expect(subject.abstract_resource).to be_an_instance_of MyNamespace::AbstractResource
+            expect(subject.embedded_resource).to be_an_instance_of MyNamespace::EmbeddedResource
           end
         end
 
         context 'that is of an unknown type' do
           it 'instantiates a shim of the embedded resource' do
-            expect(subject.abstract_resource).to be_an_instance_of OpenStruct
+            expect(subject.embedded_resource).to be_an_instance_of OpenStruct
+          end
+
+          context 'and test mode is enabled' do
+            before do
+              allow(abstract_resource).to receive(:test_mode?).and_return(true)
+            end
+
+            it 'instantiates a shim of the embedded resource' do
+              expect(subject.embedded_resource).to be_an_instance_of OpenStruct
+            end
           end
         end
       end
