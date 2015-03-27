@@ -16,9 +16,9 @@ describe Frenetic::Middleware::HalJson do
   let(:options) { Hash.new }
   let(:headers) { Hash.new }
   let(:middleware) do
-    described_class.new(lambda {|env|
+    described_class.new(lambda do |env|
       Faraday::Response.new(env)
-    }, options)
+    end, options)
   end
 
   it 'does not change nil body' do

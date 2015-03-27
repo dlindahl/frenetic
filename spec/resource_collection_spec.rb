@@ -17,11 +17,10 @@ describe Frenetic::ResourceCollection do
 
   before do
     stub_const 'MyTempResource', my_temp_resource
-
     @stubs.api_description
   end
 
-  let(:collection_response) {
+  let(:collection_response) do
     {
       '_embedded' => {
         'my_temp_resources' => [
@@ -39,7 +38,7 @@ describe Frenetic::ResourceCollection do
         }
       }
     }
-  }
+  end
 
   subject(:instance) { described_class.new(MyTempResource, collection_response) }
 

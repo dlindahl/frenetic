@@ -18,7 +18,7 @@ describe Frenetic::Connection do
       let(:url) { nil }
 
       it 'raises an error' do
-        expect{subject}.to raise_error Frenetic::ConfigError, %r{Url must be present}
+        expect{subject}.to raise_error Frenetic::ConfigError, /Url must be present/
       end
     end
 

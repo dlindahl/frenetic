@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Frenetic::Structured do
   let(:my_temp_resource) do
     Class.new do
-      def initialize( attrs = {} )
+      def initialize(attrs = {})
         @attrs = attrs
       end
     end
@@ -24,7 +24,7 @@ describe Frenetic::Structured do
 
   after { instance.destroy_structure! }
 
-  subject(:instance) { MyTempResource.new( foo:'foo', bar:'bar' ) }
+  subject(:instance) { MyTempResource.new(foo:'foo', bar:'bar') }
 
   describe '#struct_key' do
     subject { super().struct_key }
@@ -121,9 +121,10 @@ describe Frenetic::Structured do
 
     before do
       allow(instance).to receive(:signature).and_return(new_sig)
-      described_class.class_variable_set '@@signatures', {
+      described_class.class_variable_set(
+        '@@signatures',
         'MyTempResourceFreneticResourceStruct' => old_sig
-      }
+      )
     end
 
     context 'with a fresh signature' do

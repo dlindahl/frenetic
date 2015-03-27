@@ -17,6 +17,8 @@ class Frenetic
   include ActiveSupport::Configurable
   include BrieflyMemoizable
 
+  MaxAge = /max-age=(?<max_age>\d+)/
+
   config_accessor :adapter
   config_accessor :api_token
   config_accessor :cache
@@ -49,12 +51,12 @@ class Frenetic
     url: nil,
     username: nil
   }
-  self.config.merge!(@@defaults)
+  config.merge!(@@defaults)
 
   # PENDING: [ActiveSupport4] Remove merge with class defaults
   def initialize(cfg = {})
-    self.config.merge!(cfg.reverse_merge(self.class.config))
-    yield self.config if block_given?
+    config.merge!(cfg.reverse_merge(self.class.config))
+    yield config if block_given?
   end
 
   def connection
@@ -74,10 +76,10 @@ class Frenetic
   #
   # If no Cache-Control header is returned, then the results are not memoized.
   def description
-    if response = get(config.url.to_s) and response.success?
-      @description_age = cache_control_age(response.headers)
-      response.body
-    end
+    response = get(config.url.to_s)
+    return unless response.success?
+    @description_age = cache_control_age(response.headers)
+    response.body
   end
   briefly_memoize :description
 
@@ -92,8 +94,9 @@ class Frenetic
 private
 
   def cache_control_age(headers)
-    if cache_age = headers['Cache-Control']
-      age = cache_age.match(%r{max-age=(?<max_age>\d+)})[:max_age]
+    cache_age = headers['Cache-Control']
+    if cache_age
+      age = cache_age.match(MaxAge)[:max_age]
       Time.now + age.to_i
     else
       config.default_root_cache_age

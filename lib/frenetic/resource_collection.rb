@@ -6,7 +6,7 @@ class Frenetic
     include HalLinked
     include CollectionRestMethods
 
-    def initialize( resource, params = {} )
+    def initialize(resource, params = {})
       @resource_class = resource
       @resources      = []
       @params         = params || {}
@@ -43,7 +43,7 @@ class Frenetic
     end
 
     def embedded_collection
-      @params.fetch('_embedded',{}).fetch(collection_key, [])
+      @params.fetch('_embedded', {}).fetch(collection_key, [])
     end
   end
 end

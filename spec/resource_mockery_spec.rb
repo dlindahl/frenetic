@@ -76,7 +76,7 @@ describe Frenetic::ResourceMockery do
     subject { MyNamespace::MyMockedResource.default_attributes }
 
     it 'allows implementors to specify sane defaults' do
-      expect(subject).to eq Hash.new
+      expect(subject).to eq({})
     end
   end
 
@@ -86,7 +86,7 @@ describe Frenetic::ResourceMockery do
     subject { MyNamespace::MyMockedResource.new.default_attributes }
 
     it 'proxies to the class method' do
-      expect(subject).to eq Hash.new
+      expect(subject).to eq({})
     end
   end
 end

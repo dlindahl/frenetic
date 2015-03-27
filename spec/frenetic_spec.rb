@@ -17,7 +17,7 @@ describe Frenetic do
       expect(subject).to include headers:kind_of(Hash)
       expect(subject).to include middleware:[]
       expect(subject).to include :password
-      expect(subject).to include ssl:{verify:true}
+      expect(subject).to include ssl:{ verify:true }
       expect(subject).to include test_mode:false
       expect(subject).to include :url
       expect(subject).to include :username
@@ -37,7 +37,7 @@ describe Frenetic do
   end
 
   describe '#configure' do
-    subject { instance.configure {|c| } }
+    subject { instance.configure {|c| c } }
 
     it 'resets the Connection' do
       prev_connection = instance.connection

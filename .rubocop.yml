@@ -1,0 +1,45 @@
+AllCops:
+  Exclude:
+    - '*.gemspec'
+
+Metrics/ClassLength:
+  Max: 120
+
+Metrics/LineLength:
+  Max: 100
+
+Metrics/MethodLength:
+  Max: 15
+
+Style/AccessModifierIndentation:
+  Enabled: false
+
+Style/ClassVars:
+  Enabled: false
+
+Style/ConstantName:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Style/NegatedIf:
+  Enabled: false
+
+Style/RaiseArgs:
+  Enabled: false
+
+Style/SpaceAfterColon:
+  Enabled: false
+
+Style/SpaceBeforeBlockBraces:
+  Enabled: false
+
+Style/SpaceInsideBlockBraces:
+  Enabled: false
+
+Style/SpaceInsideParens:
+  Enabled: false
+
+Style/TrivialAccessors:
+  Enabled: false

@@ -8,14 +8,15 @@ class Frenetic
     extend ActiveSupport::Concern
 
     module ClassMethods
-      def briefly_memoize( symbol )
+      def briefly_memoize(symbol)
         original_method = "_unmemoized_#{symbol}".to_sym
-        memoized_ivar   = "@#{symbol}"
-        age_ivar        = "@#{symbol}_age"
+        memoized_ivar = "@#{symbol}"
+        age_ivar = "@#{symbol}_age"
 
-        class_eval <<-EOS
+        # rubocop:disable Metrics/LineLength
+        class_eval <<-CODE
           if method_defined?(:#{original_method})                                  # if method_defined?(:_unmemoized_mime_type)
-            raise "Already memoized #{symbol}"                                     #   raise "Already memoized mime_type"
+            fail "Already memoized #{symbol}"                                      #   fail "Already memoized mime_type"
           end                                                                      # end
           alias #{original_method} #{symbol}                                       # alias _unmemoized_mime_type mime_type
 
@@ -27,7 +28,8 @@ class Frenetic
           def reload_#{symbol}!                                                    # def reload_mime_type!
             #{memoized_ivar} = nil                                                 #   @mime_type = nil
           end                                                                      # end
-        EOS
+        CODE
+        # rubocop:enable Metrics/LineLength
       end
     end
   end

@@ -3,13 +3,12 @@ require 'faraday_middleware/response_middleware'
 class Frenetic
   module Middleware
     class HalJson < FaradayMiddleware::ParseJson
-
       def process_response(env)
         super
 
         case env[:status]
-        when 500...599 then raise ServerError.new(env)
-        when 400...499 then raise ClientError.new(env)
+        when 500...599 then fail ServerError.new(env)
+        when 400...499 then fail ClientError.new(env)
         end
       rescue Faraday::Error::ParsingError => err
         case env[:status]
@@ -23,4 +22,4 @@ class Frenetic
 end
 
 Faraday::Response.register_middleware \
-  hal_json:lambda { Frenetic::Middleware::HalJson }
+  hal_json: -> { Frenetic::Middleware::HalJson }

@@ -28,7 +28,7 @@ class Frenetic
     def rebuild_structure!
       destroy_structure!
       @@signatures[struct_key] = signature
-      Struct.new( struct_key, *@attrs.keys )
+      Struct.new(struct_key, *@attrs.keys)
     end
 
     def structure_expired?

@@ -29,18 +29,8 @@ class Frenetic
 
     def process_config(raw_cfg)
       @config = {}.merge(raw_cfg.to_hash)
-      @config[:url] = Addressable::URI.parse(raw_cfg[:url])
-      if @config[:url] && @config[:url].port.nil?
-        @config[:url].port = @config[:url].inferred_port
-      end
-      cfgs = @config.inject({builder:{}, conn:{}}) do |conf, (k,v)|
-        if ConnectionConfigKeys.include?(k)
-          conf[:conn][k] = v
-        else
-          conf[:builder][k] = v
-        end
-        conf
-      end
+      @config[:url] = process_url_config(raw_cfg)
+      cfgs = process_config_options(@config)
       [
         @builder_config = cfgs[:builder],
         @connection_config = cfgs[:conn]
@@ -69,8 +59,25 @@ class Frenetic
 
   private
 
+    def process_url_config(raw_cfg)
+      url = Addressable::URI.parse(raw_cfg[:url])
+      return if !url
+      url.port = url.inferred_port if url.port.nil?
+      url
+    end
+
+    def process_config_options(options)
+      options.each_with_object(builder:{}, conn:{}) do |(k, v), conf|
+        if ConnectionConfigKeys.include?(k)
+          conf[:conn][k] = v
+        else
+          conf[:builder][k] = v
+        end
+      end
+    end
+
     def validate_configuration!
-      raise ConfigError.new(self) if !valid?
+      fail ConfigError.new(self) if !valid?
     end
 
     def use_basic_auth(builder)
@@ -86,11 +93,9 @@ class Frenetic
       builder.use(
         FaradayMiddleware::RackCompatible,
         Rack::Cache::Context,
-        {
-          metastore:     "file:tmp/rack/meta/#{cache_key}",
-          entitystore:   "file:tmp/rack/body/#{cache_key}",
-          ignore_headers: %w{Authorization Set-Cookie X-Content-Digest}
-        }
+        metastore:     "file:tmp/rack/meta/#{cache_key}",
+        entitystore:   "file:tmp/rack/body/#{cache_key}",
+        ignore_headers: %w(Authorization Set-Cookie X-Content-Digest)
       )
     end
 
@@ -107,7 +112,7 @@ class Frenetic
       lib ? require(lib) : yield
     rescue NameError, LoadError => err
       context ||= self
-      raise ConfigError, "Could not load required `#{lib}` dependency for #{context}: #{err.message}"
+      raise MissingDependency.new(lib, context, err)
     end
   end
 end

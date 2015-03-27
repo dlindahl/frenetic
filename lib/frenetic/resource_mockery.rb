@@ -21,7 +21,7 @@ class Frenetic
     end
 
     def properties
-      @params.each_with_object({}) do |(k,v), props|
+      @params.each_with_object({}) do |(k, v), props|
         props[k] = v.class.to_s.underscore
       end
     end
@@ -44,14 +44,14 @@ class Frenetic
 
   private
 
-    def build_params( p )
-      raw_params = (p || {}).with_indifferent_access
+    def build_params(params)
+      raw_params = (params || {}).with_indifferent_access
       defaults = default_attributes.with_indifferent_access
       @params = defaults.deep_merge(raw_params)
     end
 
     def build_structure
-      @structure = OpenStruct.new( @attrs )
+      @structure = OpenStruct.new(@attrs)
     end
   end
 end

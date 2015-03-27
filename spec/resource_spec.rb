@@ -147,7 +147,7 @@ describe Frenetic::Resource do
       end
 
       it 'raises an error' do
-        expect{subject}.to raise_error Frenetic::HypermediaError
+        expect{subject}.to raise_error Frenetic::MissingSchemaDefinition
       end
     end
 
@@ -233,14 +233,14 @@ describe Frenetic::Resource do
 
       context 'and an embedded resource' do
         let(:args) do
-          super().merge({
+          super().merge(
             '_embedded' => {
               'embedded_resource' => {
                 'id' => 99,
                 'genus' => 'canine'
               }
             }
-          })
+          )
         end
 
         context 'that is of a known type' do
@@ -275,7 +275,7 @@ describe Frenetic::Resource do
       let(:args) { { gender:'male' } }
 
       it 'does not create accessors' do
-        expect{ subject.gender }.to raise_error NoMethodError
+        expect{subject.gender}.to raise_error(NoMethodError)
       end
 
       it 'is accessible in @params' do
@@ -305,7 +305,7 @@ describe Frenetic::Resource do
     subject { MyNamespace::MyTempResource.new(id:54, name:'me').attributes }
 
     it 'returns attributes of the resource' do
-      expect(subject).to eq({'id' => 54, 'name' => 'me'})
+      expect(subject).to eq('id' => 54, 'name' => 'me')
     end
   end
 end

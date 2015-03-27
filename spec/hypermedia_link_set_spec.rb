@@ -93,7 +93,7 @@ describe Frenetic::HypermediaLinkSet do
 
     context 'with multiple matching links' do
       let(:link_a) do
-        Frenetic::HypermediaLink.new( href:'/foo/{id}', templated:true )
+        Frenetic::HypermediaLink.new(href:'/foo/{id}', templated:true)
       end
 
       let(:links) do
@@ -126,7 +126,7 @@ describe Frenetic::HypermediaLinkSet do
     subject { super()[rel] }
 
     let(:link_b) do
-      Frenetic::HypermediaLink.new( href:'/bar', rel:'bar' )
+      Frenetic::HypermediaLink.new(href:'/bar', rel:'bar')
     end
 
     let(:links) do

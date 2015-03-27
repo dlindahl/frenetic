@@ -21,7 +21,7 @@ describe Frenetic::HalLinked do
 
     let(:_links) do
       {
-        '_links' => { 'self' => { 'href' => '/api/self' }}
+        '_links' => { 'self' => { 'href' => '/api/self' } }
       }
     end
 
@@ -65,7 +65,7 @@ describe Frenetic::HalLinked do
     context 'with an implied self link' do
       let(:_links) do
         {
-          '_links' => { 'self' => { 'href' => '/api/self' }}
+          '_links' => { 'self' => { 'href' => '/api/self' } }
         }
       end
 
@@ -92,7 +92,7 @@ describe Frenetic::HalLinked do
 
     it 'processes the link' do
       expect_any_instance_of(Frenetic::HypermediaLinkSet)
-        .to receive(:href).with( params ).and_call_original
+        .to receive(:href).with(params).and_call_original
       subject
     end
   end
@@ -106,7 +106,7 @@ describe Frenetic::HalLinked do
       before do
         allow(MyTempResource)
           .to receive(:namespace)
-            .and_return(Time.now.to_i.to_s)
+          .and_return(Time.now.to_i.to_s)
       end
 
       it 'raises an error' do

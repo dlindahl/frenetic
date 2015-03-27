@@ -139,7 +139,7 @@ Initializing an API client is really easy:
 class MyApiClient
   # Arbitrary example
   def self.api
-    @api ||= Frenetic.new( url:'http://example.com/api' )
+    @api ||= Frenetic.new(url:'http://example.com/api')
   end
 end
 ```
@@ -152,7 +152,7 @@ At the bare minimum, Frenetic only needs to know what the URL of your API is.
 Configuring Frenetic can be done during instantiation:
 
 ```ruby
-Frenetic.new( url:'http://example.com', api_token:'123bada55k3y' )
+Frenetic.new(url:'http://example.com', api_token:'123bada55k3y')
 ```
 
 Or with a block:
@@ -168,7 +168,7 @@ end
 Or both...
 
 ```ruby
-f = Frenetic.new( url:'http://example.com' )
+f = Frenetic.new(url:'http://example.com')
 f.configure do |cfg|
   cfg.api_token = '123bada55key'
 end
@@ -184,13 +184,13 @@ middleware.
 To use Basic Auth, simply configure Frenetic with a `username` and `password`:
 
 ```ruby
-Frenetic.new( url:url, username:'user', password:'password' )
+Frenetic.new(url:url, username:'user', password:'password')
 ```
 
 If your API uses an App ID and API Key pair, you can pass those as well:
 
 ```ruby
-Frenetic.new( url:url, app_id:'123abcSHA1', api_key:'bada55SHA1k3y' )
+Frenetic.new(url:url, app_id:'123abcSHA1', api_key:'bada55SHA1k3y')
 ```
 
 The `app_id` and `api_key` values are simply aliases to `username` and
@@ -201,7 +201,7 @@ The `app_id` and `api_key` values are simply aliases to `username` and
 To use Token Auth, simply configure Frenetic with your token:
 
 ```ruby
-Frenetic.new( url:url, api_token:'bada55SHA1t0k3n' )
+Frenetic.new(url:url, api_token:'bada55SHA1t0k3n')
 ```
 
 
@@ -214,7 +214,7 @@ If configured to do so, Frenetic will autotmatically cache API responses.
 ##### Rack::Cache
 
 ```ruby
-Frenetic.new( url:url, cache: :rack )
+Frenetic.new(url:url, cache: :rack)
 ```
 
 Passing in a cache option of `:rack` will cause Frenetic to use Faraday's
@@ -246,14 +246,14 @@ By default, Frenetic is configured to use Faraday's default adapter (usually
 Net::HTTP). You can change this with the `adapter` option:
 
 ```ruby
-Frenetic.new( url:url, adapter: :patron )
+Frenetic.new(url:url, adapter: :patron)
 ```
 
 Frenetic accepts any of the [Faraday adapter shortcuts][adapters], or an instance
 of the adapter itself:
 
 ```ruby
-Frenetic.new( url:url, adapter:Faraday::Adapter::Patron )
+Frenetic.new(url:url, adapter:Faraday::Adapter::Patron)
 ```
 
 
@@ -263,7 +263,7 @@ If you have no control over the API, you can explicitly tell Frenetic how long
 to cache the API description for:
 
 ```ruby
-Frenetic.new( url:url, default_root_cache_age:1.hour )
+Frenetic.new(url:url, default_root_cache_age:1.hour)
 ```
 
 
@@ -273,7 +273,7 @@ Frenetic.new( url:url, default_root_cache_age:1.hour )
 Frenetic will yield its internal Faraday connection during initialization:
 
 ```ruby
-Frenetic.new( url:url ) do |builder|
+Frenetic.new(url:url) do |builder|
   # `builder` is the Faraday Connection instance with which you can
   # add additional Faraday Middlewares or tweak the configuration.
 end
@@ -293,7 +293,7 @@ A Frenetic instance supports any HTTP verb that [Faraday][faraday] has
 impletented. This includes GET, POST, PUT, PATCH, and DELETE.
 
 ```ruby
-api = Frenetic.new( url:url )
+api = Frenetic.new(url:url)
 
 api.get '/my_things/1'
 # { 'id' => 1, 'name' => 'My Thing', '_links' => { 'self' { 'href' => '/api/my_things/1' } } }
@@ -314,8 +314,8 @@ class Order < Frenetic::Resource
   api_client { MyAPI }
 
   # TODO: Write a better example for this.
-  def self.find_all_by_name( name )
-    api.get( search_url(name) ) and response.success?
+  def self.find_all_by_name(name)
+    api.get(search_url(name)) and response.success?
   end
 end
 ```
@@ -411,7 +411,7 @@ stub out all of the HTTP requests with something like WebMock or VCR, or you can
 use Frenetic in `test_mode`
 
 ```ruby
-Frenetic.new( url:url, test_mode:true )
+Frenetic.new(url:url, test_mode:true)
 # ...or...
 api = Frenetic.new(url:url)
 api.config.test_mode = true

@@ -1,78 +1,81 @@
 require 'json'
 
 class HttpStubs
-  def initialize( rspec )
+  def initialize(rspec)
     @rspec = rspec
   end
 
   def defaults
     {
       status:  200,
-      headers: { 'Content-Type'=>'application/json' },
+      headers: { 'Content-Type' => 'application/json' },
       body:    {}
     }
   end
 
-  def response( params = {} )
-    defs    = defaults.dup
+  def response(params = {})
+    defs = defaults.dup
     headers = params.delete :headers
 
     defs[:headers].merge! headers || {}
 
-    defs.merge( params ).tap do |p|
+    defs.merge(params).tap do |p|
       p[:body] = p[:body].to_json
     end
   end
 
   def api_html_response
-    @rspec.stub_request( :any, 'example.com/api' )
-      .to_return response( body:'Non-JSON response', status:200 )
+    @rspec.stub_request(:any, 'example.com/api')
+      .to_return response(body:'Non-JSON response', status:200)
   end
 
-  def api_server_error( type = :json )
+  def api_server_error(type = :json)
     body = '500 Server Error'
 
     body = { 'error' => body }.to_json if type == :json
 
-    @rspec.stub_request( :any, 'example.com/api' )
-      .to_return response( body:body, status:500 )
+    @rspec.stub_request(:any, 'example.com/api')
+      .to_return response(body:body, status:500)
   end
 
-  def api_client_error( type = :json )
+  def api_client_error(type = :json)
     body = '404 Not Found'
 
     body = { 'error' => body }.to_json if type == :json
 
-    @rspec.stub_request( :any, 'example.com/api' )
-      .to_return defaults.merge( body:body, status:404 )
+    @rspec.stub_request(:any, 'example.com/api')
+      .to_return defaults.merge(body:body, status:404)
   end
 
   def api_description
-    @rspec.stub_request( :any, 'example.com/api' )
-      .to_return response( body:schema, headers:{ 'Cache-Control' => 'max-age=3600, public' } )
+    @rspec.stub_request(:any, 'example.com/api')
+      .to_return response(body:schema, headers:{ 'Cache-Control' => 'max-age=3600, public' })
   end
 
   def unknown_instance
-    @rspec.stub_request( :get, 'example.com/api/my_temp_resources/1' )
-      .to_return response( body:{ 'error' => '404 Not Found' }, status:404 )
+    @rspec.stub_request(:get, 'example.com/api/my_temp_resources/1')
+      .to_return response(body:{ 'error' => '404 Not Found' }, status:404)
   end
 
   def known_instance
-    @rspec.stub_request( :get, 'example.com/api/my_temp_resources/1' )
-      .to_return response( body:{ 'name' => 'Resource Name' } )
+    @rspec.stub_request(:get, 'example.com/api/my_temp_resources/1')
+      .to_return response(body:{ 'name' => 'Resource Name' })
   end
 
   def known_resource
-    @rspec.stub_request( :get, 'example.com/api/my_temp_resources' )
-      .to_return response( body:{
-        '_embedded' => {
-          'my_temp_resources' => [
-            { 'name' => 'Resource Name' }
-          ]
+    @rspec.stub_request(:get, 'example.com/api/my_temp_resources')
+      .to_return response(
+        body: {
+          '_embedded' => {
+            'my_temp_resources' => [
+              { 'name' => 'Resource Name' }
+            ]
+          }
         }
-      } )
+      )
   end
 
+  # rubocop:disable Metrics/MethodLength
   def schema
     {
       _embedded: {
@@ -110,10 +113,11 @@ class HttpStubs
       }
     }
   end
+  # rubocop:enable Metrics/MethodLength
 end
 
 RSpec.configure do |c|
   c.before :all do
-    @stubs = HttpStubs.new( self )
+    @stubs = HttpStubs.new(self)
   end
 end

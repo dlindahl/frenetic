@@ -24,8 +24,73 @@ class Frenetic
     end
   end
 
+  class MissingDependency < ConfigError
+    def initialize(lib, context, err)
+      @lib, @context, @err = lib, context, err
+      super(message)
+    end
+
+    def message
+      "Could not load required `#{@lib}` dependency for " \
+        "#{@context} (#{@err.class}: #{@err.message})"
+    end
+  end
+
   # Raised when there is a Hypermedia error
   HypermediaError = Class.new(Error)
+
+  # Raised when there is no _link entry for the desired resource
+  class MissingRelevantLink < HypermediaError
+    def initialize(tmpl_vars, link_set)
+      @tmpl_vars = tmpl_vars
+      @link_set = link_set
+    end
+
+    def message
+      "Could not find a relevant link for the data provided.\n" \
+      "Are any of the links missing the templated:true property?\n" \
+      "  Template Data: #{@tmpl_vars}\n" \
+      "  Link Set: #{@link_set.collect(&:as_json)}"
+    end
+  end
+
+  # Raised when a Resource's GET Url is not included in the _links hash
+  class MissingResourceUrl < HypermediaError
+    def initialize(resource)
+      @resource = resource
+      super(message)
+    end
+
+    def message
+      %("No Hypermedia GET Url found for the resource "#{@resource}")
+    end
+  end
+
+  # Raised when there is no schema defined by the Api root for the given resource
+  class MissingSchemaDefinition < HypermediaError
+    def initialize(namespace)
+      @namespace = namespace
+      super(message)
+    end
+
+    def message
+      %(Could not find schema definition for the resource "#{@namespace}")
+    end
+  end
+
+  # Raised when an expanded URL template is passed the wrong number of arguments
+  class UnfulfilledLinkTemplate < HypermediaError
+    def initialize(template, data)
+      @template = template
+      @data = data
+    end
+
+    def message
+      "The data provided could not satisfy the template requirements.\n" \
+      "  Template: #{@template.pattern}\n" \
+      "  Data: #{@data}"
+    end
+  end
 
   # Raised when there is a Link Template error
   LinkTemplateError = Class.new(Error)
@@ -52,7 +117,7 @@ class Frenetic
     def message
       "Mock resource not defined for `#{namespace}`." \
         " Create a new class that inherits from `#{resource}` and mixin" \
-        " `Frenetic::ResourceMockery` to define a mock."
+        ' `Frenetic::ResourceMockery` to define a mock.'
     end
   end
 
