@@ -11,6 +11,8 @@ describe Frenetic::ResourceMockery do
     Class.new(my_temp_resource) do
       def self.default_attributes
         {
+          id: 1,
+          price: 0.0,
           qux: 'qux',
           _embedded: {
             embedded_resource: {
@@ -24,7 +26,9 @@ describe Frenetic::ResourceMockery do
 
   let(:params) do
     {
-      foo: 1,
+      id: '1',
+      foo: 'bar',
+      price: '0.0',
       bar: 'baz',
       _embedded: {
         embedded_resource: {
@@ -52,7 +56,10 @@ describe Frenetic::ResourceMockery do
     subject { super().properties }
 
     it 'returns a hash of available properties' do
-      expect(subject).to include 'foo' => 'fixnum'
+      expect(subject).to include 'id' => 'fixnum'
+      expect(subject).to include 'price' => 'float'
+      expect(subject).to include 'foo' => 'string'
+      expect(subject).to include 'foo' => 'string'
       expect(subject).to include 'bar' => 'string'
     end
   end
@@ -60,8 +67,10 @@ describe Frenetic::ResourceMockery do
   describe '#attributes' do
     subject { super().attributes }
 
-    it 'returns a hash of the resources attributes' do
-      expect(subject).to include 'foo' => 1
+    it 'returns a hash of the resources type-casted attributes' do
+      expect(subject).to include 'id' => 1
+      expect(subject).to include 'price' => 0.0
+      expect(subject).to include 'foo' => 'bar'
       expect(subject).to include 'bar' => 'baz'
       expect(subject).to include 'qux' => 'qux'
       expect(subject['_embedded']['embedded_resource']).to include 'plugh' => 'xyzzy'

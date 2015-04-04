@@ -47,11 +47,25 @@ class Frenetic
     def build_params(params)
       raw_params = (params || {}).with_indifferent_access
       defaults = default_attributes.with_indifferent_access
-      @params = defaults.deep_merge(raw_params)
+      @params = cast_types(defaults.deep_merge(raw_params))
     end
 
     def build_structure
       @structure = OpenStruct.new(@attrs)
+    end
+
+    # A naive attempt to cast the attribute types of the incoming mock data
+    # based on any available type information provided in :default_attributes
+    def cast_types(params)
+      default_attributes.each do |key, value|
+        params[key] = case true
+        when value.is_a?(String) then String(params[key])
+        when value.is_a?(Float) then Float(params[key])
+        when value.is_a?(Integer) then Integer(params[key])
+        else params[key]
+        end
+      end
+      params
     end
   end
 end
