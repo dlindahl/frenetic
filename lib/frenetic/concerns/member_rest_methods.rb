@@ -6,9 +6,15 @@ class Frenetic
 
     module ClassMethods
       def find(params)
+        fail ResourceNotFound.new(self, params) if params.blank?
         params = { id:params } unless params.is_a?(Hash)
         return as_mock(params) if test_mode?
-        response = api.get(member_url(params))
+        begin
+          response = api.get(member_url(params))
+        rescue ClientParsingError, ClientError => ex
+          raise if ex.status != 404
+          raise ResourceNotFound.new(self, params)
+        end
         new(response.body) if response.success?
       end
 

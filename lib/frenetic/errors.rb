@@ -127,12 +127,14 @@ class Frenetic
     attr_reader :env, :error, :method, :status, :url
     def initialize(env)
       env ||= {}
-      body = env.fetch(:body, {})
-      @env = env
-      @error = body['error']
-      @method = env[:method]
-      @status = env[:status]
-      @url = env[:url]
+      if env.respond_to?(:fetch)
+        body = env.fetch(:body, {})
+        @env = env
+        @error = body['error']
+        @method = env[:method]
+        @status = env[:status]
+        @url = env[:url]
+      end
       super(message)
     end
 
@@ -143,6 +145,34 @@ class Frenetic
 
   # Raised when a network response returns a 400-level error
   ClientError = Class.new(ResponseError)
+
+  # Raise when a network reponse returns a 404 Not Found error
+  class ResourceNotFound < ClientError
+    def initialize(resource, params)
+      @resource = resource.to_s.demodulize
+      @params = params
+      @status = 404
+      super(message)
+    end
+
+    def message
+      if @params.blank?
+        "Couldn't find #{@resource} without an ID"
+      else
+        "Couldn't find #{@resource} with #{stringified_params}"
+      end
+    end
+
+  private
+
+    def stringified_params
+      @params.each_with_object([]) do |*pairs, agg|
+        agg.concat(pairs)
+      end.map do |pair|
+        pair.join('=')
+      end.join(', ')
+    end
+  end
 
   # Raised when a network response returns a 500-level error
   ServerError = Class.new(ResponseError)

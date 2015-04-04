@@ -47,6 +47,11 @@ class HttpStubs
       .to_return defaults.merge(body:body, status:404)
   end
 
+  def api_client_error
+    @rspec.stub_request(:get, 'example.com/api/my_temp_resources/1')
+      .to_return response(body:{ 'error' => '422 Unprocessable Entity' }, status:422)
+  end
+
   def api_description
     @rspec.stub_request(:any, 'example.com/api')
       .to_return response(body:schema, headers:{ 'Cache-Control' => 'max-age=3600, public' })
@@ -55,6 +60,11 @@ class HttpStubs
   def unknown_instance
     @rspec.stub_request(:get, 'example.com/api/my_temp_resources/1')
       .to_return response(body:{ 'error' => '404 Not Found' }, status:404)
+  end
+
+  def invalid_unknown_instance
+    @rspec.stub_request(:get, 'example.com/api/my_temp_resources/1')
+      .to_return response(body:'Unparseable Not Found', status:404)
   end
 
   def known_instance

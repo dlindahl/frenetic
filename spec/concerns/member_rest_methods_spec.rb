@@ -17,9 +17,11 @@ describe Frenetic::MemberRestMethods do
   end
 
   describe '.find' do
+    let(:params) { 1 }
+
     before { @stubs.api_description }
 
-    subject { MyTempResource.find 1 }
+    subject { MyTempResource.find(params) }
 
     context 'for a known instance' do
       before { @stubs.known_instance }
@@ -41,7 +43,23 @@ describe Frenetic::MemberRestMethods do
       before { @stubs.unknown_instance }
 
       it 'raises an error' do
-        expect{subject}.to raise_error Frenetic::ClientError
+        expect{subject}.to raise_error Frenetic::ResourceNotFound, %q(Couldn't find MyTempResource with id=1)
+      end
+
+      context 'with an unparseable response' do
+        before { @stubs.invalid_unknown_instance }
+
+        it 'raises an error' do
+          expect{subject}.to raise_error Frenetic::ResourceNotFound, %q(Couldn't find MyTempResource with id=1)
+        end
+      end
+    end
+
+    context 'that results in a client-level error' do
+      before { @stubs.api_client_error }
+
+      it 'raises an error' do
+        expect{subject}.to raise_error Frenetic::ClientError, %q(422 Unprocessable Entity)
       end
     end
 
@@ -55,6 +73,14 @@ describe Frenetic::MemberRestMethods do
 
       it 'returns a mock resource' do
         expect(subject).to be_an_instance_of MyMockResource
+      end
+
+      context 'with blank parameters' do
+        let(:params) { {} }
+
+        it 'raises an error' do
+          expect{subject}.to raise_error Frenetic::ResourceNotFound, %q(Couldn't find MyTempResource without an ID)
+        end
       end
     end
   end
