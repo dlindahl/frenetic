@@ -349,6 +349,15 @@ like so:
 > Order.find(1)
 # <Order id=1 total=54.47>
 
+> Order.find_by(id:1)
+# <Order id=1 total=54.47>
+
+> Order.find_by!(id:-1, state:'active')
+# Frenetic::ResourceNotFound: Couldn't find Order with id=-1, state=active
+
+> Order.find_by(id:-1)
+# nil
+
 > Order.all
 # [<Order id=1 total=54.47>,<Order id=2 total=42.00>]
 ```

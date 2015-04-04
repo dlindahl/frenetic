@@ -18,6 +18,16 @@ class Frenetic
         new(response.body) if response.success?
       end
 
+      def find_by!(params)
+        find(params)
+      end
+
+      def find_by(params)
+        find_by!(params)
+      rescue ClientError
+        nil
+      end
+
       def all
         return [] if test_mode?
         response = api.get(collection_url)

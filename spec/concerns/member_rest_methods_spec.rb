@@ -85,6 +85,25 @@ describe Frenetic::MemberRestMethods do
     end
   end
 
+  describe '.find_by' do
+    before { @stubs.api_description }
+
+    subject { MyTempResource.find_by(id:1) }
+
+    it 'delegates to .find' do
+      allow(MyTempResource).to receive(:find).and_return(nil)
+      subject
+      expect(MyTempResource).to have_received(:find)
+    end
+
+    context 'for an unknown resource' do
+      it 'returns nil' do
+        allow(MyTempResource).to receive(:find).and_raise(Frenetic::ClientError.new({}))
+        expect{subject}.to_not raise_error
+      end
+    end
+  end
+
   describe '.all' do
     before { @stubs.api_description }
 
