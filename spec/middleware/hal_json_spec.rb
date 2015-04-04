@@ -67,7 +67,7 @@ describe Frenetic::Middleware::HalJson do
       end
     end
 
-    context 'cause by the client' do
+    context 'caused by an unknown resource' do
       let(:status) { 404 }
       let(:error) do
         { 'status' => status.to_s, error:'404 Not Found' }.to_json
