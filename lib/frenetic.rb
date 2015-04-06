@@ -6,6 +6,7 @@ require 'active_support/core_ext/hash/reverse_merge'
 
 require 'frenetic/version'
 require 'frenetic/errors'
+require 'frenetic/behaviors'
 require 'frenetic/briefly_memoizable'
 require 'frenetic/connection'
 require 'frenetic/middleware/hal_json'
