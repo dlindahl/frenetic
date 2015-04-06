@@ -43,14 +43,18 @@ describe Frenetic::MemberRestMethods do
       before { @stubs.unknown_instance }
 
       it 'raises an error' do
-        expect{subject}.to raise_error Frenetic::ResourceNotFound, %q(Couldn't find MyTempResource with id=1)
+        expect{subject}.to(
+          raise_error Frenetic::ResourceNotFound, "Couldn't find MyTempResource with id=1"
+        )
       end
 
       context 'with an unparseable response' do
         before { @stubs.invalid_unknown_instance }
 
         it 'raises an error' do
-          expect{subject}.to raise_error Frenetic::ResourceNotFound, %q(Couldn't find MyTempResource with id=1)
+          expect{subject}.to(
+            raise_error Frenetic::ResourceNotFound, "Couldn't find MyTempResource with id=1"
+          )
         end
       end
     end
@@ -59,7 +63,7 @@ describe Frenetic::MemberRestMethods do
       before { @stubs.api_client_error }
 
       it 'raises an error' do
-        expect{subject}.to raise_error Frenetic::ClientError, %q(422 Unprocessable Entity)
+        expect{subject}.to raise_error Frenetic::ClientError, '422 Unprocessable Entity'
       end
     end
 
@@ -79,7 +83,9 @@ describe Frenetic::MemberRestMethods do
         let(:params) { {} }
 
         it 'raises an error' do
-          expect{subject}.to raise_error Frenetic::ResourceNotFound, %q(Couldn't find MyTempResource without an ID)
+          expect{subject}.to(
+            raise_error Frenetic::ResourceNotFound, "Couldn't find MyTempResource without an ID"
+          )
         end
       end
     end
