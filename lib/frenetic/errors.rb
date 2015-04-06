@@ -166,11 +166,13 @@ class Frenetic
   private
 
     def stringified_params
-      @params.each_with_object([]) do |*pairs, agg|
-        agg.concat(pairs)
-      end.map do |pair|
+      pairs = @params.each_with_object([]) do |*tuple, agg|
+        agg.concat(tuple)
+      end
+      assignments = pairs.map do |pair|
         pair.join('=')
-      end.join(', ')
+      end
+      assignments.join(', ')
     end
   end
 
