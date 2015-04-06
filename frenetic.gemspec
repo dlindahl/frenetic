@@ -28,4 +28,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'webmock',             '~> 1.18.0'
   gem.add_development_dependency 'timecop',             '~> 0.7.1'
   gem.add_development_dependency 'appraisal',           '~> 1.0.2'
+  gem.add_development_dependency 'rubocop',             '~> 0.29.1'
 end
