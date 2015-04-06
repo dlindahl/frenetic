@@ -9,13 +9,7 @@ class Frenetic
         fail ResourceNotFound.new(self, params) if params.blank?
         params = { id:params } unless params.is_a?(Hash)
         return as_mock(params) if test_mode?
-        begin
-          response = api.get(member_url(params))
-        rescue ClientParsingError, ClientError => ex
-          raise if ex.status != 404
-          raise ResourceNotFound.new(self, params)
-        end
-        new(response.body) if response.success?
+        fetch_resource(params)
       end
 
       def find_by!(params)
@@ -32,6 +26,18 @@ class Frenetic
         return [] if test_mode?
         response = api.get(collection_url)
         Frenetic::ResourceCollection.new(self, response.body) if response.success?
+      end
+
+    private
+
+      def fetch_resource(params)
+        begin
+          response = api.get(member_url(params))
+        rescue ClientParsingError, ClientError => ex
+          raise if ex.status != 404
+          raise ResourceNotFound.new(self, params)
+        end
+        new(response.body) if response.success?
       end
     end
   end
