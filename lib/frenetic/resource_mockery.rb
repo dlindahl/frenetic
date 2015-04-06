@@ -58,10 +58,10 @@ class Frenetic
     # based on any available type information provided in :default_attributes
     def cast_types(params)
       default_attributes.each do |key, value|
-        params[key] = case true
-        when value.is_a?(String) then String(params[key])
-        when value.is_a?(Float) then Float(params[key])
-        when value.is_a?(Integer) then Integer(params[key])
+        params[key] = case value
+        when String then String(params[key])
+        when Float then Float(params[key])
+        when Integer then Integer(params[key])
         else params[key]
         end
       end
