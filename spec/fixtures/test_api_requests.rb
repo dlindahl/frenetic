@@ -29,27 +29,12 @@ class HttpStubs
       .to_return response(body:'Non-JSON response', status:200)
   end
 
-  def api_server_error(type = :json)
-    body = '500 Server Error'
+  def api_error(type: :json, body: 'Not Found', status: 404, url: 'example.com/api')
+    body = "#{status} #{body}"
+    body = { 'error' => body } if type == :json
 
-    body = { 'error' => body }.to_json if type == :json
-
-    @rspec.stub_request(:any, 'example.com/api')
-      .to_return response(body:body, status:500)
-  end
-
-  def api_client_error(type = :json)
-    body = '404 Not Found'
-
-    body = { 'error' => body }.to_json if type == :json
-
-    @rspec.stub_request(:any, 'example.com/api')
-      .to_return defaults.merge(body:body, status:404)
-  end
-
-  def api_client_error
-    @rspec.stub_request(:get, 'example.com/api/my_temp_resources/1')
-      .to_return response(body:{ 'error' => '422 Unprocessable Entity' }, status:422)
+    @rspec.stub_request(:get, url)
+      .to_return response(body:body, status:status.to_i)
   end
 
   def api_description
