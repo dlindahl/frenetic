@@ -41,12 +41,13 @@ class Frenetic
       def finder_params(unique_id, alternate_key)
         return unique_id if unique_id.is_a? Hash
         params = {}
-        key = nil
-        if unique_id.to_i.to_s == unique_id.to_s
-          key = :id
-        elsif !unique_id.nil?
-          key = alternate_key
-        end
+        return params if unique_id.blank?
+        key =
+          if unique_id.to_i.to_s == unique_id.to_s
+            :id
+          elsif !unique_id.nil?
+            alternate_key
+          end
         params[key] = unique_id
         params
       end

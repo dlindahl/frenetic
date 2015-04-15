@@ -61,7 +61,11 @@ describe Frenetic::MemberRestMethods do
 
     context 'that results in a client-level error' do
       before do
-        @stubs.api_error(status:422, body:'Unprocessable Entity', url:'example.com/api/my_temp_resources/1')
+        @stubs.api_error(
+          status: 422,
+          body: 'Unprocessable Entity',
+          url: 'example.com/api/my_temp_resources/1'
+        )
       end
 
       it 'raises an error' do
