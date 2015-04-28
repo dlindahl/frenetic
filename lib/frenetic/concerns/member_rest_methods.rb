@@ -22,9 +22,9 @@ class Frenetic
         nil
       end
 
-      def all
+      def all(*params)
         return [] if test_mode?
-        response = api.get(collection_url)
+        response = api.get(collection_url(*params))
         Frenetic::ResourceCollection.new(self, response.body) if response.success?
       end
 

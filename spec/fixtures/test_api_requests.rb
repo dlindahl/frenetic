@@ -71,6 +71,19 @@ class HttpStubs
       )
   end
 
+  def filtered_resource
+    @rspec.stub_request(:get, 'example.com/api/my_filtered_resources/filters/bar')
+      .to_return response(
+        body: {
+          '_embedded' => {
+            'my_filtered_resources' => [
+              persisted_resource
+            ]
+          }
+        }
+      )
+  end
+
   def valid_created_resource
     @rspec.stub_request(:post, 'example.com/api/my_temp_resources/')
       .to_return response(
@@ -103,6 +116,13 @@ class HttpStubs
               name: 'string'
             }
           },
+          my_filtered_resource: {
+            description: 'Humanized resource description',
+            properties: {
+              id:   'number',
+              name: 'string'
+            }
+          },
           abstract_resource: {
             description: 'A random thing',
             properties: {
@@ -118,6 +138,10 @@ class HttpStubs
         },
         my_temp_resources: {
           href: '/api/my_temp_resources'
+        },
+        my_filtered_resources: {
+          href: '/api/my_filtered_resources/filters/{filter}',
+          templated: true
         },
         my_temp_resource: {
           href: '/api/my_temp_resources/{id}',

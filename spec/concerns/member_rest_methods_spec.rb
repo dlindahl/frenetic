@@ -11,6 +11,14 @@ describe Frenetic::MemberRestMethods do
     end
   end
 
+  let(:my_filtered_resource) do
+    cfg = test_cfg
+
+    Class.new(Frenetic::Resource) do
+      api_client { Frenetic.new(cfg) }
+    end
+  end
+
   before do
     stub_const 'MyTempResource', my_temp_resource
     MyTempResource.send :include, described_class
@@ -138,6 +146,24 @@ describe Frenetic::MemberRestMethods do
 
       it 'returns an empty collection' do
         expect(subject).to be_empty
+      end
+    end
+
+    context 'with additional parameters' do
+      before do
+        stub_const('MyFilteredResource', my_filtered_resource)
+        MyFilteredResource.send(:include, described_class)
+        @stubs.filtered_resource
+      end
+
+      subject { MyFilteredResource.all(filter: 'bar') }
+
+      it 'returns a resource collection' do
+        expect(subject).to be_an_instance_of Frenetic::ResourceCollection
+      end
+
+      it 'instantiates all resources in the collection' do
+        expect(subject.first).to be_an_instance_of MyFilteredResource
       end
     end
   end
