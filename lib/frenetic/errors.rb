@@ -124,13 +124,13 @@ class Frenetic
   # Parent class for all specific exceptions which are raised as a result of a
   # network response.
   class ResponseError < Error
-    attr_reader :env, :error, :method, :status, :url
+    attr_reader :body, :env, :error, :method, :status, :url
     def initialize(env)
       env ||= {}
       if env.respond_to?(:fetch)
-        body = env.fetch(:body, {})
+        @body = env.fetch(:body, {})
         @env = env
-        @error = body['error']
+        @error = @body['error']
         @method = env[:method]
         @status = env[:status]
         @url = env[:url]
@@ -173,6 +173,35 @@ class Frenetic
         pair.join('=')
       end
       assignments.join(', ')
+    end
+  end
+
+  # Raise when Resource#save! is called and the request fails with a 422
+  class ResourceInvalid < ClientError
+    attr_reader :errors
+
+    def initialize(resource)
+      @errors = resource.errors
+      @status = 422
+      super(message)
+    end
+
+    def message
+      "Validation failed: #{validation_errors}"
+    end
+
+  private
+
+    def validation_errors
+      errors.map do |attribute, error_messages|
+        error_messages.map do |error_message|
+          if attribute == 'base'
+            error_message.capitalize
+          else
+            "#{attribute.titleize} #{error_message}"
+          end
+        end
+      end.flatten.join(', ')
     end
   end
 

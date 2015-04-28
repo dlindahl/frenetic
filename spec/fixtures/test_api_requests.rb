@@ -1,5 +1,6 @@
 require 'json'
 
+# rubocop:disable Metrics/ClassLength
 class HttpStubs
   def initialize(rspec)
     @rspec = rspec
@@ -63,10 +64,30 @@ class HttpStubs
         body: {
           '_embedded' => {
             'my_temp_resources' => [
-              { 'name' => 'Resource Name' }
+              persisted_resource
             ]
           }
         }
+      )
+  end
+
+  def valid_created_resource
+    @rspec.stub_request(:post, 'example.com/api/my_temp_resources/')
+      .to_return response(
+        body: persisted_resource
+      )
+  end
+
+  def invalid_created_resource
+    @rspec.stub_request(:post, 'example.com/api/my_temp_resources/')
+      .to_return response(
+        status: 422,
+        body: persisted_resource.merge(
+          'errors' => {
+            'name' => ['cannot be blank', 'must be a name'],
+            'base' => ['cannot be valid']
+          }
+        )
       )
   end
 
@@ -109,7 +130,21 @@ class HttpStubs
     }
   end
   # rubocop:enable Metrics/MethodLength
+
+  def persisted_resource(params = {})
+    id = params.fetch('id', 1)
+    {
+      'id' => id,
+      'name' => 'Resource Name',
+      '_links' => {
+        'self' => {
+          'href' => "/api/my_temp_resources/#{id}"
+        }
+      }
+    }.merge!(params)
+  end
 end
+# rubocop:enable Metrics/ClassLength
 
 RSpec.configure do |c|
   c.before :all do

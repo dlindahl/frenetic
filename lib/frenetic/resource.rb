@@ -6,12 +6,14 @@ require 'active_support/core_ext/hash/indifferent_access'
 require 'frenetic/concerns/structured'
 require 'frenetic/concerns/hal_linked'
 require 'frenetic/concerns/member_rest_methods'
+require 'frenetic/concerns/persistence'
 
 class Frenetic
   class Resource < Delegator
     include Structured
     include HalLinked
     include MemberRestMethods
+    include Persistence
 
     def self.api_client(client = nil)
       if client
@@ -54,16 +56,15 @@ class Frenetic
       mock_class.new params
     end
 
-    def initialize(p = {})
-      build_params p
+    def initialize(params = {})
       @attrs = {}
+      initialize_with(params)
+    end
 
-      properties.keys.each do |k|
-        @attrs[k] = @params[k]
-      end
-
+    def initialize_with(p)
+      build_params(p)
+      assign_attributes(@params)
       extract_embedded_resources
-
       build_structure
     end
 
@@ -71,6 +72,12 @@ class Frenetic
       self.class.api_client
     end
     alias_method :api, :api_client
+
+    def assign_attributes(params)
+      properties.keys.each do |k|
+        @attrs[k] = params[k]
+      end
+    end
 
     def attributes
       @attributes ||= begin
