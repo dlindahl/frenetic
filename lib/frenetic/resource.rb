@@ -32,6 +32,32 @@ class Frenetic
       api_client
     end
 
+    def self.extract_embedded_resources(resource)
+      resource.fetch('_embedded', {}).each_with_object({}) do |(resource_name, attrs), embeds|
+        resource_class = find_resource_class(resource_name)
+        if test_mode? && resource_class.respond_to?(:as_mock)
+          embeds[resource_name] = resource_class.as_mock(attrs)
+        elsif attrs.is_a?(Array)
+          embeds[resource_name] = attrs.map do |a|
+            resource_class.new(a)
+          end
+        else
+          embeds[resource_name] = resource_class.new(attrs)
+        end
+      end
+    end
+
+    def self.find_resource_class(resource_name)
+      class_namespace = self.to_s.deconstantize
+      class_name = "#{class_namespace}::#{resource_name.classify}"
+      begin
+        class_name.constantize
+      rescue NameError => ex
+        raise if ex.message !~ /uninitialized constant/
+        OpenStruct
+      end
+    end
+
     def self.namespace(namespace = nil)
       if namespace
         @namespace = namespace.to_s
@@ -64,7 +90,7 @@ class Frenetic
     def initialize_with(p)
       build_params(p)
       assign_attributes(@params)
-      extract_embedded_resources
+      @attrs.merge!(self.class.extract_embedded_resources(@params))
       build_structure
     end
 
@@ -120,23 +146,6 @@ class Frenetic
 
     def build_params(p)
       @params = (p || {}).with_indifferent_access
-    end
-
-    def extract_embedded_resources
-      class_namespace = self.class.to_s.deconstantize
-      @params.fetch('_embedded', {}).each do |k, attrs|
-        class_name = "#{class_namespace}::#{k.classify}"
-        klass = begin
-          class_name.constantize
-        rescue
-          OpenStruct
-        end
-        if self.class.test_mode? && klass.respond_to?(:as_mock)
-          @attrs[k] = klass.as_mock(attrs)
-        else
-          @attrs[k] = klass.new(attrs)
-        end
-      end
     end
 
     def build_structure

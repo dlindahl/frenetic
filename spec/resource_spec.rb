@@ -88,6 +88,66 @@ describe Frenetic::Resource do
     end
   end
 
+  describe '.extract_embedded_resources' do
+    let(:resource) do
+      {
+        '_embedded' => {
+          'my_temp_resource' => {
+            'id' => 99
+          }
+        }
+      }
+    end
+
+    before { @stubs.api_description }
+
+    subject do
+      MyNamespace::MyTempResource.extract_embedded_resources(resource)
+    end
+
+    it 'extracts all embedded resources' do
+      expect(subject).to include 'my_temp_resource' => kind_of(MyNamespace::MyTempResource)
+    end
+  end
+
+  describe '.find_resource_class' do
+    let(:params) do
+      {
+        id: 54,
+        _links: {
+          known_resource: {
+            href: '/known_resource'
+          }
+        }
+      }
+    end
+
+    before do
+      @stubs.api_description
+      stub_const('MyNamespace::KnownResource', abstract_resource)
+    end
+
+    subject do
+      MyNamespace::MyTempResource.find_resource_class(resource_name)
+    end
+
+    context 'with a known resource' do
+      let(:resource_name) { 'known_resource' }
+
+      it 'returns the resource class' do
+        expect(subject).to eql MyNamespace::KnownResource
+      end
+    end
+
+    context 'with an unknown resource' do
+      let(:resource_name) { 'unknown_resource' }
+
+      it 'returns an anonymous class' do
+        expect(subject).to eql OpenStruct
+      end
+    end
+  end
+
   describe '.namespace' do
     before do
       stub_const 'MyNamespace::MyTempResource', abstract_resource
