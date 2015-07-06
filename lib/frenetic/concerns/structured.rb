@@ -28,7 +28,7 @@ class Frenetic
     def rebuild_structure!
       destroy_structure!
       @@signatures[struct_key] = signature
-      Struct.new(struct_key, *@attrs.keys)
+      Struct.new(struct_key, *@attrs.keys, &structure_instance_methods)
     end
 
     def structure_expired?
@@ -43,6 +43,23 @@ class Frenetic
       return unless structure_defined?
       @@signatures.delete struct_key
       Struct.send :remove_const, struct_key
+    end
+
+  private
+
+    def structure_method_builders
+      self.class.ancestors[1..-1].map do |ancestor|
+        ancestor.instance_variable_get('@_structure_block')
+      end.compact
+    end
+
+    def structure_instance_methods
+      instance = self
+      Proc.new do
+        instance.send(:structure_method_builders).each do |builder|
+          instance_exec(instance, &builder)
+        end
+      end
     end
   end
 end

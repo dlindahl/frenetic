@@ -4,6 +4,7 @@ require 'active_support/inflector'
 require 'active_support/core_ext/hash/indifferent_access'
 
 require 'frenetic/concerns/structured'
+require 'frenetic/concerns/structure_method_definer'
 require 'frenetic/concerns/hal_linked'
 require 'frenetic/concerns/member_rest_methods'
 require 'frenetic/concerns/persistence'
