@@ -5,6 +5,7 @@ require 'active_support/core_ext/hash/indifferent_access'
 
 require 'frenetic/concerns/structured'
 require 'frenetic/concerns/structure_method_definer'
+require 'frenetic/concerns/related'
 require 'frenetic/concerns/hal_linked'
 require 'frenetic/concerns/member_rest_methods'
 require 'frenetic/concerns/persistence'
@@ -12,6 +13,7 @@ require 'frenetic/concerns/persistence'
 class Frenetic
   class Resource < Delegator
     include Structured
+    include Related
     include HalLinked
     include MemberRestMethods
     include Persistence
@@ -92,6 +94,7 @@ class Frenetic
       build_params(p)
       assign_attributes(@params)
       @attrs.merge!(self.class.extract_embedded_resources(@params))
+      extract_related_resources
       build_structure
     end
 
@@ -130,7 +133,7 @@ class Frenetic
         "#{k}=#{val}"
       end.join(' ')
 
-      ivars = (instance_variables - [:@structure, :@attributes]).map do |k|
+      ivars = (instance_variables - [:@structure, :@attributes, :@_relations]).map do |k|
         val = instance_variable_get k
         val = val.is_a?(String) ? "\"#{val}\"" : val || 'nil'
 
