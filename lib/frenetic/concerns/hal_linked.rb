@@ -7,12 +7,12 @@ class Frenetic
     extend ActiveSupport::Concern
 
     def links
-      @params['_links']
+      @params.fetch('_links', {})
     end
 
     def member_url(params = {})
       resource = @resource_type || self.class.to_s.demodulize.underscore
-      return self.class.member_url(params) unless links.is_a?(Hash)
+      return self.class.member_url(params) if links.empty?
       link = links[resource] || links['self']
       fail MissingResourceUrl.new(resource) if !link
       HypermediaLinkSet.new(link).href params
