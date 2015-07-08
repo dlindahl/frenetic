@@ -85,7 +85,7 @@ class Frenetic
   briefly_memoize :description
 
   def schema
-    description['_embedded']['schema']
+    description.fetch('_embedded', {}).fetch('schema')
   end
 
   def reset_connection!
