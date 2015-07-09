@@ -8,7 +8,7 @@ class Frenetic
     extend Forwardable
     extend ActiveSupport::Concern
 
-    def_delegators :@params, :as_json, :to_json
+    def_delegators :@raw_params, :as_json, :to_json
 
     included do
       # I'm sure this violates some sort of CS principle or best practice,
@@ -17,11 +17,11 @@ class Frenetic
     end
 
     def attributes
-      @params
+      @known_attributes
     end
 
     def properties
-      @params.each_with_object({}) do |(k, v), props|
+      @known_attributes.each_with_object({}) do |(k, v), props|
         props[k] = v.class.to_s.underscore
       end
     end
@@ -44,14 +44,13 @@ class Frenetic
 
   private
 
-    def build_params(params)
-      raw_params = (params || {}).with_indifferent_access
+    def _assign_attributes(attributes)
       defaults = default_attributes.with_indifferent_access
-      @params = cast_types(defaults.deep_merge(raw_params))
+      @known_attributes = cast_types(defaults.deep_merge(@raw_attributes))
     end
 
     def build_structure
-      @structure = OpenStruct.new(@attrs)
+      @structure = OpenStruct.new(@known_attributes)
     end
 
     # A naive attempt to cast the attribute types of the incoming mock data

@@ -338,9 +338,9 @@ describe Frenetic::Resource do
         expect{subject.gender}.to raise_error(NoMethodError)
       end
 
-      it 'is accessible in @params' do
-        params = subject.instance_variable_get('@params')
-        expect(params).to include 'gender' => 'male'
+      it 'is accessible in @raw_attributes' do
+        raw_attrs = subject.instance_variable_get('@raw_attributes')
+        expect(raw_attrs).to include 'gender' => 'male'
       end
     end
 

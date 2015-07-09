@@ -11,12 +11,12 @@ describe Frenetic::ResourceMockery do
     Class.new(my_temp_resource) do
       def self.default_attributes
         {
-          id: 1,
-          price: 0.0,
-          qux: 'qux',
-          _embedded: {
-            embedded_resource: {
-              plugh: 'xyzzy'
+          'id' => 1,
+          'price' => 0.0,
+          'qux' => 'qux',
+          '_embedded' => {
+            'embedded_resource' => {
+              'plugh' => 'xyzzy'
             }
           }
         }
@@ -26,16 +26,16 @@ describe Frenetic::ResourceMockery do
 
   let(:params) do
     {
-      id: '1',
-      foo: 'bar',
-      price: '0.0',
-      bar: 'baz',
+      'id' => '1',
+      'foo' => 'bar',
+      'price' => '0.0',
+      'bar' => 'baz',
       _embedded: {
-        embedded_resource: {
-          grault: 'garply'
+        'embedded_resource' => {
+          'grault' => 'garply'
         },
-        another_resource: {
-          waldo: 'fred'
+        'another_resource' => {
+          'waldo' => 'fred'
         }
       }
     }

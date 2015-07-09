@@ -81,19 +81,19 @@ class Frenetic
       @mock_class || fail(Frenetic::UndefinedResourceMock.new(namespace, self))
     end
 
-    def self.as_mock(params = {})
-      mock_class.new params
+    def self.as_mock(attributes = {})
+      mock_class.new(attributes)
     end
 
-    def initialize(params = {})
-      @attrs = {}
-      initialize_with(params)
+    def initialize(attributes = nil)
+      @raw_attributes = {}
+      @known_attributes = {}
+      initialize_with(attributes || {})
     end
 
-    def initialize_with(p)
-      build_params(p)
-      assign_attributes(@params)
-      @attrs.merge!(self.class.extract_embedded_resources(@params))
+    def initialize_with(attributes)
+      assign_attributes(attributes)
+      extract_embedded_resources
       extract_related_resources
       build_structure
     end
@@ -103,10 +103,16 @@ class Frenetic
     end
     alias_method :api, :api_client
 
-    def assign_attributes(params)
-      properties.keys.each do |k|
-        @attrs[k] = params[k]
+    def attributes=(attributes)
+      assign_attributes(attributes)
+    end
+
+    def assign_attributes(new_attributes)
+      if !new_attributes.respond_to?(:stringify_keys)
+        raise ArgumentError, "When assigning attributes, you must pass a hash as an argument."
       end
+      @raw_attributes.merge!(new_attributes.stringify_keys)
+      _assign_attributes(@raw_attributes)
     end
 
     def attributes
@@ -117,13 +123,16 @@ class Frenetic
       end
     end
 
+    def extract_embedded_resources
+      @known_attributes.merge!(self.class.extract_embedded_resources(@raw_attributes))
+    end
+
     def __getobj__
       @structure
     end
 
     def __setobj__(obj)
       @attributes = nil
-
       @structure = obj
     end
 
@@ -133,7 +142,7 @@ class Frenetic
         "#{k}=#{val}"
       end.join(' ')
 
-      ivars = (instance_variables - [:@structure, :@attributes, :@_relations]).map do |k|
+      ivars = (instance_variables - [:@structure, :@attributes, :@known_attributes, :@raw_attributes, :@_relations]).map do |k|
         val = instance_variable_get k
         val = val.is_a?(String) ? "\"#{val}\"" : val || 'nil'
 
@@ -148,12 +157,18 @@ class Frenetic
 
   private
 
-    def build_params(p)
-      @params = (p || {}).with_indifferent_access
+    def _assign_attributes(attributes)
+      properties.keys.each do |k|
+        _assign_attribute(k, attributes[k])
+      end
+    end
+
+    def _assign_attribute(key, value)
+      @known_attributes[key] = value
     end
 
     def build_structure
-      @structure = structure.new(*@attrs.values)
+      @structure = structure.new(*@known_attributes.values)
     end
 
     def namespace

@@ -3,8 +3,8 @@ require 'spec_helper'
 describe Frenetic::Structured do
   let(:my_temp_resource) do
     Class.new do
-      def initialize(attrs = {})
-        @attrs = attrs
+      def initialize(attributes = {})
+        @known_attributes = attributes
       end
     end
   end

@@ -7,7 +7,7 @@ class Frenetic
     extend ActiveSupport::Concern
 
     def links
-      @params.fetch('_links', {})
+      @raw_attributes.fetch('_links', {})
     end
 
     def member_url(params = {})

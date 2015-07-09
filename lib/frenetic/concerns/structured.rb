@@ -10,7 +10,7 @@ class Frenetic
     end
 
     def signature
-      @attrs.keys.sort.join('')
+      @known_attributes.keys.sort.join('')
     end
 
     def structure
@@ -28,7 +28,7 @@ class Frenetic
     def rebuild_structure!
       destroy_structure!
       @@signatures[struct_key] = signature
-      Struct.new(struct_key, *@attrs.keys, &structure_instance_methods)
+      Struct.new(struct_key, *@known_attributes.keys, &structure_instance_methods)
     end
 
     def structure_expired?
