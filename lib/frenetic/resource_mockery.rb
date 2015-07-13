@@ -49,7 +49,7 @@ class Frenetic
       @known_attributes = cast_types(defaults.deep_merge(@raw_attributes))
     end
 
-    def build_structure
+    def init_structure
       @structure = OpenStruct.new(@known_attributes)
     end
 

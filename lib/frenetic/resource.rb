@@ -3,7 +3,6 @@ require 'ostruct'
 require 'active_support/inflector'
 require 'active_support/core_ext/hash/indifferent_access'
 
-require 'frenetic/concerns/structured'
 require 'frenetic/concerns/structure_method_definer'
 require 'frenetic/concerns/related'
 require 'frenetic/concerns/hal_linked'
@@ -12,11 +11,12 @@ require 'frenetic/concerns/persistence'
 
 class Frenetic
   class Resource < Delegator
-    include Structured
     include Related
     include HalLinked
     include MemberRestMethods
     include Persistence
+
+    attr_reader :known_attributes, :raw_attributes
 
     def self.api_client(client = nil)
       if client
@@ -95,7 +95,7 @@ class Frenetic
       assign_attributes(attributes)
       extract_embedded_resources
       extract_related_resources
-      build_structure
+      init_structure
     end
 
     def api_client
@@ -167,8 +167,12 @@ class Frenetic
       @known_attributes[key] = value
     end
 
-    def build_structure
-      @structure = structure.new(*@known_attributes.values)
+    def init_structure
+      @structure = api_client.construct(self, @known_attributes, struct_key)
+    end
+
+    def struct_key
+      "#{self.class}::FreneticResourceStruct".gsub('::', '')
     end
 
     def namespace

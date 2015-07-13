@@ -13,6 +13,8 @@ require 'frenetic/middleware/hal_json'
 require 'frenetic/resource'
 require 'frenetic/resource_collection'
 
+require 'frenetic/structure_registry'
+
 class Frenetic
   extend Forwardable
   include ActiveSupport::Configurable
@@ -33,6 +35,7 @@ class Frenetic
   config_accessor :username
 
   def_delegators :connection, :delete, :get, :head, :options, :patch, :post, :put
+  def_delegators :structure_registry, :construct
 
   # Can't explicitly use config_accessor because we need defaults and
   # ActiveSupport < 4 does not support them
@@ -86,6 +89,10 @@ class Frenetic
 
   def schema
     description.fetch('_embedded', {}).fetch('schema')
+  end
+
+  def structure_registry
+    @structure_registry ||= StructureRegistry.new
   end
 
   def reset_connection!
